@@ -1,0 +1,12 @@
+<button
+  mat-button
+  [ngClass]="getButtonClass()"
+  (click)="onBtnClick($event)"
+  [type]="type"
+  [disabled]="disabled || loading"
+>
+  <span *ngIf="loading">
+    <mat-spinner diameter="20"></mat-spinner>
+  </span>
+  <span *ngIf="!loading">{{ buttonText }}</span>
+</button>
