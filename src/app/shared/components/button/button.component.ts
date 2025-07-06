@@ -8,7 +8,7 @@ import { MatSpinner } from '@angular/material/progress-spinner';
     selector: 'app-button',
     imports: [CommonModule, MatButton, MatSpinner],
     templateUrl: './button.component.html',
-    styleUrl: './button.component.scss'
+    styleUrl: './button.component.css'
 })
 export class ButtonComponent {
   @Input() buttonStyles!: string;
