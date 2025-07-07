@@ -1,0 +1,24 @@
+<nz-table
+  [nzData]="data"
+  [nzLoading]="loading"
+  [nzPageSize]="pageSize"
+  [nzTotal]="total"
+  [nzFrontPagination]="showPagination"
+  [nzScroll]="{ x: '100%' }"
+  class="rounded-lg border border-gray-200 shadow-sm"
+>
+  <thead class="bg-amber-700">
+    <tr>
+      <th *ngFor="let col of columns" class="text-[#ec0505] text-center p-3 font-semibold text-sm border border-[#EBEBEB]">
+        {{ col.title }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of data" class="hover:bg-gray-50 transition-all">
+      <td *ngFor="let col of columns" class="p-3 text-sm text-gray-800">
+        {{ item[col.key] }}
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
