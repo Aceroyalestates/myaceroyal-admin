@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+:host {
+  display: flex;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.ant-layout {
+  background-color: #FBFBFB;
+}
+
+.menu-sidebar {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  min-width: fit-content !important;
+  background-color: white;
+}
+
+nz-header {
+  padding: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.app-header {
+  position: relative;
+  height: fit-content;
+  padding: 0;
+  background: #fff;
+}
+
+nz-content {
+  margin: 24px;
+  margin-top: 80px;
+}
+
+.inner-content {
+  background: #fff;
+  height: 100%;
+}
+
+.ant-menu-item {
+  padding: 0;
+}
+
+.ant-menu-vertical .ant-menu-item {
+  max-height: fit-content;
+}
+
+.ant-menu-item a::before {
+  display: none;
+}
+
+.ant-menu-item a {
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 15px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  padding: 0;
+}
+.ant-menu-item:hover a {
+  color: white;
+}
+
+.ant-menu-item-selected {
+  background-color: #E41C24 !important;
+  color: white;
+  padding: 9px 20px;
+  border-radius: 50px;
+}
+.ant-menu-item:hover {
+  background-color: #E41C24 !important;
+  color: white;
+  padding: 9px 20px;
+  border-radius: 50px;
+}
+
+.ant-menu-vertical {
+  border: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+  margin-bottom: .5em;
+  color: inherit !important;
+  font-weight: 500;
+}

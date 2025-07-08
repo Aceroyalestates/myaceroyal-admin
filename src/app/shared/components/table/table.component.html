@@ -1,0 +1,63 @@
+<div class="overflow-x-auto w-full">
+  <table class="min-w-full divide-y-[3px] divide-[#fbfbfb]">
+    <thead class="bg-transparent">
+      <tr>
+        <!-- Headers -->
+        <ng-container
+          *ngFor="
+            let header of table.getHeaderGroups()[0].headers;
+            let i = index;
+            let isFirst = first
+          "
+        >
+          <th
+            class="p-4 py-2 pl-2 text-left text-[16px] font-medium text-[#4F4F4F]"
+            [class.cursor-pointer]="enableSorting()"
+            (click)="enableSorting() && header.column.toggleSorting()"
+          >
+            <span class="mr-7"
+              ><input
+                *ngIf="enableSelection() && isFirst"
+                type="checkbox"
+                (change)="toggleAllRows()"
+                [checked]="
+                  selectedRowIds().size === table.getRowModel().rows.length
+                "
+            /></span>
+            {{ header.column.columnDef.header }}
+            <span *ngIf="enableSorting() && header.column.getIsSorted()">
+              {{ header.column.getIsSorted() === "asc" ? "🔼" : "🔽" }}
+            </span>
+          </th>
+        </ng-container>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr
+        *ngFor="let row of table.getRowModel().rows"
+        class="hover:bg-gray-50 transition py-[14px] border-b-[3px] last:border-0 border-[#FBFBFB]"
+      >
+        <!-- Row data -->
+        <ng-container
+          *ngFor="
+            let cell of row.getVisibleCells();
+            let i = index;
+            let isFirst = first
+          "
+        >
+          <td class="p-2 text-sm text-gray-800">
+            <span class="mr-7"
+              ><input
+                type="checkbox"
+                *ngIf="enableSelection() && isFirst"
+                [checked]="selectedRowIds().has(row.id)"
+                (change)="toggleRow(row.id)"
+            /></span>
+            {{ cell.renderValue() }}
+          </td>
+        </ng-container>
+      </tr>
+    </tbody>
+  </table>
+</div>

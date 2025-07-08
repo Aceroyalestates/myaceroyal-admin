@@ -1,1 +1,133 @@
-<p>main works!</p>
+<nz-layout class="app-layout">
+  <nz-sider
+    class="menu-sidebar"
+    nzCollapsible
+    nzWidth="256px"
+    nzBreakpoint="md"
+    [(nzCollapsed)]="isCollapsed"
+    [nzTrigger]="null"
+  >
+    <div class="sidebar-logo">
+      <a href="/dashboard">
+        <img src="logo.png" alt="logo" />
+      </a>
+    </div>
+    <div class="pt-8 flex flex-col px-[30px] pb-6 gap-4">
+      <h1 class="font-medium text-sm text-[#E41C24] uppercase">Main Menu</h1>
+      <ul nz-menu class="menu">
+        <li nz-menu-item class="menu-item" nzMatchRouter>
+          <app-icon name="dashboard"></app-icon>
+
+          <a
+            [routerLink]="['/dashboard']"
+            routerLinkActive="!bg-primary !text-[#fff]"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Dashboard</a
+          >
+        </li>
+        <li nz-menu-item class="menu-item" nzMatchRouter>
+          <app-icon name="property"></app-icon>
+
+          <a
+            [routerLink]="['/property-management']"
+            routerLinkActive="!bg-primary !text-[#fff]"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Property Management</a
+          >
+        </li>
+        <li nz-menu-item class="menu-item" nzMatchRouter>
+          <app-icon name="user-round"></app-icon>
+
+          <a
+            [routerLink]="['/user-management']"
+            routerLinkActive="!bg-primary !text-[#fff]"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >User Management</a
+          >
+        </li>
+        <li nz-menu-item class="menu-item" nzMatchRouter>
+          <app-icon name="purse"></app-icon>
+
+          <a
+            [routerLink]="['/financial-management']"
+            routerLinkActive="!bg-primary !text-[#fff]"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Financial Management</a
+          >
+        </li>
+        <li nz-menu-item class="menu-item" nzMatchRouter>
+          <app-icon name="bag"></app-icon>
+
+          <a
+            [routerLink]="['/subscription-form']"
+            routerLinkActive="!bg-primary !text-[#fff]"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Subsciption Form</a
+          >
+        </li>
+        <!-- <li nz-menu-item class="menu-item" nzMatchRouter>
+            <app-icon name="bag"></app-icon>
+
+          <a [routerLink]="['/realtor-management']"
+          routerLinkActive="!bg-primary !text-[#fff]"
+          [routerLinkActiveOptions]="{ exact: true }">Realtor Management</a>
+        </li> -->
+      </ul>
+    </div>
+    <div class="pt-8 flex flex-col px-[30px] pb-6 gap-0">
+      <h1 class="font-medium text-sm text-[#E41C24] uppercase mb-0">
+        SETTINGS
+      </h1>
+      <ul nz-menu class="menu">
+        <li nz-menu-item class="menu-item" nzMatchRouter>
+          <app-icon name="bell"></app-icon>
+
+          <a
+            [routerLink]="['/notifications']"
+            routerLinkActive="!bg-primary !text-[#fff]"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Notifications</a
+          >
+        </li>
+        <li nz-menu-item class="menu-item" nzMatchRouter>
+          <app-icon name="exit"></app-icon>
+
+          <a>Sign Out</a>
+        </li>
+      </ul>
+    </div>
+  </nz-sider>
+  <nz-layout>
+    <nz-header>
+      <div class="app-header">
+        <div class="flex items-center justify-between py-[30px] px-10 w-full">
+          <div>
+            <app-search-bar (search)="onSearch($event)" [placeholder]="'Search property...'"></app-search-bar>
+          </div>
+          <div class="flex gap-16 items-center">
+            <app-icon
+              [name]="'bell'"
+              class="text-primary p-2 bg-primary/10 rounded-full"
+            ></app-icon>
+            <div class="flex gap-2 items-center">
+              <img
+                src="logo.png"
+                alt="profile"
+                class="w-10 h-10 rounded-full object-cover border border-red-500"
+              />
+              <div>
+                <h2 class="font-medium text-foreground mb-1 text-normal">Endurance</h2>
+                <p class="text-small">Admin</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nz-header>
+    <nz-content>
+      <div class="inner-content">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+  </nz-layout>
+</nz-layout>
