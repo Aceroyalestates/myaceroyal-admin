@@ -23,4 +23,9 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 })
 export class MainComponent {
   isCollapsed = false;
+
+  onSearch(query: string) {
+    console.log('Search query:', query);
+    // filter table, trigger API search, etc.
+  }
 }

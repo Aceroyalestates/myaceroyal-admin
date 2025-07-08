@@ -102,11 +102,7 @@
       <div class="app-header">
         <div class="flex items-center justify-between py-[30px] px-10 w-full">
           <div>
-            <app-input
-              [isSearchAccount]="true"
-              [placeholder]="'Search'"
-              class="w-[350px] max-h-fit text-2xl rounded-[50px]"
-            ></app-input>
+            <app-search-bar (search)="onSearch($event)"></app-search-bar>
           </div>
           <div class="flex gap-16 items-center">
             <app-icon

@@ -1,0 +1,38 @@
+<div class="relative w-full max-w-[372px]">
+  <input
+    #searchInput
+    [(ngModel)]="query"
+    (input)="onInputChange()"
+    type="text"
+    placeholder="Search..."
+    class="w-full border rounded-full border-gray-300 h-[50px] pl-10 pr-3 focus:outline-none transition"
+  />
+  <svg
+    class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 103 10.5a7.5 7.5 0 0013.65 6.15z"
+    />
+  </svg>
+  <span
+    *ngIf="!query"
+    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+  >
+    Ctrl F
+  </span>
+  <button
+    *ngIf="query"
+    (click)="clear()"
+    class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+    aria-label="Clear"
+  >
+    ✕
+  </button>
+</div>

@@ -5,6 +5,7 @@ import { AlertModalComponent } from './components/alert-modal/alert-modal.compon
 import { InputComponent } from './components/input/input.component';
 import { TableComponent } from './components/table/table.component';
 import { IconComponent } from './components/icon/icon.component';
+import { SearchBarComponent } from './components/search-bar/search-bar.component';
 
 @NgModule({
   declarations: [],
@@ -15,6 +16,7 @@ import { IconComponent } from './components/icon/icon.component';
     InputComponent,
     TableComponent,
     IconComponent,
+    SearchBarComponent
   ],
   exports: [
     ButtonComponent,
@@ -22,6 +24,7 @@ import { IconComponent } from './components/icon/icon.component';
     InputComponent,
     TableComponent,
     IconComponent,
+    SearchBarComponent
   ],
 })
 export class SharedModule {}
