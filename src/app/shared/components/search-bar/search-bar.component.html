@@ -1,10 +1,12 @@
-<div class="relative w-full max-w-[372px]">
+<div class="relative w-full">
   <input
     #searchInput
     [(ngModel)]="query"
     (input)="onInputChange()"
     type="text"
-    placeholder="Search..."
+    id="search"
+    name="search"
+    [placeholder]="placeholder"
     class="w-full border rounded-full border-gray-300 h-[50px] pl-10 pr-3 focus:outline-none transition"
   />
   <svg

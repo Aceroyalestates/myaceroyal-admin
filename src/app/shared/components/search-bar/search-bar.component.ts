@@ -1,10 +1,11 @@
-
 import { CommonModule } from '@angular/common';
 import {
   Component,
   ElementRef,
   EventEmitter,
   HostListener,
+  Input,
+  input,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -19,7 +20,7 @@ import { FormsModule } from '@angular/forms';
 export class SearchBarComponent {
   @Output() search = new EventEmitter<string>();
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
-
+  @Input() placeholder: string = 'Search...';
   query: string = '';
 
   @HostListener('window:keydown', ['$event'])

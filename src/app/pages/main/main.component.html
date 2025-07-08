@@ -102,7 +102,7 @@
       <div class="app-header">
         <div class="flex items-center justify-between py-[30px] px-10 w-full">
           <div>
-            <app-search-bar (search)="onSearch($event)"></app-search-bar>
+            <app-search-bar (search)="onSearch($event)" [placeholder]="'Search property...'"></app-search-bar>
           </div>
           <div class="flex gap-16 items-center">
             <app-icon
@@ -116,7 +116,7 @@
                 class="w-10 h-10 rounded-full object-cover border border-red-500"
               />
               <div>
-                <h2 class="font-medium mb-1 text-normal">Endurance</h2>
+                <h2 class="font-medium text-foreground mb-1 text-normal">Endurance</h2>
                 <p class="text-small">Admin</p>
               </div>
             </div>
