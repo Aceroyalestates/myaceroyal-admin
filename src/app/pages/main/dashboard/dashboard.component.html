@@ -1,9 +1,10 @@
-<main class="flex items-center justify-between">
+<main class="flex items-center justify-between w-full">
   <app-table
-    [columns]="columns"
-    [data]="data"
-    [loading]="false"
-    [pageSize]="10"
-    [total]="data.length"
+  [data]="people"
+  [columns]="columns"
+  [enableSorting]="false"
+  [enableSelection]="false"
+  (selectedData)="handleSelectedData($event)"
+  class="w-full"
   ></app-table>
 </main>
