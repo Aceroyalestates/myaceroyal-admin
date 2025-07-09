@@ -6,6 +6,7 @@ import { InputComponent } from './components/input/input.component';
 import { TableComponent } from './components/table/table.component';
 import { IconComponent } from './components/icon/icon.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
+import { PropertyCardComponent } from './components/property-card/property-card.component';
 
 @NgModule({
   declarations: [],
@@ -16,7 +17,8 @@ import { SearchBarComponent } from './components/search-bar/search-bar.component
     InputComponent,
     TableComponent,
     IconComponent,
-    SearchBarComponent
+    SearchBarComponent,
+    PropertyCardComponent
   ],
   exports: [
     ButtonComponent,
@@ -24,7 +26,8 @@ import { SearchBarComponent } from './components/search-bar/search-bar.component
     InputComponent,
     TableComponent,
     IconComponent,
-    SearchBarComponent
+    SearchBarComponent,
+    PropertyCardComponent
   ],
 })
 export class SharedModule {}
