@@ -1,13 +1,28 @@
 <main class="flex flex-col w-full">
-<div class="flex flex-col gap-12">
-  <p class="text-[#4F4F4F] text-normal text-[32px]">Dashboard</p>
-</div>
+  <div class="flex flex-col gap-12">
+    <p class="text-[#4F4F4F] text-normal text-[32px]">Dashboard</p>
+    <div class="flex items-center gap-9">
+      @for(metric of metrics; track metric.id){
+      <div
+        class="flex flex-col gap-6 p-6 border border-[#EEF2F6] rounded-lg w-full"
+        [ngStyle]="{ 'background-color': getTransparentColor(metric.color)}"
+
+      >
+        <h2 class="text-primary">{{ metric.title }}</h2>
+        <div class="flex items-center gap-3">
+          {{ metric.amount }}
+          {{ metric.percentage }}
+        </div>
+      </div>
+      }
+    </div>
+  </div>
   <app-table
-  [data]="people"
-  [columns]="columns"
-  [enableSorting]="false"
-  [enableSelection]="false"
-  (selectedData)="handleSelectedData($event)"
-  class="w-full"
+    [data]="people"
+    [columns]="columns"
+    [enableSorting]="false"
+    [enableSelection]="false"
+    (selectedData)="handleSelectedData($event)"
+    class="w-full"
   ></app-table>
 </main>
