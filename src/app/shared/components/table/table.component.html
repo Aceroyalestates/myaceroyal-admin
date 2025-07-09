@@ -15,9 +15,8 @@
             [class.cursor-pointer]="enableSorting()"
             (click)="enableSorting() && header.column.toggleSorting()"
           >
-            <span class="mr-7"
+            <span class="mr-7" *ngIf="enableSelection() && isFirst"
               ><input
-                *ngIf="enableSelection() && isFirst"
                 type="checkbox"
                 (change)="toggleAllRows()"
                 [checked]="
@@ -47,10 +46,10 @@
           "
         >
           <td class="p-2 text-sm text-gray-800">
-            <span class="mr-7"
+            <span class="mr-7" *ngIf="enableSelection() && isFirst"
               ><input
                 type="checkbox"
-                *ngIf="enableSelection() && isFirst"
+
                 [checked]="selectedRowIds().has(row.id)"
                 (change)="toggleRow(row.id)"
             /></span>

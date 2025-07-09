@@ -63,16 +63,18 @@
     @apply text-[16px] leading-[100%];
   }
 
-  h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6{
-      @apply text-foreground m-0;
-    }
+
 }
 
-
+h1,
+p,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0px !important;
+  padding: 0px;
+}
 @layer base{
 }
