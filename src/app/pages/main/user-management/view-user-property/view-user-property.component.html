@@ -175,11 +175,11 @@
     </p>
   </div>
   <div
-    class="flex flex-col w-full max-w-5/6 rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10"
+    class="flex flex-col w-full max-w-9/12 gap-6"
   >
     @for (payment of paymentSchedules; track $index) {
     <div
-      class="flex flex-col gap-10 items-center rounded-lg border-2 border-[#EEF2F6] bg-background py-8 px-6 w-full"
+      class="flex flex-col gap-10 items-start rounded-lg border-2 border-[#EEF2F6] bg-background py-8 px-6 w-full"
     >
       <div class="flex items-center justify-between w-full">
         <h2 class="text-normal">
@@ -187,11 +187,39 @@
           installment
         </h2>
         @let statuses ={ paid : "!text-[#1FAF38] border border-[#34A85333]
-        bg-[#34A8531F] !px-6 !py-2 rounded-full", pending:"!text-[#FBBC05] border border-[#FBBC0533]
-        bg-[#FBBC051F] !px-6 !py-2 rounded-full", overdue:"!text-[#E41C24] border border-[#E41C2433]
-        bg-[#E41C241F] !px-6 !py-2 rounded-full" };
-        <p [ngClass]="statuses[payment.status]" >{{ payment.status }}</p>
+        bg-[#34A8531F]", pending:"!text-[#FBBC05] border border-[#FBBC0533]
+        bg-[#FBBC051F]", overdue:"!text-[#E41C24] border border-[#E41C2433]
+        bg-[#E41C241F]" };
+        <p
+          [ngClass]="statuses[payment.status]"
+          class="!px-6 !py-2 rounded-full w-[162px] text-center capitalize text-normal text-[20px]"
+        >
+          {{ payment.status }}
+        </p>
       </div>
+      <div class="flex flex-col gap-6 w-full">
+        <div class="flex justify-between items-center">
+          <h4 class="!text-[#7A7A7A] !text-normal !font-normal text-[20px]">
+            Amount
+          </h4>
+          <p class="!text-[#7A7A7A] text-normal text-2xl !font-medium">
+            &#8358; {{ payment.amount }}
+          </p>
+        </div>
+        <div class="flex justify-between items-center">
+          <h4 class="!text-[#7A7A7A] !text-normal !font-normal text-[20px]">
+            Date Due
+          </h4>
+          <p class="!text-[#7A7A7A] text-normal text-2xl !font-medium">
+            {{ payment.date }}
+          </p>
+        </div>
+      </div>
+      @if(payment.status.toLowerCase() !== "paid"){
+      <button class="bg-primary !text-white text-medium font-medium rounded-full px-8 py-4">
+        Send Reminder
+      </button>
+      }
     </div>
     }
   </div>
