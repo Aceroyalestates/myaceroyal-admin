@@ -1,0 +1,145 @@
+<main class="flex flex-col w-full">
+  <div class="flex flex-col mb-10">
+    <div class="mb-16">
+      <app-breadcrumb
+        [items]="[
+          { label: 'User Management', url: '/user-management' },
+          { label: 'View User' },
+          { label: 'Racheal Endurance' }
+        ]"
+      ></app-breadcrumb>
+    </div>
+    <div
+      class="flex gap-6 py-5 px-7 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
+    >
+      <img
+        src="images/user.png"
+        alt="user"
+        class="w-full max-w-[230px] h-full rounded-lg object-cover"
+      />
+      <div class="flex flex-col gap-5 w-full">
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Email Address</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+            rachael&#64;gmail.com
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Phone Number</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+            +234 8123 456 789
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Gender</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+            Female
+          </h2>
+        </div>
+        <div class="flex items-center justify-between w-11/12">
+          <div class="flex flex-col gap-1">
+            <p class="!text-[#7A7A7A] !text-medium !mb-2">Joined</p>
+            <h2
+              class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
+            >
+              12-02-2026
+            </h2>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Properties</p>
+            <h2
+              class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
+            >
+              2
+            </h2>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Purchases</p>
+            <h2
+              class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
+            >
+            &#8358; 300,000,000
+            </h2>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="!text-[#7A7A7A] !text-medium !mb-2">Status</p>
+            <h2
+              class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
+            >
+              Active
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+    class="flex gap-6 py-8 px-6 border border-[#EBEBEB] rounded-lg w-full bg-background"
+  >
+    <div class="flex flex-col gap-8 w-full">
+      <h2 class="!text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
+        Financial Transactions
+      </h2>
+      <div class="flex items-center justify-between w-11/12">
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Assets</p>
+          <h2
+            class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+          >
+          &#8358; 300,000,000
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Outstanding Bill</p>
+          <h2
+            class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+          >
+          &#8358; 20,000,000
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Number of Installments</p>
+          <h2
+            class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+          >
+            4
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Next Installment Payment</p>
+          <h2
+            class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+          >
+          &#8358; 450,000
+          </h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="flex items-center justify-between mb-10">
+    <p class="text-[#4F4F4F] text-normal text-2xl">Properties</p>
+    <nz-select ngModel="All Properties" nzAllowClear nzPlaceHolder="All Properties" class="!w-[200px]">
+      <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+      <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
+      <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
+      <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
+      <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
+    </nz-select>
+  </div>
+  <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+    <div class="flex items-center justify-between mb-7 px-7">
+      <div class="flex flex-col gap-2">
+        <app-search-bar />
+      </div>
+    </div>
+    <app-table
+      [data]="people"
+      [columns]="columns"
+      [enableSorting]="true"
+      [rowLink]="getRowLink"
+      [enableSelection]="true"
+      (selectedData)="handleSelectedData($event)"
+      class="w-full"
+    />
+  </div>
+</main>

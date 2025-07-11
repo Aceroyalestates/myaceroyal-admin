@@ -1,6 +1,6 @@
 <div class="overflow-x-auto w-full">
   <table class="min-w-full divide-y-[3px] divide-[#fbfbfb]">
-    <thead class="bg-transparent">
+    <thead class="bg-[#F9F9F9]">
       <tr>
         <!-- Headers -->
         <ng-container
@@ -15,9 +15,8 @@
             [class.cursor-pointer]="enableSorting()"
             (click)="enableSorting() && header.column.toggleSorting()"
           >
-            <span class="mr-7"
+            <span class="mr-7" *ngIf="enableSelection() && isFirst"
               ><input
-                *ngIf="enableSelection() && isFirst"
                 type="checkbox"
                 (change)="toggleAllRows()"
                 [checked]="
@@ -35,9 +34,10 @@
 
     <tbody>
       <tr
-        *ngFor="let row of table.getRowModel().rows"
-        class="hover:bg-gray-50 transition py-[14px] border-b-[3px] last:border-0 border-[#FBFBFB]"
-      >
+      *ngFor="let row of table.getRowModel().rows"
+      class="hover:bg-gray-50 transition py-[14px] border-b-[3px] last:border-0 border-[#FBFBFB] cursor-pointer"
+      (click)="navigateToRow(row.original, $event)"
+    >
         <!-- Row data -->
         <ng-container
           *ngFor="
@@ -47,10 +47,10 @@
           "
         >
           <td class="p-2 text-sm text-gray-800">
-            <span class="mr-7"
+            <span class="mr-7" *ngIf="enableSelection() && isFirst"
               ><input
                 type="checkbox"
-                *ngIf="enableSelection() && isFirst"
+
                 [checked]="selectedRowIds().has(row.id)"
                 (change)="toggleRow(row.id)"
             /></span>

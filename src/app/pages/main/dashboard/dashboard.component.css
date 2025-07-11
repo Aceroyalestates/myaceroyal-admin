@@ -1,0 +1,12 @@
+.ant-select-single.ant-select-selector{
+  width: 174 !important;
+    height: 48;
+    border-radius: 8px;
+    gap: 32px;
+    border-width: 1px;
+    padding-top: 14px;
+    padding-right: 20px;
+    padding-bottom: 14px;
+    padding-left: 20px;
+    background-color: red !important;
+}
