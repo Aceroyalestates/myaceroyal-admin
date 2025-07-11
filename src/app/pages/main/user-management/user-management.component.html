@@ -1,3 +1,76 @@
-<p>
-  user-management works!
-</p>
+<main class="flex flex-col w-full">
+  <div class="flex flex-col gap-12">
+    <p class="text-[#4F4F4F] text-normal text-[32px]">User Management</p>
+    <div class="flex items-center gap-9 mb-12">
+      @for(metric of userMetrics; track metric.id){
+      <div
+        class="flex flex-col gap-6 p-6 border border-[#EEF2F6] rounded-lg w-full bg-background"
+      >
+        <p class="text-[#7A7A7A] text-normal text-[20px]">{{ metric.title }}</p>
+        <div class="flex items-center justify-between">
+          <p class="text-[#4F4F4F] text-[32px] text-normal">
+            {{ metric.amount }}
+          </p>
+          <span
+            class="flex items-center gap-1"
+            [ngStyle]="{ color: metric.color }"
+          >
+            <app-icon name="arrow-up"></app-icon>
+            <p class="font-medium text-normal">
+              <svg
+                width="11"
+                height="10"
+                viewBox="0 0 11 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.48712 10H3.19379C0.350743 10 -0.817395 8.04044 0.608421 5.64728L1.75938 3.72108L2.91034 1.79487C4.33616 -0.598291 6.66384 -0.598291 8.08966 1.79487L9.24062 3.72108L10.3916 5.64728C11.8174 8.04044 10.6493 10 7.80621 10H5.48712Z"
+                  fill=""
+                />
+              </svg>
+
+              +{{ metric.percentage }}%
+            </p>
+          </span>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+  <div class="flex items-center justify-between mb-10">
+    <p class="text-[#4F4F4F] text-normal text-2xl">User List</p>
+    <button
+      class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+      [ngStyle]="{ color: '#FFF' }"
+    >
+      Export
+    </button>
+  </div>
+  <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+    <div class="flex items-center justify-between mb-7 px-7">
+      <div class="flex flex-col gap-2">
+        <app-search-bar />
+      </div>
+      <nz-select
+        ngModel="All Activities"
+        nzAllowClear
+        nzPlaceHolder="All Activities"
+      >
+        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+        <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
+        <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
+        <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
+        <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
+      </nz-select>
+    </div>
+    <app-table
+      [data]="people"
+      [columns]="columns"
+      [enableSorting]="true"
+      [enableSelection]="true"
+      (selectedData)="handleSelectedData($event)"
+      class="w-full"
+    />
+  </div>
+</main>
