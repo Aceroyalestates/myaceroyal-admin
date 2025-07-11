@@ -1,4 +1,4 @@
-import { Person, Metric, Property } from "../types/general";
+import { Person, Metric, Property, PaymentSchedule } from '../types/general';
 
 export const People: Person[] = [
   { id: 1, name: 'Alice', email: 'alice@example.com', age: 30 },
@@ -54,5 +54,30 @@ export const Properties: Property[] = [
     location: 'Lagos-Epe Expressway, Abijo, Lagos',
     quantity: '3 Plots Available',
     amenities: 'Electricity, Pipe-borne Water, Tarred Road',
+  },
+];
+
+
+export const PaymentSchedules: PaymentSchedule[] = [
+  {
+    currInstallment: '1',
+    amount: '300,000,000',
+    date: '20-06-2025',
+    noOfInstallment: '3',
+    status: 'paid',
+  },
+  {
+    currInstallment: '2',
+    amount: '300,000,000',
+    date: '20-06-2025',
+    noOfInstallment: '3',
+    status: 'pending',
+  },
+  {
+    currInstallment: '3',
+    amount: '300,000,000',
+    date: '20-06-2025',
+    noOfInstallment: '3',
+    status: 'overdue',
   },
 ];
