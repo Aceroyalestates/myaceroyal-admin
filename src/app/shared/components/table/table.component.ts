@@ -15,6 +15,7 @@ import {
 } from '@tanstack/table-core';
 import { createAngularTable } from '@tanstack/angular-table';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-table',
   imports: [CommonModule],
@@ -22,19 +23,15 @@ import { CommonModule } from '@angular/common';
   styleUrl: './table.component.css',
 })
 export class TableComponent<T extends object> {
-  // ✅ Input signals
   data = input<T[]>([]);
   columns = input<ColumnDef<T>[]>([]);
   enableSorting = input<boolean>(true);
   enableSelection = input<boolean>(false);
+  rowLink = input<(row: T) => string>(); // receives a function from parent
 
-  // ✅ Output signal for parent to observe selected rows
   selectedData = output<T[]>();
-
-  // Internal signal for selected row IDs
   selectedRowIds = signal<Set<string>>(new Set());
 
-  // Create the table using signal-based API
   table = createAngularTable(() => ({
     data: this.data(),
     columns: this.columns(),
@@ -52,7 +49,7 @@ export class TableComponent<T extends object> {
       .map((row) => row.original)
   );
 
-  constructor() {
+  constructor(private router: Router) {
     // Emit selected data to parent
     effect(() => {
       if (this.enableSelection()) {
@@ -83,5 +80,18 @@ export class TableComponent<T extends object> {
     const current = new Set(this.selectedRowIds());
     current.has(rowId) ? current.delete(rowId) : current.add(rowId);
     this.selectedRowIds.set(current);
+  }
+
+  navigateToRow(row: T, event: MouseEvent) {
+    // Prevent navigation on checkbox clicks
+    if ((event.target as HTMLElement).closest('input[type="checkbox"]')) {
+      return;
+    }
+
+    const linkFn = this.rowLink();
+    if (linkFn) {
+      const link = linkFn(row);
+      this.router.navigateByUrl(link);
+    }
   }
 }

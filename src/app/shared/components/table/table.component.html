@@ -34,9 +34,10 @@
 
     <tbody>
       <tr
-        *ngFor="let row of table.getRowModel().rows"
-        class="hover:bg-gray-50 transition py-[14px] border-b-[3px] last:border-0 border-[#FBFBFB]"
-      >
+      *ngFor="let row of table.getRowModel().rows"
+      class="hover:bg-gray-50 transition py-[14px] border-b-[3px] last:border-0 border-[#FBFBFB] cursor-pointer"
+      (click)="navigateToRow(row.original, $event)"
+    >
         <!-- Row data -->
         <ng-container
           *ngFor="

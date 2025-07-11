@@ -1,0 +1,153 @@
+<main class="flex flex-col w-full">
+  <div class="flex flex-col mb-10">
+    <div class="mb-16">
+      <app-breadcrumb
+        [items]="[
+          { label: 'User Management', url: '/user-management' },
+          { label: 'View User' },
+          { label: 'Racheal Endurance', url: '/user-management/view/2' },
+          { label: 'Eko Parapo Property' }
+        ]"
+      ></app-breadcrumb>
+    </div>
+    <div
+      class="flex flex-col gap-8 w-full py-8 px-6 border border-[#EBEBEB] rounded-lg bg-background mb-8"
+    >
+      <h2 class="!text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
+        Property Details
+      </h2>
+      <div class="flex items-center gap-12 max-w-11/12 flex-wrap">
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Date Purchased</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            05-12-2025
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Category</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            Developed
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Type</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            2- Bedroom
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">No of Units</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            1
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Cost</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            &#8358; 300,000,000
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Payment Type</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            Installment
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Payment Status</p>
+          <h2 class="!text-[#FBBC05] text-normal font-semibold text-2xl !mb-0">
+            In Progress
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Realtor</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            Endurance Peace
+          </h2>
+        </div>
+      </div>
+    </div>
+    <div
+      class="flex flex-col gap-8 w-full py-8 px-6 border border-[#EBEBEB] rounded-lg bg-background mb-8"
+    >
+      <h2 class="!text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
+        Property Documentation
+      </h2>
+      <div class="flex flex-col gap-1">
+        <p class="!text-[#7A7A7A] !text-medium !mb-2">Subscription Form</p>
+        <span class="flex items-center gap-4">
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M36.6654 16.6654V24.9987C36.6654 33.332 33.332 36.6654 24.9987 36.6654H14.9987C6.66536 36.6654 3.33203 33.332 3.33203 24.9987V14.9987C3.33203 6.66536 6.66536 3.33203 14.9987 3.33203H23.332"
+              stroke="#7A7A7A"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M36.6654 16.6654H29.9987C24.9987 16.6654 23.332 14.9987 23.332 9.9987V3.33203L36.6654 16.6654Z"
+              stroke="#7A7A7A"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M11.668 21.668H21.668"
+              stroke="#7A7A7A"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M11.668 28.332H18.3346"
+              stroke="#7A7A7A"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <h2 class="!text-[#E06714] text-normal font-medium text-[20px] !mb-0 underline">
+            Subscription form.pdf
+          </h2>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="flex items-center justify-between mb-10">
+    <p class="text-[#4F4F4F] text-normal text-2xl">Properties</p>
+    <nz-select
+      ngModel="All Properties"
+      nzAllowClear
+      nzPlaceHolder="All Properties"
+      class="!w-[200px]"
+    >
+      <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+      <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
+      <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
+      <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
+      <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
+    </nz-select>
+  </div>
+  <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+    <div class="flex items-center justify-between mb-7 px-7">
+      <div class="flex flex-col gap-2">
+        <app-search-bar />
+      </div>
+    </div>
+    <app-table
+      [data]="people"
+      [columns]="columns"
+      [enableSorting]="true"
+      [rowLink]="getRowLink"
+      [enableSelection]="true"
+      (selectedData)="handleSelectedData($event)"
+      class="w-full"
+    />
+  </div>
+</main>

@@ -1,22 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, signal } from '@angular/core';
-import { ColumnDef } from '@tanstack/angular-table';
+import { Component, effect, OnInit, signal } from '@angular/core';
+import { ColumnDef } from '@tanstack/table-core';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Metrics, People } from 'src/app/core/constants';
 import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
-  selector: 'app-user-management',
+  selector: 'app-view-user-property',
   imports: [CommonModule, SharedModule, NzSelectModule],
-  templateUrl: './user-management.component.html',
-  styleUrls: ['./user-management.component.css'],
+  templateUrl: './view-user-property.component.html',
+  styleUrls: ['./view-user-property.component.css'],
 })
-export class UserManagementComponent {
+export class ViewUserPropertyComponent {
   userMetrics = Metrics;
   lucy!: string;
   people: Person[] = People;
-  getRowLink = (row: Person) => `/user-management/view/${row.id}`;
+  getRowLink = (row: Person) => `/user-management/view/${row.id}/${row.name}`;
   columns: ColumnDef<Person>[] = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'email', header: 'Email' },
