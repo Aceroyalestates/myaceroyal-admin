@@ -2,9 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { MainComponent } from './main.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { UserManagementComponent } from './user-management/user-management.component';
-import { VeiwUserComponent } from './user-management/veiw-user/veiw-user.component';
-import { ViewUserPropertyComponent } from './user-management/view-user-property/view-user-property.component';
 
 const routes: Routes = [
   {
@@ -22,15 +19,24 @@ const routes: Routes = [
       },
       {
         path: 'user-management',
-        component: UserManagementComponent,
+        loadChildren: () =>
+          import('./user-management/user-management.module').then(
+            (m) => m.UserManagementModule
+          ),
       },
       {
-        path: 'user-management/view/:id',
-        component: VeiwUserComponent,
+        path: 'realtor-management',
+        loadChildren: () =>
+          import('./realtor-management/realtor-management.module').then(
+            (m) => m.RealtorManagementModule
+          ),
       },
       {
-        path: 'user-management/view/:id/:slug',
-        component: ViewUserPropertyComponent,
+        path: 'admin-management',
+        loadChildren: () =>
+          import('./admin-management/admin-management.module').then(
+            (m) => m.AdminManagementModule
+          ),
       },
     ],
   },
