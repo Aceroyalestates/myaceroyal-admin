@@ -112,42 +112,115 @@
               stroke-linejoin="round"
             />
           </svg>
-          <h2 class="!text-[#E06714] text-normal font-medium text-[20px] !mb-0 underline">
+          <h2
+            class="!text-[#E06714] text-normal font-medium text-[20px] !mb-0 underline"
+          >
             Subscription form.pdf
           </h2>
         </span>
       </div>
     </div>
-  </div>
-  <div class="flex items-center justify-between mb-10">
-    <p class="text-[#4F4F4F] text-normal text-2xl">Properties</p>
-    <nz-select
-      ngModel="All Properties"
-      nzAllowClear
-      nzPlaceHolder="All Properties"
-      class="!w-[200px]"
+    <div
+      class="flex flex-col gap-8 w-full py-8 px-6 border border-[#EBEBEB] rounded-lg bg-background mb-8"
     >
-      <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-      <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
-      <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
-      <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
-      <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
-    </nz-select>
-  </div>
-  <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
-    <div class="flex items-center justify-between mb-7 px-7">
-      <div class="flex flex-col gap-2">
-        <app-search-bar />
+      <h2 class="!text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
+        Payment Plan
+      </h2>
+      <div class="flex items-center gap-12 max-w-11/12 flex-wrap">
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Price</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            &#8358; 300,000,000
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Installment Plan</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            6 Months
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Installment Paid</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            3
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">
+            Outstanding Installment
+          </p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            3
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Amount Paid</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            &#8358; 300,000,000
+          </h2>
+        </div>
+        <div class="flex flex-col gap-1">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Outstanding Amount</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            &#8358; 300,000,000
+          </h2>
+        </div>
       </div>
     </div>
-    <app-table
-      [data]="people"
-      [columns]="columns"
-      [enableSorting]="true"
-      [rowLink]="getRowLink"
-      [enableSelection]="true"
-      (selectedData)="handleSelectedData($event)"
-      class="w-full"
-    />
+  </div>
+  <div class="flex flex-col gap-2 mb-6">
+    <h2 class="!text-[#4F4F4F] text-normal text-2xl">Payment Schedule</h2>
+    <p class="text-normal !text-[#7A7A7A]">
+      You have been approved to make payment on behalf of the Client
+    </p>
+  </div>
+  <div
+    class="flex flex-col w-full max-w-9/12 gap-6"
+  >
+    @for (payment of paymentSchedules; track $index) {
+    <div
+      class="flex flex-col gap-10 items-start rounded-lg border-2 border-[#EEF2F6] bg-background py-8 px-6 w-full"
+    >
+      <div class="flex items-center justify-between w-full">
+        <h2 class="text-normal">
+          {{ payment.currInstallment }}/{{ payment.noOfInstallment }}
+          installment
+        </h2>
+        @let statuses ={ paid : "!text-[#1FAF38] border border-[#34A85333]
+        bg-[#34A8531F]", pending:"!text-[#FBBC05] border border-[#FBBC0533]
+        bg-[#FBBC051F]", overdue:"!text-[#E41C24] border border-[#E41C2433]
+        bg-[#E41C241F]" };
+        <p
+          [ngClass]="statuses[payment.status]"
+          class="!px-6 !py-2 rounded-full w-[162px] text-center capitalize text-normal text-[20px]"
+        >
+          {{ payment.status }}
+        </p>
+      </div>
+      <div class="flex flex-col gap-6 w-full">
+        <div class="flex justify-between items-center">
+          <h4 class="!text-[#7A7A7A] !text-normal !font-normal text-[20px]">
+            Amount
+          </h4>
+          <p class="!text-[#7A7A7A] text-normal text-2xl !font-medium">
+            &#8358; {{ payment.amount }}
+          </p>
+        </div>
+        <div class="flex justify-between items-center">
+          <h4 class="!text-[#7A7A7A] !text-normal !font-normal text-[20px]">
+            Date Due
+          </h4>
+          <p class="!text-[#7A7A7A] text-normal text-2xl !font-medium">
+            {{ payment.date }}
+          </p>
+        </div>
+      </div>
+      @if(payment.status.toLowerCase() !== "paid"){
+      <button class="bg-primary !text-white text-medium font-medium rounded-full px-8 py-4">
+        Send Reminder
+      </button>
+      }
+    </div>
+    }
   </div>
 </main>

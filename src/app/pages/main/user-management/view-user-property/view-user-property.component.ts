@@ -5,6 +5,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Metrics, People } from 'src/app/core/constants';
 import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { PaymentSchedules } from '../../../../core/constants/index';
 
 @Component({
   selector: 'app-view-user-property',
@@ -16,6 +17,7 @@ export class ViewUserPropertyComponent {
   userMetrics = Metrics;
   lucy!: string;
   people: Person[] = People;
+  paymentSchedules = PaymentSchedules;
   getRowLink = (row: Person) => `/user-management/view/${row.id}/${row.name}`;
   columns: ColumnDef<Person>[] = [
     { accessorKey: 'name', header: 'Name' },

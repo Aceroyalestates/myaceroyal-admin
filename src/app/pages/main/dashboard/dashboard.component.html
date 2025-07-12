@@ -1,6 +1,10 @@
 <main class="flex flex-col w-full">
   <div class="flex flex-col gap-12 mb-16">
-    <p class="text-[#4F4F4F] text-normal text-[32px]">Dashboard</p>
+    <app-breadcrumb
+        [items]="[
+          { label: 'Dashboard', url: '/dashboard' },
+        ]"
+      ></app-breadcrumb>
     <div class="flex items-center gap-9">
       @for(metric of metrics; track metric.id){
       <div

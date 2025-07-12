@@ -21,3 +21,11 @@ export interface Property {
   price: string;
   quantity: string;
 }
+
+export interface PaymentSchedule {
+  currInstallment: string;
+  noOfInstallment: string;
+  status: 'paid' | 'pending' | 'overdue';
+  amount: string;
+  date: string;
+}
