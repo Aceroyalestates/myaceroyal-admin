@@ -20,7 +20,7 @@ import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.componen
     IconComponent,
     SearchBarComponent,
     PropertyCardComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
   ],
   exports: [
     ButtonComponent,
@@ -30,7 +30,7 @@ import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.componen
     IconComponent,
     SearchBarComponent,
     PropertyCardComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
   ],
 })
 export class SharedModule {}

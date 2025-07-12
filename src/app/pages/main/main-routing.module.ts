@@ -32,6 +32,10 @@ const routes: Routes = [
         path: 'user-management/view/:id/:slug',
         component: ViewUserPropertyComponent,
       },
+      {
+        path: 'property-management',
+        loadChildren: () => import('../main/property-management/property-management.routes').then(m => m.propertyManagementRoutes),
+      },
     ],
   },
 ];

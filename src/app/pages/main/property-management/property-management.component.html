@@ -1,0 +1,42 @@
+<main class="flex flex-col w-full">
+  <div class="flex flex-col gap-12">
+    <app-breadcrumb
+      [items]="[{ label: 'Property Management', url: '/property-management' }]"
+    ></app-breadcrumb>
+    <div class="flex justify-end">
+        <button
+            class="flex justify-self-end items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer text-[#E41C24]"
+            [ngStyle]="{ color: '#FFF' }"
+            >
+                <app-icon name="plus"></app-icon>
+                Add Property
+        </button>
+    </div>
+    <div class="flex">
+        <!-- <button nz-button nzType="primary">Primary Button</button>
+    <button nz-button nzType="default">Default Button</button>
+    <button nz-button nzType="dashed">Dashed Button</button>
+    <button nz-button nzType="text">Text Button</button>
+    <a nz-button nzType="link">Link Button</a> -->
+        Tabs Components
+        <nz-tabset>
+            <nz-tab nzTitle="Tab 1">Content of Tab Pane 1</nz-tab>
+            <nz-tab nzTitle="Tab 2">Content of Tab Pane 2</nz-tab>
+            <nz-tab nzTitle="Tab 3">Content of Tab Pane 3</nz-tab>
+        </nz-tabset>
+
+        <!-- NZ Select
+        <nz-select
+        ngModel="All Activities"
+        nzAllowClear
+        nzPlaceHolder="All Activities"
+      >
+        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+        <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
+        <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
+        <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
+        <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
+      </nz-select> -->
+    </div>
+  </div>
+</main>
