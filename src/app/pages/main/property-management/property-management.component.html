@@ -1,0 +1,104 @@
+<main class="flex flex-col w-full">
+  <div class="flex flex-col gap-12">
+    <app-breadcrumb
+      [items]="[{ label: 'Property Management', url: '/property-management' }]"
+    ></app-breadcrumb>
+    <div class="flex justify-end">
+        <button
+            class="flex justify-self-end items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer text-[#E41C24]"
+            [ngStyle]="{ color: '#FFF' }"
+            >
+                <app-icon name="plus"></app-icon>
+                Add Property
+        </button>
+    </div>
+    <div class="flex">
+        <nz-tabset>
+            <nz-tab nzTitle="All Properties">
+                  <div class="flex items-center justify-between mb-10">
+                        <p class="text-[#4F4F4F] text-normal text-2xl">All Properties</p>
+                        <button
+                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                        [ngStyle]="{ color: '#FFF' }"
+                        >
+                        <app-icon name="arrow-up"></app-icon>
+                        Export
+                        </button>
+                    </div>
+                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+                    <div class="flex items-center justify-between mb-7 px-7">
+                    <div class="flex flex-col gap-2">
+                        <app-search-bar placeholder="Search Property" />
+                    </div>
+                    </div>
+                    <app-table
+                    [data]="properties"
+                    [columns]="columns"
+                    [enableSorting]="true"
+                    [rowLink]="getRowLink"
+                    [enableSelection]="false"
+                    (selectedData)="handleSelectedData($event)"
+                    class="w-full"
+                    />
+                </div>
+            </nz-tab>
+            <nz-tab nzTitle="Sold Properties">
+                <div class="flex items-center justify-between mb-10">
+                        <p class="text-[#4F4F4F] text-normal text-2xl">Sold Properties</p>
+                        <button
+                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                        [ngStyle]="{ color: '#FFF' }"
+                        >
+                        <app-icon name="arrow-up"></app-icon>
+                        Export
+                        </button>
+                    </div>
+                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+                    <div class="flex items-center justify-between mb-7 px-7">
+                    <div class="flex flex-col gap-2">
+                        <app-search-bar placeholder="Search Property" />
+                    </div>
+                    </div>
+                    <app-table
+                    [data]="properties"
+                    [columns]="columns"
+                    [enableSorting]="true"
+                    [rowLink]="getRowLink"
+                    [enableSelection]="false"
+                    (selectedData)="handleSelectedData($event)"
+                    class="w-full"
+                    />
+                </div>
+            </nz-tab>
+            <nz-tab nzTitle="Available Properties">
+                <div class="flex items-center justify-between mb-10">
+                        <p class="text-[#4F4F4F] text-normal text-2xl">Available Properties</p>
+                        <button
+                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                        [ngStyle]="{ color: '#FFF' }"
+                        >
+                        <app-icon name="arrow-up"></app-icon>
+                        Export
+                        </button>
+                    </div>
+                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+                    <div class="flex items-center justify-between mb-7 px-7">
+                    <div class="flex flex-col gap-2">
+                        <app-search-bar placeholder="Search Property" />
+                    </div>
+                    </div>
+                    <app-table
+                    [data]="properties"
+                    [columns]="columns"
+                    [enableSorting]="true"
+                    [rowLink]="getRowLink"
+                    [enableSelection]="false"
+                    (selectedData)="handleSelectedData($event)"
+                    class="w-full"
+                    />
+                </div>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+  </div>
+</main>

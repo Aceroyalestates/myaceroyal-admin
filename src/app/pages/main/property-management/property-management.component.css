@@ -1,0 +1,8 @@
+.ant-tabs-tab {
+    color: blueviolet;
+}
+
+.ant-tabs-tab .ng-star-inserted .ant-tabs-tab-active {
+color: red !important;
+    background: green;
+}

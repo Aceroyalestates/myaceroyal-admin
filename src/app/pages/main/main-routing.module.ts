@@ -38,6 +38,12 @@ const routes: Routes = [
             (m) => m.AdminManagementModule
           ),
       },
+      {
+        path: 'property-management',
+        loadChildren: () => 
+          import('./property-management/property-management.module').then(
+            m => m.PropertyManagementModule),
+      },
     ],
   },
 ];

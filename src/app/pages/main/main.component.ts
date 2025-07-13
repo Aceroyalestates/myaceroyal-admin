@@ -5,7 +5,6 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { SharedModule } from '../../shared/shared.module';
-import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   imports: [
