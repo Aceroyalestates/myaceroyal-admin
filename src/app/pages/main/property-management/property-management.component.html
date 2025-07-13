@@ -13,30 +13,92 @@
         </button>
     </div>
     <div class="flex">
-        <!-- <button nz-button nzType="primary">Primary Button</button>
-    <button nz-button nzType="default">Default Button</button>
-    <button nz-button nzType="dashed">Dashed Button</button>
-    <button nz-button nzType="text">Text Button</button>
-    <a nz-button nzType="link">Link Button</a> -->
-        Tabs Components
         <nz-tabset>
-            <nz-tab nzTitle="Tab 1">Content of Tab Pane 1</nz-tab>
-            <nz-tab nzTitle="Tab 2">Content of Tab Pane 2</nz-tab>
-            <nz-tab nzTitle="Tab 3">Content of Tab Pane 3</nz-tab>
+            <nz-tab nzTitle="All Properties">
+                  <div class="flex items-center justify-between mb-10">
+                        <p class="text-[#4F4F4F] text-normal text-2xl">All Properties</p>
+                        <button
+                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                        [ngStyle]="{ color: '#FFF' }"
+                        >
+                        <app-icon name="arrow-up"></app-icon>
+                        Export
+                        </button>
+                    </div>
+                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+                    <div class="flex items-center justify-between mb-7 px-7">
+                    <div class="flex flex-col gap-2">
+                        <app-search-bar placeholder="Search Property" />
+                    </div>
+                    </div>
+                    <app-table
+                    [data]="properties"
+                    [columns]="columns"
+                    [enableSorting]="true"
+                    [rowLink]="getRowLink"
+                    [enableSelection]="false"
+                    (selectedData)="handleSelectedData($event)"
+                    class="w-full"
+                    />
+                </div>
+            </nz-tab>
+            <nz-tab nzTitle="Sold Properties">
+                <div class="flex items-center justify-between mb-10">
+                        <p class="text-[#4F4F4F] text-normal text-2xl">Sold Properties</p>
+                        <button
+                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                        [ngStyle]="{ color: '#FFF' }"
+                        >
+                        <app-icon name="arrow-up"></app-icon>
+                        Export
+                        </button>
+                    </div>
+                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+                    <div class="flex items-center justify-between mb-7 px-7">
+                    <div class="flex flex-col gap-2">
+                        <app-search-bar placeholder="Search Property" />
+                    </div>
+                    </div>
+                    <app-table
+                    [data]="properties"
+                    [columns]="columns"
+                    [enableSorting]="true"
+                    [rowLink]="getRowLink"
+                    [enableSelection]="false"
+                    (selectedData)="handleSelectedData($event)"
+                    class="w-full"
+                    />
+                </div>
+            </nz-tab>
+            <nz-tab nzTitle="Available Properties">
+                <div class="flex items-center justify-between mb-10">
+                        <p class="text-[#4F4F4F] text-normal text-2xl">Available Properties</p>
+                        <button
+                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                        [ngStyle]="{ color: '#FFF' }"
+                        >
+                        <app-icon name="arrow-up"></app-icon>
+                        Export
+                        </button>
+                    </div>
+                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+                    <div class="flex items-center justify-between mb-7 px-7">
+                    <div class="flex flex-col gap-2">
+                        <app-search-bar placeholder="Search Property" />
+                    </div>
+                    </div>
+                    <app-table
+                    [data]="properties"
+                    [columns]="columns"
+                    [enableSorting]="true"
+                    [rowLink]="getRowLink"
+                    [enableSelection]="false"
+                    (selectedData)="handleSelectedData($event)"
+                    class="w-full"
+                    />
+                </div>
+            </nz-tab>
         </nz-tabset>
-
-        <!-- NZ Select
-        <nz-select
-        ngModel="All Activities"
-        nzAllowClear
-        nzPlaceHolder="All Activities"
-      >
-        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-        <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
-        <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
-        <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
-        <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
-      </nz-select> -->
     </div>
   </div>
 </main>

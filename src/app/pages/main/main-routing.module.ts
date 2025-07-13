@@ -40,7 +40,9 @@ const routes: Routes = [
       },
       {
         path: 'property-management',
-        loadChildren: () => import('../main/property-management/property-management.routes').then(m => m.propertyManagementRoutes),
+        loadChildren: () => 
+          import('./property-management/property-management.module').then(
+            m => m.PropertyManagementModule),
       },
     ],
   },
