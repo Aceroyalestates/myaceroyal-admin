@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { propertyManagementRoutes } from './property-management.routes';
 import { PropertyManagementComponent } from './property-management.component';
 import { ViewPropertyComponent } from './view-property/view-property.component';
 import { AddPropertyComponent } from './add-property/add-property.component';
@@ -10,10 +9,10 @@ const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'list'
+        redirectTo: ''
       },
       {
-        path: 'list',
+        path: '',
         component: PropertyManagementComponent
       },
       {

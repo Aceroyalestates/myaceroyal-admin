@@ -1,1 +1,303 @@
-<p>add-property works!</p>
+<main class="flex flex-col w-full">
+  <div class="flex flex-col mb-10">
+    <app-breadcrumb
+      [items]="[
+        { label: 'Property Management', url: '/property-management' },
+        { label: 'Add New Property' }
+      ]"
+    ></app-breadcrumb>
+    <!-- <p class="!text-medium font-medium !text-[#7A7A7A]">
+      Fill details below to create a new admin profile
+    </p> -->
+  </div>
+ <div class="flex gap-6">
+    <div class="flex bg-background p-5 h-fit border border-[#EBEBEB] rounded-lg max-w-2/5">
+        <nz-steps class="!text-primary" [nzCurrent]="currentStep" nzDirection="vertical" nzSize="small">
+            <nz-step nzTitle="Details" nzDescription="Enter basic details such as name, category"></nz-step>
+            <nz-step nzTitle="Features/Amenities" nzDescription="Enter available amenities and facilities of the properties"></nz-step>
+            <nz-step nzTitle="Property Images" nzDescription="Add property images"></nz-step>
+            <nz-step nzTitle="Payment Plan" nzDescription="Set payment plan"></nz-step>
+        </nz-steps>
+    </div>
+  @if (currentStep == 0) {
+    <div
+      class="flex flex-col gap-6 py-5 px-8 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
+    >
+    <h1 class="!text-primary">Basic Details</h1>
+    <form nz-form [formGroup]="formBasic" (ngSubmit)="submitFormBasic()">
+    <div class="flex flex-col justify-center gap-y-8 w-full">
+      <div class="w-full">
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="category" [nzNoColon]="true">
+          <span>Property Category</span>
+        </nz-form-label>
+        <nz-form-control
+          nzErrorTip="Please select property category"
+        >
+          <nz-select
+            id="category"
+            formControlName="category"
+            nzAllowClear
+            nzPlaceHolder="Select a category for this property"
+          >
+            <nz-option nzValue="cat1" nzLabel="Category 1"></nz-option>
+            <nz-option nzValue="cat2" nzLabel="Category 2"></nz-option>
+            <nz-option nzValue="cat3" nzLabel="Category 3"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" [nzNoColon]="true">
+          <span>Property Name</span>
+        </nz-form-label>
+        <nz-form-control
+          nzErrorTip="Please enter property name!"
+        >
+          <input
+            nz-input
+            id="name"
+            placeholder="Enter property name"
+            formControlName="name"
+          />
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="location" [nzNoColon]="true">
+            Property Location
+        </nz-form-label
+        >
+        <nz-form-control
+          nzErrorTip="Please enter property location"
+        >
+          <input
+            nz-input
+            formControlName="location"
+            placeholder="Enter Property location"
+            id="location"
+          />
+        </nz-form-control>
+      </div>
+
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="description" [nzNoColon]="true">
+            Property Description
+        </nz-form-label
+        >
+        <nz-form-control
+          nzErrorTip="Please enter property description"
+        >
+          <textarea
+            nz-input
+            formControlName="description"
+            placeholder="Enter Property description"
+            id="description"
+            rows="4"
+          ></textarea>
+        </nz-form-control>
+      </div>
+            
+    </div>
+
+    <div class="flex items-center justify-end gap-6 my-12">
+      <button
+        type="submit"
+        class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+      >
+        Save & Continue
+      </button>
+    </div>
+  </form>
+  </div>
+  }
+
+  @if (currentStep == 1) {
+    <div
+      class="flex flex-col gap-6 py-5 px-8 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
+    >
+    <h1 class="!text-primary">Features/Amenities</h1>
+    <form nz-form [formGroup]="formAmenities" (ngSubmit)="submitFormAmenities()">
+    <div class="flex flex-col justify-center gap-y-8 w-full">
+      <div class="w-full">
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="category" [nzNoColon]="true">
+          <span>Select Amenities</span>
+        </nz-form-label>
+        <nz-form-control
+          nzErrorTip="Please select property amenities"
+        >
+          <nz-select
+            id="amenities"
+            nzShowSearch 
+            nzAllowClear 
+            nzPlaceHolder="Select property amenities" 
+            formControlName="amenities"
+            nzMode="multiple"
+            nzPlacement="bottomRight"
+            nzSuffixIcon="dashboard"
+            >
+            <nz-option nzCustomContent nzLabel="Tarred Road" nzValue="road">
+                <nz-icon nzType="dashboard" />
+                Tarred Road
+            </nz-option>
+            <nz-option nzCustomContent nzLabel="24/7 Electricity" nzValue="electricity">
+                <nz-icon nzType="dashboard" />
+                24/7 Electricity
+            </nz-option>
+            <nz-option nzCustomContent nzLabel="Fenced Perimeter" nzValue="fence">
+                <nz-icon nzType="eye" />
+                Fenced Perimeter
+            </nz-option>
+        </nz-select>
+        </nz-form-control>
+      </div>
+            
+    </div>
+
+    <div class="flex items-center justify-end gap-6 my-12">
+      <button
+        type="submit"
+        class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+      >
+        Save & Continue
+      </button>
+    </div>
+  </form>
+  </div>
+  }
+
+  @if (currentStep == 2) {
+    <div
+      class="flex flex-col gap-2 py-5 px-8 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
+    >
+    <h1 class="!text-primary">Property Images</h1>
+    <p class="!text-medium !text-[#7A7A7A]">
+      Upload images of the property here, upload at least 4 images, Make sure the images are of good quality
+    </p>
+
+    <div class="flex flex-col mt-8">
+        <div class="flex gap-4">
+            <nz-upload
+            nzType="drag"
+            [nzMultiple]="true"
+            nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+            (nzChange)="handleChange($event)"
+            nzAccept="image/*"
+            >
+            <div class="p-6">
+                <p class="ant-upload-drag-icon">
+                <nz-icon nzType="inbox" />
+                </p>
+                <p class="ant-upload-text">Drop images here or click to browse</p>
+                <p class="ant-upload-hint">
+                    Support for a single or bulk upload.
+                </p>
+            </div>
+        </nz-upload>
+        </div>
+        <div class="flex items-center justify-end gap-6 my-12">
+            <button
+                (click)="submitImage()"
+                class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+            >
+                Save & Continue
+            </button>
+        </div>
+    </div>
+    
+  </div>
+  }
+
+  @if (currentStep == 3) {
+    <div
+      class="flex flex-col gap-2 py-5 px-24 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
+    >
+    <h1 class="!text-primary">Payment Plan</h1>
+    <p class="!text-medium !text-[#7A7A7A]">
+      Set payment plan for this property
+    </p>
+
+    <div class="flex flex-col mt-8">
+        <div class="flex justify-end !text-primary">+  Add Unit</div>
+        <div class="flex flex-col gap-4 bg-gray-50 p-8 w-full rounded border border-gray-200">
+            <!-- <div class="flex flex-col gap-4">
+                <label for="unitType"> Unit Type</label>
+                <input 
+                    type="text" 
+                    placeholder="Enter unit type" 
+                    class="border border-gray-200 rounded px-4 py-2 outline-none placeholder-gray-100::placeholder"> 
+            </div> -->
+            @for(in of ['Unit Type', 'Amount']; track in) {
+                <div class="flex flex-col gap-2">
+                <span class="text-medium text-gray-600">{{ in }}</span>
+                <nz-form-control
+                nzErrorTip="Please {{in}}"
+                >
+                <input
+                    nz-input
+                    class="!bg-gray-50"
+                    placeholder="Enter {{in}}"
+                />
+                </nz-form-control>
+            </div>
+            }
+            <nz-divider></nz-divider>
+            <div class="flex justify-end !text-primary text-medium">+  Add Installment</div>
+            <div class="flex justify-between items-center border-b border-gray-200 pb-2 !text-[#7A7A7A]">
+                <h2 class="!text-medium">Installment Details</h2>
+                <app-icon name="trash"></app-icon>
+                <!-- <nz-icon type="bin"></nz-icon> -->
+            </div>
+            @for(in of ['Installment Type', 'Initial Deposite', 'Total Amount']; track in) {
+                <div class="flex flex-col gap-2">
+                <span class="text-medium text-gray-600">{{ in }}</span>
+                <nz-form-control
+                nzErrorTip="Please {{in}}"
+                >
+                <input
+                    nz-input
+                    class="!bg-gray-50"
+                    placeholder="Enter {{in}}"
+                />
+                </nz-form-control>
+            </div>
+            }
+
+            <nz-divider></nz-divider>
+
+            <div class="flex justify-between items-center border-b border-gray-200 pb-2 !text-[#7A7A7A]">
+                <h2 class="!text-medium">Installment Details</h2>
+                <app-icon name="trash"></app-icon>
+                <!-- <nz-icon type="bin"></nz-icon> -->
+            </div>
+            @for(in of ['Installment Type', 'Initial Deposite', 'Total Amount']; track in) {
+                <div class="flex flex-col gap-2">
+                <span class="text-medium text-gray-600">{{ in }}</span>
+                <nz-form-control
+                nzErrorTip="Please {{in}}"
+                >
+                <input
+                    nz-input
+                    class="!bg-gray-50"
+                    placeholder="Enter {{in}}"
+                />
+                </nz-form-control>
+            </div>
+            }
+            <div class="flex justify-end gap-2 !text-[#7A7A7A]">
+                <app-icon name="trash"></app-icon>
+                Delete Unit
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-6 my-12">
+            <button
+                (click)="submit()"
+                class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+            >
+                Create Property
+            </button>
+        </div>
+    </div>
+    
+  </div>
+  }
+ </div>
+  
+</main>

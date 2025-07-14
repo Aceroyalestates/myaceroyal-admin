@@ -5,11 +5,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { Property } from 'src/app/core/types/general';
 import { Properties } from 'src/app/core/constants';
 import { ColumnDef } from '@tanstack/angular-table';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-property-management',
-  imports: [CommonModule, SharedModule, NzTabsModule],
+  imports: [CommonModule, SharedModule, NzTabsModule, RouterLink],
   templateUrl: './property-management.component.html',
   styleUrl: './property-management.component.css',
 })
