@@ -14,9 +14,9 @@
         </button>
     </div>
     <div class="flex">
-        <nz-tabset>
+        <nz-tabset class="w-full">
             <nz-tab nzTitle="All Properties">
-                  <div class="flex items-center justify-between mb-10">
+                  <div class="flex w-full items-center justify-between mb-10">
                         <p class="text-[#4F4F4F] text-normal text-2xl">All Properties</p>
                         <button
                         class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
@@ -73,15 +73,15 @@
             </nz-tab>
             <nz-tab nzTitle="Available Properties">
                 <div class="flex items-center justify-between mb-10">
-                        <p class="text-[#4F4F4F] text-normal text-2xl">Available Properties</p>
-                        <button
-                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
-                        [ngStyle]="{ color: '#FFF' }"
-                        >
-                        <app-icon name="arrow-up"></app-icon>
-                        Export
-                        </button>
-                    </div>
+                    <p class="text-[#4F4F4F] text-normal text-2xl">Available Properties</p>
+                    <button
+                    class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                    [ngStyle]="{ color: '#FFF' }"
+                    >
+                    <app-icon name="arrow-up"></app-icon>
+                    Export
+                    </button>
+                </div>
                 <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
                     <div class="flex items-center justify-between mb-7 px-7">
                     <div class="flex flex-col gap-2">

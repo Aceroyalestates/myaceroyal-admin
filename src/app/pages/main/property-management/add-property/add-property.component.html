@@ -172,22 +172,128 @@
       Upload images of the property here, upload at least 4 images, Make sure the images are of good quality
     </p>
 
-    <div class="flex">
-        <nz-upload
+    <div class="flex flex-col mt-8">
+        <div class="flex gap-4">
+            <nz-upload
             nzType="drag"
             [nzMultiple]="true"
             nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
             (nzChange)="handleChange($event)"
             nzAccept="image/*"
             >
-            <p class="ant-upload-drag-icon">
+            <div class="p-6">
+                <p class="ant-upload-drag-icon">
                 <nz-icon nzType="inbox" />
-            </p>
-            <p class="ant-upload-text">Drop images here or click to browse</p>
-            <p class="ant-upload-hint">
-                Support for a single or bulk upload.
-            </p>
+                </p>
+                <p class="ant-upload-text">Drop images here or click to browse</p>
+                <p class="ant-upload-hint">
+                    Support for a single or bulk upload.
+                </p>
+            </div>
         </nz-upload>
+        </div>
+        <div class="flex items-center justify-end gap-6 my-12">
+            <button
+                (click)="submitImage()"
+                class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+            >
+                Save & Continue
+            </button>
+        </div>
+    </div>
+    
+  </div>
+  }
+
+  @if (currentStep == 3) {
+    <div
+      class="flex flex-col gap-2 py-5 px-24 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
+    >
+    <h1 class="!text-primary">Payment Plan</h1>
+    <p class="!text-medium !text-[#7A7A7A]">
+      Set payment plan for this property
+    </p>
+
+    <div class="flex flex-col mt-8">
+        <div class="flex justify-end !text-primary">+  Add Unit</div>
+        <div class="flex flex-col gap-4 bg-gray-50 p-8 w-full rounded border border-gray-200">
+            <!-- <div class="flex flex-col gap-4">
+                <label for="unitType"> Unit Type</label>
+                <input 
+                    type="text" 
+                    placeholder="Enter unit type" 
+                    class="border border-gray-200 rounded px-4 py-2 outline-none placeholder-gray-100::placeholder"> 
+            </div> -->
+            @for(in of ['Unit Type', 'Amount']; track in) {
+                <div class="flex flex-col gap-2">
+                <span class="text-medium text-gray-600">{{ in }}</span>
+                <nz-form-control
+                nzErrorTip="Please {{in}}"
+                >
+                <input
+                    nz-input
+                    class="!bg-gray-50"
+                    placeholder="Enter {{in}}"
+                />
+                </nz-form-control>
+            </div>
+            }
+            <nz-divider></nz-divider>
+            <div class="flex justify-end !text-primary text-medium">+  Add Installment</div>
+            <div class="flex justify-between items-center border-b border-gray-200 pb-2 !text-[#7A7A7A]">
+                <h2 class="!text-medium">Installment Details</h2>
+                <app-icon name="trash"></app-icon>
+                <!-- <nz-icon type="bin"></nz-icon> -->
+            </div>
+            @for(in of ['Installment Type', 'Initial Deposite', 'Total Amount']; track in) {
+                <div class="flex flex-col gap-2">
+                <span class="text-medium text-gray-600">{{ in }}</span>
+                <nz-form-control
+                nzErrorTip="Please {{in}}"
+                >
+                <input
+                    nz-input
+                    class="!bg-gray-50"
+                    placeholder="Enter {{in}}"
+                />
+                </nz-form-control>
+            </div>
+            }
+
+            <nz-divider></nz-divider>
+
+            <div class="flex justify-between items-center border-b border-gray-200 pb-2 !text-[#7A7A7A]">
+                <h2 class="!text-medium">Installment Details</h2>
+                <app-icon name="trash"></app-icon>
+                <!-- <nz-icon type="bin"></nz-icon> -->
+            </div>
+            @for(in of ['Installment Type', 'Initial Deposite', 'Total Amount']; track in) {
+                <div class="flex flex-col gap-2">
+                <span class="text-medium text-gray-600">{{ in }}</span>
+                <nz-form-control
+                nzErrorTip="Please {{in}}"
+                >
+                <input
+                    nz-input
+                    class="!bg-gray-50"
+                    placeholder="Enter {{in}}"
+                />
+                </nz-form-control>
+            </div>
+            }
+            <div class="flex justify-end gap-2 !text-[#7A7A7A]">
+                <app-icon name="trash"></app-icon>
+                Delete Unit
+            </div>
+        </div>
+        <div class="flex items-center justify-end gap-6 my-12">
+            <button
+                (click)="submit()"
+                class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+            >
+                Create Property
+            </button>
+        </div>
     </div>
     
   </div>

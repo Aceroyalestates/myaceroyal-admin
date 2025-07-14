@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Properties } from 'src/app/core/constants';
 import { Property } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -30,13 +30,10 @@ panels = [
     }
   ];
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
-    // Option 1: Get ID using snapshot (for simple cases)
     this.id = this.route.snapshot.paramMap.get('id');
-
-    // Option 2: Subscribe to paramMap for dynamic changes (if ID can change without reloading component)
     this.route.paramMap.subscribe(params => {
       this.id = params.get('id');
       console.log('Route ID:', this.id); // For debugging
@@ -46,5 +43,9 @@ panels = [
         console.warn('Property not found for ID:', this.id);
       }
     });
+  }
+
+  gotoEdit() {
+    this.router.navigateByUrl(`property-management/edit/${this.id}`);
   }
 }

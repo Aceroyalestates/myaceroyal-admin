@@ -11,6 +11,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 @Component({
   selector: 'app-add-property',
@@ -25,7 +26,8 @@ import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
     NzSelectModule,
     NzStepsModule,
     NzIconModule,
-    NzUploadModule
+    NzUploadModule,
+    NzDividerModule
   ],
   templateUrl: './add-property.component.html',
   styleUrl: './add-property.component.css'
@@ -33,15 +35,15 @@ import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
 export class AddPropertyComponent implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private destroy$ = new Subject<void>();
-  currentStep = 2;
+  currentStep = 0;
 
-  alphabet(): string[] {
-  const children: string[] = [];
-  for (let i = 10; i < 36; i++) {
-    children.push(i.toString(36) + i);
-  }
-  return children;
-}
+  // alphabet(): string[] {
+  // const children: string[] = [];
+  // for (let i = 10; i < 36; i++) {
+  //   children.push(i.toString(36) + i);
+  // }
+  // return children;
+  // }
 
   readonly listOfOption: string[] = ['Tarred Road', '24/7 Electricity', 'Fenced Perimeter'];
 
@@ -91,7 +93,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   submitFormAmenities(): void {
     if (this.formAmenities.valid) {
       console.log('submit', this.formAmenities.value);
-      // this.currentStep = 2
+      this.currentStep = 2
     } else {
       Object.values(this.formAmenities.controls).forEach((control) => {
         if (control.invalid) {
@@ -100,6 +102,16 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  submitImage(): void {
+    console.log('submit image');
+    this.currentStep = 3
+  }
+
+  submit(): void {
+    console.log('final submit');
+    this.currentStep = 0;
   }
 
   // confirmationValidator(control: AbstractControl): ValidationErrors | null {

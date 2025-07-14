@@ -45,6 +45,8 @@ export const Properties: Property[] = [
     location: 'Lagos-Epe Expressway, Abijo, Lagos',
     quantity: '3 Plots Available',
     amenities: 'Electricity, Pipe-borne Water, Tarred Road',
+    propertyType: 'Land',
+    unitType: 'Plot'
   },
   {
     id: 2,
@@ -54,6 +56,8 @@ export const Properties: Property[] = [
     location: 'Lagos-Epe Expressway, Abijo, Lagos',
     quantity: '3 Plots Available',
     amenities: 'Electricity, Pipe-borne Water, Tarred Road',
+    propertyType: 'Land',
+    unitType: 'Acres'
   },
 ];
 
