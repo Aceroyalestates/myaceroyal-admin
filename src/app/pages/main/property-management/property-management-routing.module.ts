@@ -10,10 +10,10 @@ const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'list'
+        redirectTo: ''
       },
       {
-        path: 'list',
+        path: '',
         component: PropertyManagementComponent
       },
       {
