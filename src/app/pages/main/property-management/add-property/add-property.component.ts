@@ -35,7 +35,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 export class AddPropertyComponent implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private destroy$ = new Subject<void>();
-  currentStep = 0;
+  currentStep = 1;
 
   // alphabet(): string[] {
   // const children: string[] = [];
