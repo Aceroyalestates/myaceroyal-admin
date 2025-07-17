@@ -1,0 +1,107 @@
+<main class="flex flex-col w-full">
+  <div class="flex flex-col mb-10">
+    <app-breadcrumb
+      [items]="[
+        { label: 'Admin Management', url: '/admin-management' },
+        { label: 'Admin 001' }
+      ]"
+    ></app-breadcrumb>
+    <div class="flex items-center justify-end gap-6 my-12">
+      <button
+        class="place-self-end rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+      >
+        Suspend Realtor
+      </button>
+    </div>
+    <div
+      class="flex gap-6 py-5 px-7 border border-[#EBEBEB] rounded-lg w-11/12 bg-background"
+    >
+      <img
+        src="images/user.png"
+        alt="user"
+        class="w-full max-w-[230px] h-full rounded-lg object-cover"
+      />
+
+      <div class="flex flex-wrap items-center justify-between w-11/12 gap-x-16">
+        <div class="flex flex-col gap-4">
+          <p class="!text-[#7A7A7A] !text-medium">Full Name</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+            Endurance Racheal Ace
+          </h2>
+        </div>
+        <div class="flex flex-col gap-4">
+          <p class="!text-[#7A7A7A] !text-medium">Email Address</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+            Exampla1&#64;gmail.com
+          </h2>
+        </div>
+        <div class="flex flex-col gap-4">
+          <p class="!text-[#7A7A7A] !text-medium">Unique ID</p>
+          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+            ACE00123456
+          </h2>
+        </div>
+        <div class="flex flex-col gap-4">
+          <p class="!text-[#7A7A7A] !text-medium">Role(s)</p>
+          <span class="flex gap-2 items-center"
+            ><p
+              class="!px-2 !py-[2px] rounded-full bg-[#34A8531F] !text-[#1FAF38] border border-[#34A85333] font-medium text-center text-medium"
+            >
+              General Admin
+            </p>
+            <p
+              class="!px-2 !py-[2px] bg-[#E41C241F] !text-[#E41C24] border border-[#E41C2433] rounded-full font-medium text-center text-medium"
+            >
+              Finance Admin
+            </p></span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mb-10">
+    <p class="text-[#4F4F4F] text-normal text-2xl !mb-2">Edit Role</p>
+    <nz-select
+      ngModel="role"
+      nzAllowClear
+      nzMode="multiple"
+      [nzMaxTagCount]="3"
+      nzPlaceHolder="Edit Role"
+      class="!w-[515px]"
+    >
+      <nz-option nzValue="general" nzLabel="General Admin"></nz-option>
+      <nz-option nzValue="finance" nzLabel="Finance Admin"></nz-option>
+    </nz-select>
+  </div>
+  <div class="flex items-center justify-between mb-10">
+    <p class="text-[#4F4F4F] text-normal text-2xl">Activity Log</p>
+    <nz-select
+      ngModel="All Properties"
+      nzAllowClear
+      nzPlaceHolder="All Properties"
+      class="!w-[200px]"
+    >
+      <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+      <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
+      <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
+      <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
+      <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
+    </nz-select>
+  </div>
+  <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+    <div class="flex items-center justify-between mb-7 px-7">
+      <div class="flex flex-col gap-2">
+        <app-search-bar />
+      </div>
+    </div>
+    <app-table
+      [data]="people"
+      [columns]="columns"
+      [enableSorting]="true"
+      [rowLink]="getRowLink"
+      [enableSelection]="true"
+      (selectedData)="handleSelectedData($event)"
+      class="w-full"
+    />
+  </div>
+</main>

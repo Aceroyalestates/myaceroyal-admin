@@ -1,0 +1,94 @@
+<main class="flex flex-col w-full">
+  <div class="flex flex-col gap-12">
+    <app-breadcrumb
+      [items]="[{ label: 'Admin Management', url: '/admin-management' }]"
+    ></app-breadcrumb>
+    <button
+      class="place-self-end rounded-lg bg-primary py-4 px-10 text-[20px] !text-white font-medium cursor-pointer"
+     routerLink="new"
+    >
+      + Add Admin
+    </button>
+    <div class="flex items-center gap-9 mb-12 max-w-3/6">
+      @let realtors = [userMetrics[0],userMetrics[1]]; @for(metric of realtors;
+      track metric.id){
+      <div
+        class="flex flex-col gap-6 p-6 border border-[#EEF2F6] rounded-lg w-full bg-background"
+      >
+        <div class="flex gap-1 items-center">
+          <svg
+            width="24"
+            height="25"
+            viewBox="0 0 24 25"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 12.5C14.7614 12.5 17 10.2614 17 7.5C17 4.73858 14.7614 2.5 12 2.5C9.23858 2.5 7 4.73858 7 7.5C7 10.2614 9.23858 12.5 12 12.5Z"
+              stroke="#4F4F4F"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M20.5901 22.5C20.5901 18.63 16.7402 15.5 12.0002 15.5C7.26015 15.5 3.41016 18.63 3.41016 22.5"
+              stroke="#4F4F4F"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+
+          <p class="text-[#7A7A7A] text-normal text-[20px] !mb-0">
+            {{ metric.title }}
+          </p>
+        </div>
+        <div class="flex items-center justify-between">
+          <p class="text-[#4F4F4F] text-[32px] text-normal">
+            {{ metric.amount }}
+          </p>
+          <!-- <span
+            class="flex items-center gap-1"
+            [ngStyle]="{ color: metric.color }"
+          >
+            <app-icon name="arrow-up"></app-icon>
+            <p class="font-medium text-normal">
+              <svg
+                width="11"
+                height="10"
+                viewBox="0 0 11 10"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M5.48712 10H3.19379C0.350743 10 -0.817395 8.04044 0.608421 5.64728L1.75938 3.72108L2.91034 1.79487C4.33616 -0.598291 6.66384 -0.598291 8.08966 1.79487L9.24062 3.72108L10.3916 5.64728C11.8174 8.04044 10.6493 10 7.80621 10H5.48712Z"
+                  fill=""
+                />
+              </svg>
+
+              +{{ metric.percentage }}%
+            </p>
+          </span> -->
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+    <p class="text-[#4F4F4F] text-normal text-2xl !mb-10">Realtor List</p>
+  <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+    <div class="flex items-center justify-between mb-7 px-7">
+      <div class="flex flex-col gap-2">
+        <app-search-bar />
+      </div>
+    </div>
+    <app-table
+      [data]="people"
+      [columns]="columns"
+      [enableSorting]="true"
+      [rowLink]="getRowLink"
+      [enableSelection]="true"
+      (selectedData)="handleSelectedData($event)"
+      class="w-full"
+    />
+  </div>
+</main>

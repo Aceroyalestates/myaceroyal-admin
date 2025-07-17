@@ -1,0 +1,11 @@
+.ant-input,
+.ant-select {
+  width: 515px;
+}
+
+.ant-form {
+  background-color: white;
+  border: 1px solid #EBEBEB;
+  border-radius: 8px;
+  padding: 48px 32px;
+}

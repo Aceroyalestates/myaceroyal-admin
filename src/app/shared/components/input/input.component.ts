@@ -6,7 +6,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
     selector: 'app-input',
     imports: [CommonModule, FormsModule, ReactiveFormsModule,],
     templateUrl: './input.component.html',
-    styleUrl: './input.component.scss'
+    styleUrl: './input.component.css'
 })
 export class InputComponent {
 
@@ -19,7 +19,7 @@ export class InputComponent {
   @Input() errorMessage: string = '';
   @Input() maxlength?: number;
   @Input() isSearchAccount?: boolean;
-  @Input() numbersOnly: boolean = false; 
+  @Input() numbersOnly: boolean = false;
   @Input() formatAsCurrency: boolean = false;
 
 

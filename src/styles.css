@@ -1,2 +1,235 @@
 /* You can add global styles to this file, and also import other style files */
+/* @import "~ng-zorro-antd/ng-zorro-antd.min.css"; */
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'Euclid Circular A';
+  src: url('/fonts/euclid-circular-a/Euclid-Circular-A-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular A';
+  src: url('/fonts/euclid-circular-a/Euclid-Circular-A-Light-Italic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular A';
+  src: url('/fonts/euclid-circular-a/Euclid-Circular-A-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular A';
+  src: url('/fonts/euclid-circular-a/Euclid-Circular-A-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular A';
+  src: url('/fonts/euclid-circular-a/Euclid-Circular-A-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular A';
+  src: url('/fonts/euclid-circular-a/Euclid-Circular-A-Medium-Italic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular A';
+  src: url('/fonts/euclid-circular-a/Euclid-Circular-A-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular A';
+  src: url('/fonts/euclid-circular-a/Euclid-Circular-A-SemiBold-Italic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular A';
+  src: url('/fonts/euclid-circular-a/Euclid-Circular-A-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Euclid Circular A';
+  src: url('/fonts/euclid-circular-a/Euclid-Circular-A-Bold-Italic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@theme inline {
+  --font-euclid-circular-a: var(--font-euclid-circular-a);
+  --font-poppins: var(--font-poppins);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: #E41C24;
+  --secondary: oklch(0.97 0 0);
+  --font-euclid-circular-a: 'Euclid Circular A', sans-serif;
+  --font-poppins: "Poppins", "Bricolage Grotesque", serif;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: #E41C24;
+  --secondary: oklch(0.269 0 0);
+}
+
+
+@layer components {
+
+  .ant-menu,
+  .app-layout {
+    @apply w-full bg-white border-0;
+  }
+
+  .sidebar-logo {
+    @apply pt-11 px-20 pb-8 border-b border-[#EEF2F6];
+  }
+
+  .menu-item {
+    @apply bg-transparent flex !rounded-full;
+  }
+
+  .ant-menu {
+    @apply flex flex-col gap-2;
+  }
+
+  .ant-menu-title-content {
+    @apply flex gap-[10px] items-center
+  }
+
+  .text-small {
+    @apply text-[12px] leading-[100%];
+  }
+
+  .text-normal {
+    @apply text-[14px] leading-[100%];
+  }
+
+  .text-medium {
+    @apply text-[16px] leading-[100%];
+  }
+
+  .ant-form-item-label {
+    @apply !text-lg !m-0 !text-primary !min-w-fit;
+  }
+
+  .ant-form-item-label>label {
+    @apply !text-[20px] !font-medium !text-[#4F4F4F] mb-2;
+  }
+
+  .ant-input {
+    @apply !px-4 !py-[10px] !rounded-lg border !border-[#E6E6E6];
+  }
+}
+
+h1,
+p,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0px !important;
+  padding: 0px;
+}
+
+a {
+  text-decoration: none !important;
+  color: #444;
+}
+
+@layer base {
+  * {
+    @apply font-euclid-circular-a;
+  }
+}
+
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn, .ant-tabs-tab:hover {
+    color: #E41C24 !important;
+}
+
+.ant-tabs-tab-active {
+  border-bottom: 1px solid #E41C24 !important;
+}
+
+.ant-tabs-ink-bar {
+  background: #E41C24 !important;
+}
+
+/* html {
+  --ant-primary-color: #E41C24 !important;
+} */
+ .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-icon {
+    background: #E41C24 !important;
+}
+
+.ant-steps-item-process .ant-steps-item-icon {
+    background-color: #fff;
+    border-color: #E41C24 !important;
+}
+
+.ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-tail::after {
+    background-color: #E41C24 !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+    color: #E41C24 !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon {
+    background-color: #fff;
+    border-color: #E41C24 !important;
+}
+
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    border-color: #e5aeaf !important;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, .2);
+    border-right-width: 1px;
+    outline: 0;
+}
+
+.ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+    border-color: #e7c4c5 !important;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, .2);
+    border-right-width: 1px;
+    outline: 0;
+}
+
+.ant-select-show-search.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    cursor: text;
+}

@@ -1,0 +1,155 @@
+<main class="flex flex-col w-full">
+  <div class="flex flex-col mb-10">
+    <app-breadcrumb
+      [items]="[
+        { label: 'Admin Management', url: '/admin-management' },
+        { label: 'Add New Admin' }
+      ]"
+    ></app-breadcrumb>
+    <p class="!text-medium font-medium !text-[#7A7A7A]">
+      Fill details below to create a new admin profile
+    </p>
+  </div>
+  <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8">
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstName">
+          <span>First Name</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please input your first name!"
+        >
+          <input
+            nz-input
+            id="firstName"
+            placeholder="Enter first name"
+            formControlName="firstName"
+          />
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lastName">
+          <span>Last Name</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please input your last name!"
+        >
+          <input
+            nz-input
+            id="lastName"
+            placeholder="Enter last name"
+            formControlName="lastName"
+          />
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="email"
+          >Email Address</nz-form-label
+        >
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="The input is not valid E-mail!"
+        >
+          <input
+            nz-input
+            formControlName="email"
+            placeholder="Enter email"
+            id="email"
+          />
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="uniqueId">
+          <span>Unique ID</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please create a Unique ID"
+        >
+          <input
+            nz-input
+            id="uniqueId"
+            placeholder="Create Unique ID"
+            formControlName="uniqueId"
+          />
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password"
+          >Create Password</nz-form-label
+        >
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please input your password!"
+        >
+          <input
+            nz-input
+            type="password"
+            id="password"
+            placeholder="Create Admin Password"
+            formControlName="password"
+          />
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkPassword"
+          >Confirm Password</nz-form-label
+        >
+        <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
+          <input
+            nz-input
+            type="password"
+            formControlName="checkPassword"
+            placeholder="Confirm Admin Password"
+            id="checkPassword"
+          />
+          <ng-template #errorTpl let-control>
+            @if (control.errors?.['required']) { Please confirm your password! }
+            @if (control.errors?.['confirm']) { Two passwords that you enter is
+            inconsistent! }
+          </ng-template>
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="role">
+          <span>Assign Role</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please select a nation!"
+        >
+          <nz-select
+            id="role"
+            formControlName="role"
+            nzAllowClear
+            nzPlaceHolder="Select role"
+          >
+            <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+            <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
+            <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
+            <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
+            <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </div>
+      <h2 class="!font-medium !text-medium">{{ form.get("role")?.value }}</h2>
+    </div>
+
+    <div class="flex items-center justify-end gap-6 my-12">
+      <button
+        type="submit"
+        class="place-self-end rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+      >
+        Save & Create Admin
+      </button>
+    </div>
+  </form>
+</main>
