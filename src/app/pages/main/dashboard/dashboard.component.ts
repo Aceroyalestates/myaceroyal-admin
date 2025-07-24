@@ -1,6 +1,6 @@
 import { Component, effect, signal } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ColumnDef } from '@tanstack/table-core';
+import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from 'src/app/shared/components/icon/icon.component';
 import { Person, Metric, Property } from 'src/app/core/types/general';
@@ -23,10 +23,25 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 export class DashboardComponent {
   people: Person[] = People;
   lucy!:string
-  columns: ColumnDef<Person>[] = [
-    { accessorKey: 'name', header: 'Name' },
-    { accessorKey: 'email', header: 'Email' },
-    { accessorKey: 'age', header: 'Age' },
+  columns: TableColumn[] = [
+    { 
+      key: 'name', 
+      title: 'Name',
+      sortable: false,
+      type: 'text'
+    },
+    { 
+      key: 'email', 
+      title: 'Email',
+      sortable: false,
+      type: 'text'
+    },
+    { 
+      key: 'age', 
+      title: 'Age',
+      sortable: false,
+      type: 'text'
+    },
   ];
 
   selectedPeople = signal<Person[]>([]);
@@ -38,6 +53,11 @@ export class DashboardComponent {
     effect(() => {
       console.log('Selected people from table:', this.selectedPeople());
     });
+  }
+
+  onSelectionChange(selected: Person[]) {
+    this.selectedPeople.set(selected);
+    console.log('Selected people:', this.selectedPeople());
   }
 
   handleSelectedData(selected: Person[]) {
