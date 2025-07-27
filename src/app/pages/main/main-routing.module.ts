@@ -44,6 +44,13 @@ const routes: Routes = [
           import('./property-management/property-management.module').then(
             m => m.PropertyManagementModule),
       },
+      {
+        path: 'finance-management',
+        loadChildren: () =>
+          import('./finance-management/finance-management.module').then(
+            (m) => m.FinanceManagementModule
+          ),
+      },
     ],
   },
 ];

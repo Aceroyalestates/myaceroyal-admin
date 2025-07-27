@@ -1,0 +1,208 @@
+/* Finance Management Component Styles */
+.finance-management-container {
+  background-color: #FBFBFB;
+  min-height: 100vh;
+}
+
+/* Metrics Cards */
+.metric-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Chart Container */
+.chart-container {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+/* Custom input styles */
+input[type="text"]:focus,
+input[type="date"]:focus,
+select:focus {
+  outline: none;
+  border-color: #E41C24;
+  box-shadow: 0 0 0 3px rgba(228, 28, 36, 0.1);
+}
+
+/* Custom radio button styles */
+input[type="radio"] {
+  accent-color: #E41C24;
+}
+
+/* Table styles */
+.transactions-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.transactions-table th {
+  background-color: #F9FAFB;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.transactions-table tbody tr:hover {
+  background-color: #F9FAFB;
+}
+
+/* Status badge styles */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Button hover effects */
+.export-btn {
+  transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+  background-color: #C41822;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(228, 28, 36, 0.2);
+}
+
+/* Pagination styles */
+.pagination-btn {
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover {
+  background-color: #F3F4F6;
+  transform: scale(1.05);
+}
+
+.pagination-btn.active {
+  background-color: #E41C24;
+  color: white;
+}
+
+/* Search section styles */
+.search-section {
+  background-color: #F9FAFB;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .metric-card {
+    min-width: 100%;
+  }
+  
+  .chart-container {
+    height: 250px;
+  }
+  
+  .search-section {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .transactions-table {
+    font-size: 14px;
+  }
+  
+  .transactions-table th,
+  .transactions-table td {
+    padding: 8px 4px;
+  }
+}
+
+/* Loading states */
+.loading-shimmer {
+  background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Chart tooltip custom styles */
+.chart-tooltip {
+  background-color: #1F2937;
+  border: 1px solid #E41C24;
+  border-radius: 6px;
+  color: white;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+/* Custom scrollbar for table */
+.table-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #F3F4F6;
+  border-radius: 3px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #E41C24;
+  border-radius: 3px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #C41822;
+}
+
+/* Animation for new rows */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.table-row-enter {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Filter pills */
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: #F3F4F6;
+  border-radius: 16px;
+  font-size: 12px;
+  color: #6B7280;
+  margin: 2px;
+  transition: all 0.2s ease;
+}
+
+.filter-pill:hover {
+  background-color: #E5E7EB;
+  color: #374151;
+}
+
+.filter-pill.active {
+  background-color: #E41C24;
+  color: white;
+}

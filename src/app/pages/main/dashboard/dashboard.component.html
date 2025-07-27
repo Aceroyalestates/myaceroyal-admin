@@ -168,9 +168,11 @@
     <app-table
       [data]="people"
       [columns]="columns"
-      [enableSorting]="false"
-      [enableSelection]="false"
-      (selectedData)="handleSelectedData($event)"
+      [showSelection]="false"
+      [showPagination]="true"
+      [showSearch]="false"
+      [showFilters]="false"
+      (selectionChange)="onSelectionChange($event)"
       class="w-full"
     />
   </div>

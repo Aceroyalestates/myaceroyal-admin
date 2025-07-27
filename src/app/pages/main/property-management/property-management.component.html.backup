@@ -1,0 +1,125 @@
+<main class="flex flex-col w-full min-h-screen bg-[#F5F5F5] p-6">
+    <app-breadcrumb
+      [items]="[{ label: 'Property Management', url: '/property-management' }]"
+    ></app-breadcrumb>
+    <div class="flex justify-end">
+        <button type="submit" class="bg-primary text-white rounded-lg px-5 py-3">
+            Add New Property
+        </button>
+    </div>
+    <div class="flex flex-col gap-12">
+        <nz-tabset class="w-full" nzType="card">
+            <nz-tab nzTitle="All Properties">
+                <div class="flex items-center justify-between mb-10">
+                    <app-search-bar />
+                </div>
+                    <app-table
+                    [data]="properties"
+                    [columns]="columns"
+                    [actions]="actions"
+                    [showSelection]="false"
+                    [showPagination]="true"
+                    [showSearch]="true"
+                    [showFilters]="true"
+                    (selectionChange)="onSelectionChange($event)"
+                    (actionClick)="onTableAction($event)"
+                    (rowClick)="onRowClick($event)"
+                    class="w-full"
+                    />
+                </div>
+            </nz-tab>
+            <nz-tab nzTitle="Sold Properties">
+                <div class="flex items-center justify-between mb-10">
+                    <p class="text-[#4F4F4F] text-normal text-2xl">Sold Properties</p>
+                    <button
+                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                        [ngStyle]="{ color: '#FFF' }"
+                        >
+                        <app-icon name="arrow-up"></app-icon>
+                        Export
+                        </button>
+                    </div>
+                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+                    <div class="flex items-center justify-between mb-7 px-7">
+                    <div class="flex flex-col gap-2">
+                        <app-search-bar placeholder="Search Property" />
+                    </div>
+                    </div>
+                    <app-table
+                    [data]="properties"
+                    [columns]="columns"
+                    [actions]="actions"
+                    [showSelection]="false"
+                    [showPagination]="true"
+                    [showSearch]="true"
+                    [showFilters]="true"
+                    (selectionChange)="onSelectionChange($event)"
+                    (actionClick)="onTableAction($event)"
+                    (rowClick)="onRowClick($event)"
+                    class="w-full"
+                    />
+                        <button
+                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                        [ngStyle]="{ color: '#FFF' }"
+                        >
+                        <app-icon name="arrow-up"></app-icon>
+                        Export
+                        </button>
+                    </div>
+                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+                    <div class="flex items-center justify-between mb-7 px-7">
+                    <div class="flex flex-col gap-2">
+                        <app-search-bar placeholder="Search Property" />
+                    </div>
+                    </div>
+                    <app-table
+                    [data]="properties"
+                    [columns]="columns"
+                    [actions]="actions"
+                    [showSelection]="false"
+                    [showPagination]="true"
+                    [showSearch]="true"
+                    [showFilters]="true"
+                    (selectionChange)="onSelectionChange($event)"
+                    (actionClick)="onTableAction($event)"
+                    (rowClick)="onRowClick($event)"
+                    class="w-full"
+                    />
+                </div>
+            </nz-tab>
+            <nz-tab nzTitle="Available Properties">
+                <div class="flex items-center justify-between mb-10">
+                    <p class="text-[#4F4F4F] text-normal text-2xl">Available Properties</p>
+                    <button
+                    class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                    [ngStyle]="{ color: '#FFF' }"
+                    >
+                    <app-icon name="arrow-up"></app-icon>
+                    Export
+                    </button>
+                </div>
+                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+                    <div class="flex items-center justify-between mb-7 px-7">
+                    <div class="flex flex-col gap-2">
+                        <app-search-bar placeholder="Search Property" />
+                    </div>
+                    </div>
+                    <app-table
+                    [data]="properties"
+                    [columns]="columns"
+                    [actions]="actions"
+                    [showSelection]="false"
+                    [showPagination]="true"
+                    [showSearch]="true"
+                    [showFilters]="true"
+                    (selectionChange)="onSelectionChange($event)"
+                    (actionClick)="onTableAction($event)"
+                    (rowClick)="onRowClick($event)"
+                    class="w-full"
+                    />
+                </div>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+  </div>
+</main>

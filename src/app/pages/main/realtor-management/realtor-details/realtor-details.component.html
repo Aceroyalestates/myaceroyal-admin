@@ -145,10 +145,14 @@
     <app-table
       [data]="people"
       [columns]="columns"
-      [enableSorting]="true"
-      [rowLink]="getRowLink"
-      [enableSelection]="true"
-      (selectedData)="handleSelectedData($event)"
+      [actions]="actions"
+      [showSelection]="true"
+      [showPagination]="true"
+      [showSearch]="true"
+      [showFilters]="true"
+      (selectionChange)="onSelectionChange($event)"
+      (actionClick)="onTableAction($event)"
+      (rowClick)="onRowClick($event)"
       class="w-full"
     />
   </div>
