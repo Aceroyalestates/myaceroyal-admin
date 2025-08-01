@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, signal } from '@angular/core';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { Property } from 'src/app/core/types/general';
 import { Properties } from 'src/app/core/constants';
 import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
+import { PropertyService } from 'src/app/core/services/property.service';
+import { Property } from 'src/app/core/models/properties';
 
 
 @Component({
@@ -14,7 +15,12 @@ import { TableColumn, TableAction } from 'src/app/shared/components/table/table.
   styleUrl: './property-management.component.css',
 })
 export class PropertyManagementComponent {
-  properties: Property[] = Properties;
+
+  propertyList: any[] = [];
+  loading = false;
+  error: string | null = null;
+
+  properties: Property[] = [];
   columns: TableColumn[] = [
       { 
         key: 'name', 
@@ -29,7 +35,7 @@ export class PropertyManagementComponent {
         type: 'text'
       },
       { 
-        key: 'propertyType', 
+        key: 'property_type.name', 
         title: 'Property Type',
         sortable: true,
         filterable: true,
@@ -42,7 +48,7 @@ export class PropertyManagementComponent {
         ]
       },
       { 
-        key: 'unitType', 
+        key: 'unit_type_name',
         title: 'Unit Type',
         sortable: true,
         filterable: true,
@@ -61,7 +67,7 @@ export class PropertyManagementComponent {
         type: 'text'
       },
       { 
-        key: 'price', 
+        key: 'unit_price', 
         title: 'Unit Price',
         sortable: true,
         type: 'text',
@@ -94,9 +100,10 @@ export class PropertyManagementComponent {
     ];
     selectedproperty = signal<Property[]>([]);
 
-    constructor() {
+    constructor(private propertyService: PropertyService) {
       effect(() => {
         console.log('Selected property from table: ', this.selectedproperty());
+        this.loadProperties();
       })
     }
 
@@ -144,4 +151,34 @@ export class PropertyManagementComponent {
         this.selectedproperty.set(selected);
         console.log(this.selectedproperty);
       }
+
+      loadProperties() {
+      this.propertyService.getProperties(1, 10, { })
+        .subscribe({
+          next: (response) => {
+            // Preprocess properties to add unit_type_name
+            this.properties = response.data.map((property: any) => ({
+              ...property,
+              unit_type_name: property.property_units && property.property_units.length > 0 && property.property_units[0].unit_type ? property.property_units[0].unit_type.name : '',
+              quantity: property.property_units ? property.property_units.length : 0,
+              unit_price: property.property_units && property.property_units.length > 0 && property.property_units[0].price !== undefined
+                ? formatNaira(property.property_units[0].price)
+                : ''
+            }));
+            this.loading = false;
+            console.log(this.properties); // Property array
+            console.log(response.pagination); // Pagination info
+          },
+          error: (error) => {
+            console.error('Error fetching properties:', error);
+            this.loading = false;
+            this.error = 'Failed to load properties';
+          }
+        });
+    }
 }
+
+
+const formatNaira = (value: number): string => {
+  return '₦' + value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
