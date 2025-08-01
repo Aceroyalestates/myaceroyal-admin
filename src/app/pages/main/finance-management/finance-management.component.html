@@ -75,7 +75,7 @@
         nzType="primary"
         nzSize="default"
         (click)="onExport()"
-        class="flex items-center gap-2 bg-[#DC3545] border-[#DC3545] hover:bg-[#C82333] hover:border-[#C82333] text-white">
+        class="flex items-center gap-2">
         <span nz-icon nzType="download" nzTheme="outline"></span>
         Export
       </button>
@@ -98,7 +98,7 @@
             />
           </nz-input-group>
           <ng-template #searchButton>
-            <button nz-button nzType="primary" nzSearch (click)="onSearch()" class="bg-[#DC3545] border-[#DC3545] hover:bg-[#C82333] hover:border-[#C82333]">
+            <button nz-button nzType="primary" nzSearch (click)="onSearch()">
               <span nz-icon nzType="search"></span>
             </button>
           </ng-template>
