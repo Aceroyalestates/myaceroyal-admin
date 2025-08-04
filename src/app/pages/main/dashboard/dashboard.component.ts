@@ -1,12 +1,18 @@
-import { Component, effect, signal } from '@angular/core';
+import { Component, effect, OnInit, signal } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
+import {
+  TableColumn,
+} from 'src/app/shared/components/table/table.component';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from 'src/app/shared/components/icon/icon.component';
-import { Person, Metric, Property } from 'src/app/core/types/general';
-import { Metrics, People, Properties } from 'src/app/core/constants';
+import { Metric } from 'src/app/core/types/general';
+import { Metrics, PAGE_SIZE } from 'src/app/core/constants';
 import { FormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { User } from 'src/app/core/models/users';
+import { DashboardService } from '../../../core/services/dashboard.service';
+import { forkJoin } from 'rxjs';
+import { Property } from 'src/app/core/models/properties';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,50 +26,73 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent {
-  people: Person[] = People;
-  lucy!:string
+export class DashboardComponent implements OnInit {
+  loading = false;
+  error: string | null = null;
+  users!: User[];
+  lucy!: string;
   columns: TableColumn[] = [
-    { 
-      key: 'name', 
+    {
+      key: 'full_name',
       title: 'Name',
-      sortable: false,
-      type: 'text'
+      sortable: true,
+      type: 'text',
     },
-    { 
-      key: 'email', 
-      title: 'Email',
-      sortable: false,
-      type: 'text'
+    {
+      key: 'gender',
+      title: 'Gender',
+      sortable: true,
+      type: 'text',
     },
-    { 
-      key: 'age', 
-      title: 'Age',
-      sortable: false,
-      type: 'text'
+    {
+      key: 'phone_number',
+      title: 'Phone Number',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'createdAt',
+      title: 'Date',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'is_active',
+      title: 'Status',
+      sortable: true,
+      type: 'status',
     },
   ];
 
-  selectedPeople = signal<Person[]>([]);
   metrics: Metric[] = Metrics;
+  properties!: Property[];
 
-  properties: Property[] = Properties;
-  constructor() {
-    // Optional effect to react to selected people changes
-    effect(() => {
-      console.log('Selected people from table:', this.selectedPeople());
+  constructor(private dashboardService: DashboardService) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+  loadUsers() {
+    forkJoin([
+      this.dashboardService.getAdminProperties(1, 2, {}),
+      this.dashboardService.getUsers(1, PAGE_SIZE, {}),
+    ]).subscribe({
+      next: ([response1, response2]) => {
+        this.properties = response1.data;
+        this.users = response2.data.map((user) => ({
+          ...user,
+          is_active: user.is_active === true ? 'Active' : 'Inactive',
+        }));
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error fetching users:', error);
+        this.loading = false;
+        this.error = 'Failed to load users';
+      },
     });
   }
 
-  onSelectionChange(selected: Person[]) {
-    this.selectedPeople.set(selected);
-    console.log('Selected people:', this.selectedPeople());
-  }
-
-  handleSelectedData(selected: Person[]) {
-    this.selectedPeople.set(selected);
-    console.log(this.selectedPeople);
-  }
   getTransparentColor(hex: string): string {
     // Convert HEX to rgba
     if (!hex.startsWith('#')) return hex;

@@ -1,10 +1,8 @@
 <main class="flex flex-col w-full">
   <div class="flex flex-col gap-12 mb-16">
     <app-breadcrumb
-        [items]="[
-          { label: 'Dashboard', url: '/dashboard' },
-        ]"
-      ></app-breadcrumb>
+      [items]="[{ label: 'Dashboard', url: '/dashboard' }]"
+    ></app-breadcrumb>
     <div class="flex items-center gap-9">
       @for(metric of metrics; track metric.id){
       <div
@@ -83,23 +81,21 @@
     </p>
     <div class="flex items-center gap-7">
       @for(property of properties; track property.id){
-      <div
-        class="flex-1 flex-col shadow-[6px_6px_21.3px_3px_#EBEBEB5E]"
-      >
+      <div class="flex-1 flex-col shadow-[6px_6px_21.3px_3px_#EBEBEB5E] max-w-3/6">
         <img
-          [src]="property.image"
-          alt=""
-          class="w-full h-[308px] rounded-[5px] object-cover"
+          [src]="property.property_images[0].image_url"
+          [alt]="property.property_features[0].name"
+          class="w-full h-full max-h-[308px] rounded-[5px] object-cover"
         />
         <div
-          class="p-6 border border-[#EEF2F6] border-t-0 rounded-es-[10px] rounded-ee-[10px]"
+          class="p-6 flex-1 border border-[#EEF2F6] border-t-0 rounded-es-[10px] rounded-ee-[10px]"
         >
           <div class="flex flex-col gap-2 mb-6">
             <p class="text-[#4F4F4F] font-semibold text-[20px] text-normal">
               {{ property.name }}
             </p>
             <p class="text-primary font-medium text-[20px] text-normal">
-              &#8358; {{ property.price }}
+              &#8358; {{ property.property_units[0].price }}
             </p>
           </div>
           <div class="flex flex-col gap-2 mb-6">
@@ -107,14 +103,13 @@
               <app-icon name="map-pin"></app-icon>{{ property.location }}
             </p>
             <p class="flex items-center gap-1 text-[#7A7A7A] text-medium">
-              <app-icon name="double-arrow"></app-icon>{{ property.quantity }}
+              <app-icon name="double-arrow"></app-icon>{{ property.property_units.length }}
             </p>
           </div>
           <div class="flex flex-col gap-2">
             <p class="text-[#4F4F4F] font-semibold text-medium">Amenities</p>
-            @let amenities = property.amenities.split(',');
-            <div class="flex items-center gap-3">
-              @for(amenity of amenities; track amenity){
+            <div class="flex items-center gap-3 max-w-full flex-wrap">
+              @for(amenity of property.property_features; track amenity){
               <p class="flex items-center gap-1">
                 <svg
                   width="16"
@@ -136,7 +131,7 @@
                     stroke-linejoin="round"
                   />
                 </svg>
-                {{ amenity }}
+                {{ amenity.feature.name }}
               </p>
               }
             </div>
@@ -157,7 +152,11 @@
           Explore all recent actions on the platform
         </p>
       </div>
-      <nz-select ngModel="All Activities" nzAllowClear nzPlaceHolder="All Activities">
+      <nz-select
+        ngModel="All Activities"
+        nzAllowClear
+        nzPlaceHolder="All Activities"
+      >
         <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
         <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
         <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
@@ -166,13 +165,12 @@
       </nz-select>
     </div>
     <app-table
-      [data]="people"
+      [data]="users"
       [columns]="columns"
       [showSelection]="false"
       [showPagination]="true"
-      [showSearch]="false"
-      [showFilters]="false"
-      (selectionChange)="onSelectionChange($event)"
+      [showSearch]="true"
+      [showFilters]="true"
       class="w-full"
     />
   </div>

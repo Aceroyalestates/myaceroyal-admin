@@ -1,8 +1,7 @@
-export interface PropertyResponse {
-  success: boolean;
-  message: string;
+import { IResponse, Pagination } from './generic';
+
+export interface PropertyResponse extends IResponse {
   data: Property[];
-  pagination: Pagination;
 }
 
 export interface Property {
@@ -52,11 +51,8 @@ export interface PropertyFeature {
   id: number;
   name: string;
   icon: string;
-}
-
-export interface Pagination {
-  total: number;
-  page: number;
-  limit: number;
-  pages: number;
+  feature_id: string;
+  feature: {
+    name: string
+  };
 }
