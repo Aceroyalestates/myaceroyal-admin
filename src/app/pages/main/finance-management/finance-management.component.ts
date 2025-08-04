@@ -219,25 +219,10 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
   // Table actions configuration
   actions: TableAction[] = [
     {
-      key: 'view',
-      label: 'View',
-      icon: 'eye',
-      color: 'blue',
-      tooltip: 'View details'
-    },
-    {
-      key: 'edit',
-      label: 'Edit',
-      icon: 'edit',
-      color: 'green',
-      tooltip: 'Edit transaction'
-    },
-    {
-      key: 'delete',
-      label: 'Delete',
-      icon: 'delete',
-      color: 'red',
-      tooltip: 'Delete transaction'
+      key: 'view-details',
+      label: 'View Details',
+      color: '#E41C24',
+      tooltip: 'View transaction details'
     }
   ];
 
@@ -398,14 +383,8 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
   onTableAction(event: { action: string; row: any }): void {
     console.log('Table action:', event.action, 'Row:', event.row);
     switch (event.action) {
-      case 'view':
-        this.viewTransaction(event.row);
-        break;
-      case 'edit':
-        this.editTransaction(event.row);
-        break;
-      case 'delete':
-        this.deleteTransaction(event.row);
+      case 'view-details':
+        this.viewTransactionDetails(event.row);
         break;
     }
   }
@@ -414,19 +393,9 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
     console.log('Selected rows:', selectedRows);
   }
 
-  viewTransaction(transaction: Transaction): void {
-    console.log('Viewing transaction:', transaction);
-    // Implement view functionality
-  }
-
-  editTransaction(transaction: Transaction): void {
-    console.log('Editing transaction:', transaction);
-    // Implement edit functionality
-  }
-
-  deleteTransaction(transaction: Transaction): void {
-    console.log('Deleting transaction:', transaction);
-    // Implement delete functionality
+  viewTransactionDetails(transaction: Transaction): void {
+    console.log('Viewing transaction details:', transaction);
+    // Implement view details functionality - can navigate to details page or open modal
   }
 
   getStatusClass(status: string): string {

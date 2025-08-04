@@ -1,8 +1,7 @@
-export interface PropertyResponse {
-  success: boolean;
-  message: string;
+import { IResponse, Pagination } from './generic';
+
+export interface PropertyResponse extends IResponse {
   data: Property[];
-  pagination: Pagination;
 }
 
 export interface Property {
@@ -64,49 +63,11 @@ export interface UnitType {
 }
 
 export interface PropertyFeature {
-feature_id: number;
-  feature: Feature;
+  id: number;
+  name: string;
+  icon: string;
+  feature_id: string;
+  feature: {
+    name: string
+  };
 }
-
-export interface Feature {
-    name: string;
-}
-export interface PropertyPlan {
-  title: string;
-}
-
-export interface Pagination {
-  total: number;
-  page: number;
-  limit: number;
-  pages: number;
-}
-
-// Example of a property installment plan
-
-// property_installment_plans
-// : 
-// Array(1)
-// 0
-// : 
-// id
-// : 
-// 11
-// initial_amount
-// : 
-// "8000000"
-// is_active
-// : 
-// true
-// plan_id
-// : 
-// 1
-// property_plan
-// : 
-// {title: '3 months'}
-// start_date
-// : 
-// "2025-07-23T00:00:00.000Z"
-// total_price
-// : 
-// "30000000"

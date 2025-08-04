@@ -1,9 +1,9 @@
-<main class="flex flex-col w-full">
+@if(!loading){<main class="flex flex-col w-full">
   <div class="flex flex-col mb-10">
     <app-breadcrumb
       [items]="[
         { label: 'Admin Management', url: '/admin-management' },
-        { label: 'Admin 001' }
+        { label: user.full_name}
       ]"
     ></app-breadcrumb>
     <div class="flex items-center justify-end gap-6 my-12">
@@ -17,8 +17,8 @@
       class="flex gap-6 py-5 px-7 border border-[#EBEBEB] rounded-lg w-11/12 bg-background"
     >
       <img
-        src="images/user.png"
-        alt="user"
+        [src]="user.avatar || 'images/user.png'"
+        [alt]="user.full_name"
         class="w-full max-w-[230px] h-full rounded-lg object-cover"
       />
 
@@ -26,19 +26,19 @@
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Full Name</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            Endurance Racheal Ace
+            {{user.full_name}}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Email Address</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            Exampla1&#64;gmail.com
+            {{user.email}}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Unique ID</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            ACE00123456
+            {{user.id}}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
@@ -88,12 +88,6 @@
       <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
     </nz-select>
   </div>
-  <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
-    <div class="flex items-center justify-between mb-7 px-7">
-      <div class="flex flex-col gap-2">
-        <app-search-bar />
-      </div>
-    </div>
     <app-table
       [data]="people"
       [columns]="columns"
@@ -107,5 +101,4 @@
       (rowClick)="onRowClick($event)"
       class="w-full"
     />
-  </div>
-</main>
+</main>}

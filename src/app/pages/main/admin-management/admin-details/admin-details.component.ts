@@ -1,10 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, signal } from '@angular/core';
-import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
+import { Component, effect, OnInit, signal } from '@angular/core';
+import {
+  TableColumn,
+  TableAction,
+} from 'src/app/shared/components/table/table.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Metrics, People } from 'src/app/core/constants';
 import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { ActivatedRoute } from '@angular/router';
+import { User } from 'src/app/core/models/users';
+import { DashboardService } from '../../../../core/services/dashboard.service';
 
 @Component({
   selector: 'app-admin-details',
@@ -12,30 +18,35 @@ import { SharedModule } from 'src/app/shared/shared.module';
   templateUrl: './admin-details.component.html',
   styleUrl: './admin-details.component.css',
 })
-export class AdminDetailsComponent {
+export class AdminDetailsComponent implements OnInit {
   userMetrics = Metrics;
+  loading = false;
+  error: string | null = null;
+
   lucy!: string;
   role!: string;
   people: Person[] = People;
-  
+  id: string = '';
+  user!: User;
+
   columns: TableColumn[] = [
-    { 
-      key: 'name', 
+    {
+      key: 'name',
       title: 'Name',
       sortable: true,
-      type: 'text'
+      type: 'text',
     },
-    { 
-      key: 'email', 
+    {
+      key: 'email',
       title: 'Email',
       sortable: true,
-      type: 'text'
+      type: 'text',
     },
-    { 
-      key: 'age', 
+    {
+      key: 'age',
       title: 'Age',
       sortable: true,
-      type: 'text'
+      type: 'text',
     },
   ];
 
@@ -45,26 +56,44 @@ export class AdminDetailsComponent {
       label: 'View',
       icon: 'eye',
       color: 'blue',
-      tooltip: 'View details'
+      tooltip: 'View details',
     },
     {
       key: 'edit',
       label: 'Edit',
       icon: 'edit',
       color: 'green',
-      tooltip: 'Edit user'
-    }
+      tooltip: 'Edit user',
+    },
   ];
 
   selectedPeople = signal<Person[]>([]);
 
-  constructor() {
-    // Optional effect to react to selected people changes
-    effect(() => {
-      console.log('Selected people from table:', this.selectedPeople());
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private dashboardService: DashboardService
+  ) {}
+
+  ngOnInit(): void {
+    this.loading = true;
+    this.activatedRoute.params.subscribe({
+      next: (param) => (this.id = param['id']),
     });
+    this.getUser(this.id)
   }
 
+  getUser(id: string) {
+    this.dashboardService.getUserById(id).subscribe({
+      next: (user) => {
+        this.loading = false;
+        this.user = user;
+      },
+      error: (error) => {
+        this.loading = false;
+        console.error('An error occured: ', error.message);
+      },
+    });
+  }
   onSelectionChange(selected: Person[]) {
     this.selectedPeople.set(selected);
     console.log('Selected people:', this.selectedPeople());

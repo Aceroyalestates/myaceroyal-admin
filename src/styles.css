@@ -154,6 +154,21 @@
   .ant-input {
     @apply !px-4 !py-[10px] !rounded-lg border !border-[#E6E6E6];
   }
+
+  /* Custom Aceroyal primary button styles */
+  .ant-btn-primary,
+  .ant-btn-primary:hover,
+  .ant-btn-primary:focus,
+  .ant-btn-primary:active {
+    background-color: #E41C24 !important;
+    border-color: #E41C24 !important;
+    color: #fff !important;
+  }
+
+  .ant-btn-primary:hover {
+    background-color: #C21A21 !important;
+    border-color: #C21A21 !important;
+  }
 }
 
 h1,
