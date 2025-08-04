@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Properties } from 'src/app/core/constants';
-import { Property } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { Property } from 'src/app/core/models/properties';
+import { PropertyService } from 'src/app/core/services/property.service';
 
 @Component({
   selector: 'app-view-property',
@@ -13,8 +13,8 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
   styleUrl: './view-property.component.css'
 })
 export class ViewPropertyComponent {
-id: string | null = null;
-properties: Property[] = Properties;
+id: string = '';
+// properties: Property[] = Properties;
 property: Property | null = null;
 
 panels = [
@@ -30,14 +30,25 @@ panels = [
     }
   ];
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private router: Router,
+    private propertyService: PropertyService,
+  ) {}
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.paramMap.get('id');
+    this.route.queryParams.subscribe(params => {
+      console.log('Query Params:', params);
+    });
+    this.id = this.route.snapshot.paramMap.get('id') || '';
     this.route.paramMap.subscribe(params => {
-      this.id = params.get('id');
-      console.log('Route ID:', this.id); // For debugging
-      this.property = this.properties.find(p => p.id === Number(this.id)) || null;
+      this.id = params.get('id') || '';
+      console.log('Route ID:', this.id); 
+      this.propertyService.getPropertyById(this.id).subscribe(property => {
+        this.property = property;
+        console.log('Fetched property:', this.property);
+        this.property = property;
+      });
       console.log({property: this.property})
       if (!this.property) {
         console.warn('Property not found for ID:', this.id);

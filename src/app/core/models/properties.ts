@@ -40,6 +40,21 @@ export interface PropertyUnit {
   price: string;
   is_available: boolean;
   unit_type: UnitType;
+  is_sold_out: boolean;
+  total_units: number;
+  unit_type_id: number;
+  unit_sold: number;
+  property_installment_plans: PropertyInstallmentPlan[];
+}
+
+export interface PropertyInstallmentPlan {
+  id: number;
+  initial_amount: string;
+  is_active: boolean;
+  plan_id: number;
+  property_plan: PropertyPlan;
+  start_date: string;
+  total_price: string;
 }
 
 export interface UnitType {
@@ -49,9 +64,15 @@ export interface UnitType {
 }
 
 export interface PropertyFeature {
-  id: number;
-  name: string;
-  icon: string;
+feature_id: number;
+  feature: Feature;
+}
+
+export interface Feature {
+    name: string;
+}
+export interface PropertyPlan {
+  title: string;
 }
 
 export interface Pagination {
@@ -60,3 +81,32 @@ export interface Pagination {
   limit: number;
   pages: number;
 }
+
+// Example of a property installment plan
+
+// property_installment_plans
+// : 
+// Array(1)
+// 0
+// : 
+// id
+// : 
+// 11
+// initial_amount
+// : 
+// "8000000"
+// is_active
+// : 
+// true
+// plan_id
+// : 
+// 1
+// property_plan
+// : 
+// {title: '3 months'}
+// start_date
+// : 
+// "2025-07-23T00:00:00.000Z"
+// total_price
+// : 
+// "30000000"

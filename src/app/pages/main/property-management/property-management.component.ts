@@ -6,6 +6,7 @@ import { Properties } from 'src/app/core/constants';
 import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
 import { PropertyService } from 'src/app/core/services/property.service';
 import { Property } from 'src/app/core/models/properties';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -100,7 +101,10 @@ export class PropertyManagementComponent {
     ];
     selectedproperty = signal<Property[]>([]);
 
-    constructor(private propertyService: PropertyService) {
+    constructor(
+      private propertyService: PropertyService, 
+      private router: Router
+    ) {
       effect(() => {
         console.log('Selected property from table: ', this.selectedproperty());
         this.loadProperties();
@@ -128,13 +132,16 @@ export class PropertyManagementComponent {
     }
 
     onRowClick(row: Property) {
+      console.log('Row clicked:', row);
       // Navigate to property details
-      window.location.href = `/property-management/view/${row.id}`;
+      this.router.navigate([`/property-management/view/${row.slug}`, {queryParams: { id: row.id }}]);
+      // window.location.href = `/property-management/view/${row.id}`;
     }
 
     viewProperty(property: Property) {
       console.log('Viewing property:', property);
-      window.location.href = `/property-management/view/${property.id}`;
+      // window.location.href = `/property-management/view/${property.id}`;
+      this.router.navigate([`/property-management/view/${property.id}`, ]);
     }
 
     editProperty(property: Property) {
@@ -153,6 +160,7 @@ export class PropertyManagementComponent {
       }
 
       loadProperties() {
+        this.loading = true;
       this.propertyService.getProperties(1, 10, { })
         .subscribe({
           next: (response) => {

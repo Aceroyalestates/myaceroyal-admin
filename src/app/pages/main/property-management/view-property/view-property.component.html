@@ -10,6 +10,7 @@
     </div>
     <div
       class="flex flex-col gap-6 py-5 px-7 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
+      *ngIf="property"
     >
         <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0">
                 {{ property?.name }}
@@ -35,61 +36,110 @@
             </button>
         </div>
 
-      <div class="flex justify-center items-center gap-6">
-        <img
-            src="{{property?.image}}"
-            alt="user"
-            class="w-full h-full rounded-lg object-cover"
-        />
+      <div class="grid grid-cols-3  justify-center items-center gap-6">
+        @for(img of property?.property_images; track img.image_url) {
+          <img
+              src="{{img.image_url}}"
+              alt="property image"
+              class="w-full h-full rounded-lg object-cover"
+          />
+        }
       </div>
       <div class="flex flex-col gap-5 w-full">
         <div class="flex flex-col gap-1">
           <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Category</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            Developed Property
+            {{ property?.property_type?.name }} Property
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Location</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            Lekki, Lagos, Nigeria
+            {{ property?.location }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Description</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            Lorem Ipsum...
+            {{ property?.description }}
           </h2>
         </div>
 
         <div class="flex flex-col gap-1">
           <p class="!text-[#7A7A7A] !text-medium !mb-2">Amenities</p>
           
-          <div class="flex gap-4">
-            @for(am of ['Tarred Road','24/7 Electricity','Fenced Perimeter']; track am) {
-                <div class="flex bg-tertiary items-center gap-2 bg-gray-100 p-2 rounded">
+          <div class="grid grid-cols-6 gap-4">
+            @for(pf of property?.property_features; track pf) {
+                <div class="flex bg-tertiary items-center gap-2 bg-gray-100 p-2 rounded w-full">
                     <app-icon class="!text-primary text-[10px]" name="power"></app-icon>
-                    <h2 class="!text-[#4F4F4F] text-normal font-medium text-[16px] !mb-0">
-                        {{am}}
-                    </h2>
+                    <p class="!text-[#4F4F4F] text-normal !mb-0">
+                        {{pf?.feature?.name}}
+                    </p>
                 </div>
             }
           </div>
         </div>
 
-        <div class="flex">
+        <!-- <div class="flex">
             <nz-collapse class="w-full" [nzExpandIconPosition]="'end'">
-                @for (panel of panels; track panel) {
-                    <nz-collapse-panel [nzHeader]="panel.name" [nzActive]="panel.active" [nzShowArrow]="panel.arrow">
+                @for (unit of property?.property_units; track unit) {
+                    <nz-collapse-panel [nzHeader]="unit?.unit_type?.name" [nzActive]="true" [nzShowArrow]="true">
                         <div class="flex flex-col gap-0">
-                        <p class="!text-[#7A7A7A] !text-medium !mb-2">Unit Type</p>
-                        <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-                            {{ panel.name }}
-                        </h2>
+                          <p class="!text-[#7A7A7A] !text-medium !mb-2">Unit Type</p>
+                          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+                              {{ unit?.unit_type?.name }}
+                          </h2>
                         </div>
+                        <div class="flex flex-col gap-0">
+                          <p class="!text-[#7A7A7A] !text-medium !mb-2">Amount</p>
+                          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+                              {{ unit?.price | currency: 'NGN' }}
+                          </h2>
+                        </div>
+                        @if (unit?.property_installment_plans && unit?.property_installment_plans?.length > 0) {
+                            @for (plan of unit?.property_installment_plans; track plan) {
+                                <div class="flex flex-col gap-0">
+                                    <p class="!text-[#7A7A7A] !text-medium !mb-2">Installment Type</p>
+                                    <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+                                        {{ plan?.property_plan?.title }}
+                                    </h2>
+                                </div>
+                            }
+                        }
                     </nz-collapse-panel>
                 }
             </nz-collapse>
+        </div> -->
+
+        <div class="flex">
+          <nz-collapse class="w-full flex flex-col gap-4" [nzExpandIconPosition]="'end'">
+            @for (unit of property?.property_units; track unit.id; let i = $index) {
+              <nz-collapse-panel [nzHeader]="unit.unit_type.name" [nzActive]="i === 0" [nzShowArrow]="true">
+                <div class="flex flex-col gap-0">
+                  <p class="!text-[#7A7A7A] !text-medium !mb-2">Unit Type</p>
+                  <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+                    {{ unit.unit_type.name }}
+                  </h2>
+                </div>
+                <div class="flex flex-col gap-0 pt-2">
+                  <p class="!text-[#7A7A7A] !text-medium !mb-2">Amount</p>
+                  <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+                    {{ unit.price | currency: 'NGN' }}
+                  </h2>
+                </div>
+                @if (unit.property_installment_plans.length > 0) {
+                  @for (plan of unit.property_installment_plans; track plan.id) {
+                    <div class="flex flex-col gap-0 pt-2">
+                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Installment Type</p>
+                      <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+                        {{ plan.property_plan.title }} Installment
+                      </h2>
+                    </div>
+                  }
+                }
+              </nz-collapse-panel>
+            }
+          </nz-collapse>
         </div>
         
       </div>
