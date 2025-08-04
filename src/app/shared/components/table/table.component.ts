@@ -99,7 +99,10 @@ export class TableComponent implements OnInit, OnChanges {
   @Output() selectionChange = new EventEmitter<any[]>();
   @Output() searchChange = new EventEmitter<string>();
   @Output() filterChange = new EventEmitter<TableFilter>();
-  @Output() sortChange = new EventEmitter<{ column: string; direction: string | null }>();
+  @Output() sortChange = new EventEmitter<{
+    column: string;
+    direction: string | null;
+  }>();
   @Output() rowClick = new EventEmitter<any>();
   @Output() pageChange = new EventEmitter<{ page: number; size: number }>();
 
@@ -116,7 +119,7 @@ export class TableComponent implements OnInit, OnChanges {
   indeterminate = false;
   allChecked = false;
   filters: TableFilter = {};
-  
+
   // Processed data
   filteredData: any[] = [];
   displayData: any[] = [];
@@ -142,7 +145,7 @@ export class TableComponent implements OnInit, OnChanges {
 
   initializeFilters(): void {
     this.filters = {};
-    this.columns.forEach(column => {
+    this.columns.forEach((column) => {
       if (column.filterable) {
         this.filters[column.key] = null;
       }
@@ -151,34 +154,34 @@ export class TableComponent implements OnInit, OnChanges {
 
   updateData(): void {
     let processedData = [...this.data];
-    
+
     // Apply search
     if (this.searchTerm.trim()) {
       processedData = this.applySearch(processedData);
     }
-    
+
     // Apply filters
     processedData = this.applyFilters(processedData);
-    
+
     // Apply sorting
     if (this.sortField && this.sortOrder) {
       processedData = this.applySort(processedData);
     }
-    
+
     this.filteredData = processedData;
     this.total = processedData.length;
-    
+
     // Apply pagination
     this.updateDisplayData();
-    
+
     // Update selection state
     this.updateSelectionState();
   }
 
   applySearch(data: any[]): any[] {
     const searchTerm = this.searchTerm.toLowerCase().trim();
-    return data.filter(row => {
-      return this.columns.some(column => {
+    return data.filter((row) => {
+      return this.columns.some((column) => {
         const value = this.getCellValue(row, column);
         return String(value).toLowerCase().includes(searchTerm);
       });
@@ -186,11 +189,11 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   applyFilters(data: any[]): any[] {
-    return data.filter(row => {
-      return Object.keys(this.filters).every(key => {
+    return data.filter((row) => {
+      return Object.keys(this.filters).every((key) => {
         const filterValue = this.filters[key];
         if (!filterValue) return true;
-        
+
         const cellValue = this.getCellValue(row, this.getColumnByKey(key));
         return this.matchesFilter(cellValue, filterValue);
       });
@@ -199,15 +202,15 @@ export class TableComponent implements OnInit, OnChanges {
 
   applySort(data: any[]): any[] {
     if (!this.sortField || !this.sortOrder) return data;
-    
+
     return [...data].sort((a, b) => {
       const aValue = this.getCellValue(a, this.getColumnByKey(this.sortField!));
       const bValue = this.getCellValue(b, this.getColumnByKey(this.sortField!));
-      
+
       let result = 0;
       if (aValue < bValue) result = -1;
       else if (aValue > bValue) result = 1;
-      
+
       return this.sortOrder === 'desc' ? -result : result;
     });
   }
@@ -220,27 +223,29 @@ export class TableComponent implements OnInit, OnChanges {
 
   getCellValue(row: any, column: TableColumn | null): any {
     if (!column) return '';
-    
+
     const keys = column.key.split('.');
     let value = row;
-    
+
     for (const key of keys) {
       value = value?.[key];
       if (value === undefined || value === null) break;
     }
-    
+
     return value ?? '';
   }
 
   getColumnByKey(key: string): TableColumn | null {
-    return this.columns.find(col => col.key === key) || null;
+    return this.columns.find((col) => col.key === key) || null;
   }
 
   matchesFilter(cellValue: any, filterValue: any): boolean {
     if (Array.isArray(filterValue)) {
       return filterValue.includes(cellValue);
     }
-    return String(cellValue).toLowerCase().includes(String(filterValue).toLowerCase());
+    return String(cellValue)
+      .toLowerCase()
+      .includes(String(filterValue).toLowerCase());
   }
 
   // Search functionality
@@ -283,7 +288,7 @@ export class TableComponent implements OnInit, OnChanges {
   // Sorting functionality
   onSortChange(column: TableColumn): void {
     if (!column.sortable) return;
-    
+
     if (this.sortField === column.key) {
       if (this.sortOrder === 'asc') {
         this.sortOrder = 'desc';
@@ -297,9 +302,12 @@ export class TableComponent implements OnInit, OnChanges {
       this.sortField = column.key;
       this.sortOrder = 'asc';
     }
-    
+
     this.updateData();
-    this.sortChange.emit({ column: this.sortField || '', direction: this.sortOrder });
+    this.sortChange.emit({
+      column: this.sortField || '',
+      direction: this.sortOrder,
+    });
   }
 
   getSortDirection(column: TableColumn): string | null {
@@ -313,15 +321,19 @@ export class TableComponent implements OnInit, OnChanges {
 
   // Check if filters have values
   hasActiveFilters(): boolean {
-    return Object.values(this.filters).some(f => f !== null && f !== undefined);
+    return Object.values(this.filters).some(
+      (f) => f !== null && f !== undefined
+    );
   }
 
   // Selection functionality
   updateSelectionState(): void {
-    const validRows = this.displayData.filter(row => row[this.rowKey] !== undefined);
+    const validRows = this.displayData.filter(
+      (row) => row[this.rowKey] !== undefined
+    );
     const selectedCount = this.selectedRows.length;
     const totalCount = validRows.length;
-    
+
     this.allChecked = totalCount > 0 && selectedCount === totalCount;
     this.indeterminate = selectedCount > 0 && selectedCount < totalCount;
   }
@@ -340,18 +352,20 @@ export class TableComponent implements OnInit, OnChanges {
   onRowCheckedChange(row: any, event: Event): void {
     const checked = (event.target as HTMLInputElement).checked;
     if (checked) {
-      if (!this.selectedRows.find(r => r[this.rowKey] === row[this.rowKey])) {
+      if (!this.selectedRows.find((r) => r[this.rowKey] === row[this.rowKey])) {
         this.selectedRows.push(row);
       }
     } else {
-      this.selectedRows = this.selectedRows.filter(r => r[this.rowKey] !== row[this.rowKey]);
+      this.selectedRows = this.selectedRows.filter(
+        (r) => r[this.rowKey] !== row[this.rowKey]
+      );
     }
     this.updateSelectionState();
     this.selectionChange.emit(this.selectedRows);
   }
 
   isRowSelected(row: any): boolean {
-    return this.selectedRows.some(r => r[this.rowKey] === row[this.rowKey]);
+    return this.selectedRows.some((r) => r[this.rowKey] === row[this.rowKey]);
   }
 
   // Pagination functionality
@@ -373,11 +387,11 @@ export class TableComponent implements OnInit, OnChanges {
     if (event) {
       event.stopPropagation();
     }
-    
+
     if (action.disabled && action.disabled(row)) {
       return;
     }
-    
+
     this.actionClick.emit({ action: action.key, row });
   }
 
@@ -403,6 +417,7 @@ export class TableComponent implements OnInit, OnChanges {
       case 'approved':
       case 'completed':
       case 'active':
+      case 'true':
       case 'success':
         return 'success';
       case 'pending':
@@ -414,6 +429,7 @@ export class TableComponent implements OnInit, OnChanges {
         return 'warning';
       case 'failed':
       case 'error':
+      case 'false':
       case 'rejected':
       case 'inactive':
         return 'error';
@@ -430,32 +446,34 @@ export class TableComponent implements OnInit, OnChanges {
     if (column.render) {
       return column.render(value, this.getCellValue);
     }
-    
+
     if (column.type === 'date' && value) {
       return new Date(value).toLocaleDateString();
     }
-    
+
     if (column.type === 'number' && value !== null && value !== undefined) {
       return Number(value).toLocaleString();
     }
-    
+
     return String(value || '');
   }
 
   // Export functionality
   exportToCSV(): void {
-    const headers = this.columns.map(col => col.title).join(',');
-    const rows = this.filteredData.map(row => 
-      this.columns.map(col => {
-        const value = this.getCellValue(row, col);
-        return `"${String(value).replace(/"/g, '""')}"`;
-      }).join(',')
+    const headers = this.columns.map((col) => col.title).join(',');
+    const rows = this.filteredData.map((row) =>
+      this.columns
+        .map((col) => {
+          const value = this.getCellValue(row, col);
+          return `"${String(value).replace(/"/g, '""')}"`;
+        })
+        .join(',')
     );
-    
+
     const csvContent = [headers, ...rows].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
-    
+
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);

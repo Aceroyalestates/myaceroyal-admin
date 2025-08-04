@@ -1,4 +1,4 @@
-import { Person, Metric, Property, PaymentSchedule } from '../types/general';
+import { Person, Metric, PaymentSchedule } from '../types/general';
 
 export const People: Person[] = [
   { id: 1, name: 'Alice', email: 'alice@example.com', age: 30 },
@@ -35,6 +35,20 @@ export const Metrics: Metric[] = [
     color: '#4D76B8',
   },
 ];
+
+interface Property
+  {
+    id: number,
+    image:string
+    name:string
+    price:string
+    location:string
+    quantity:string
+    amenities:string
+    propertyType:string
+    unitType:string
+  }
+
 
 export const Properties: Property[] = [
   {
@@ -85,3 +99,6 @@ export const PaymentSchedules: PaymentSchedule[] = [
     status: 'overdue',
   },
 ];
+
+
+export const PAGE_SIZE = 10
