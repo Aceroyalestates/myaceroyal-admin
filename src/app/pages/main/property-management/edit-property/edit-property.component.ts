@@ -1,12 +1,10 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Properties } from 'src/app/core/constants';
-import { Property } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
-import { NonNullableFormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -15,8 +13,12 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { PropertyService } from 'src/app/core/services/property.service';
+import { Property } from 'src/app/core/models/properties';
+
+type EditablePropertyFields = 'name' | 'location' | 'description';
 
 @Component({
   selector: 'app-edit-property',
@@ -38,12 +40,17 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
   templateUrl: './edit-property.component.html',
   styleUrl: './edit-property.component.css'
 })
+
 export class EditPropertyComponent implements OnInit, OnDestroy {
 id: string | null = null;
-properties: Property[] = Properties;
 property: Property | null = null;
 private fb = inject(NonNullableFormBuilder);
 private destroy$ = new Subject<void>();
+editingName = false;
+editingLocation = false;
+editingDescription = false;
+editForm: FormGroup;
+// Define the keys that are allowed to be updated
 
 panels = [
     {
@@ -58,28 +65,36 @@ panels = [
     }
   ];
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute, 
+    private propertyService: PropertyService
+  ) {
+      this.editForm = this.fb.group({
+      category: this.fb.control(this.property?.property_type.name, [Validators.required]),
+      name: this.fb.control(this.property?.name, [Validators.required]),
+      location: this.fb.control(this.property?.location, [Validators.required]),
+      description: this.fb.control(this.property?.description, [Validators.required]),
+      amenities: this.fb.control(this.property?.property_features, [Validators.required]),
+      images: this.fb.control(this.property?.property_images, [Validators.required])
+    });
+  }
 
-  editForm = this.fb.group({
-    category: this.fb.control('', [Validators.required]),
-    name: this.fb.control('', [Validators.required]),
-    location: this.fb.control('', [Validators.required]),
-    description: this.fb.control('', [Validators.required]),
-    amenities: this.fb.control([], [Validators.required]),
-    images: this.fb.control([], [Validators.required])
-  });
+
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
-    this.route.paramMap.subscribe(params => {
-      this.id = params.get('id');
-      console.log('Route ID:', this.id); // For debugging
-      this.property = this.properties.find(p => p.id === Number(this.id)) || null;
-      console.log({property: this.property})
-      if (!this.property) {
-        console.warn('Property not found for ID:', this.id);
-      }
-    });
+    this.propertyService.getPropertyById(this.id!).subscribe(property => {
+        this.property = property;
+        console.log('Fetched property:', this.property);
+          this.editForm = this.fb.group({
+            category: this.fb.control(this.property?.property_type.name, [Validators.required]),
+            name: this.fb.control(this.property?.name, [Validators.required]),
+            location: this.fb.control(this.property?.location, [Validators.required]),
+            description: this.fb.control(this.property?.description, [Validators.required]),
+            amenities: this.fb.control(this.property?.property_features, [Validators.required]),
+            images: this.fb.control(this.property?.property_images, [Validators.required])
+          });
+      });
   }
 
   submit(): void {
@@ -93,6 +108,43 @@ panels = [
         }
       });
     }
+  }
+
+  setEditingName(editing: boolean): void {
+    console.log('Editing name:', editing);
+    this.editingName = editing;
+    const updatedValue = this.editForm.get('name')?.value;
+    console.log('Current property name:', this.property?.name);
+    console.log('Form control value:', updatedValue);
+    const isValueChanged: boolean = updatedValue !== this.property?.name;
+    if (!this.editingName && isValueChanged) {
+      this.updateField({name: updatedValue});
+    }
+  }
+
+  setEditingLocation(editing: boolean): void {
+    console.log('Editing location:', editing);
+    this.editingLocation = editing;
+  }
+
+  setEditingDescription(editing: boolean): void {
+    console.log('Editing description:', editing);
+    this.editingDescription = editing;
+  }
+
+
+  updateField(field: any): void {
+    this.propertyService.updateProperty(this.property!.id, field).subscribe({
+      next: (response) => {
+        console.log('Property updated successfully:', response);
+        // Optionally, you can refresh the property data or show a success message
+        this.property = { ...this.property, ...field };
+      },
+      error: (error) => {
+        console.error('Error updating property:', error);
+        // Handle error, e.g., show a notification or alert
+      }
+    });
   }
 
   ngOnDestroy(): void {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
-import { Property, PropertyResponse } from '../models/properties';
+import { Property, PropertyResponse, PropertyUpdateResponse } from '../models/properties';
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +10,10 @@ export class PropertyService {
 
   constructor(private httpService: HttpService) {}
 
-  /**
-   * Get properties with pagination
-   * @param page Page number
-   * @param limit Items per page
-   * @param filters Optional filters for properties
-   */
+  //  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NDUxMTUzMSwiZXhwIjoxNzU0NTk3OTMxfQ.jZ4ry1d6OCKYbFj7U04R2g9tfGTstadgqYuls2AUur4' \
+//set the headers in the HttpService
+  
+
   getProperties(page: number = 1, limit: number = 10, filters?: any): Observable<PropertyResponse> {
     const params = {
       page: page.toString(),
@@ -25,10 +23,6 @@ export class PropertyService {
     return this.httpService.get<PropertyResponse>('properties', params);
   }
 
-  /**
-   * Get single property by ID
-   * @param id Property ID
-   */
   getPropertyById(id: string): Observable<Property> {
     return this.httpService.get<{ data: Property }>(`properties/${id}`)
       .pipe(
@@ -36,10 +30,6 @@ export class PropertyService {
       );
   }
 
-  /**
-   * Create a new property
-   * @param property Property data to create
-   */
   createProperty(property: Partial<Property>): Observable<Property> {
     return this.httpService.post<{ data: Property }>('properties', property)
       .pipe(
@@ -47,23 +37,13 @@ export class PropertyService {
       );
   }
 
-  /**
-   * Update existing property
-   * @param id Property ID
-   * @param property Property data to update
-   */
-  updateProperty(id: string, property: Partial<Property>): Observable<Property> {
-    return this.httpService.put<{ data: Property }>(`properties/${id}`, property)
+  updateProperty(id: string, property: Partial<Property>): Observable<PropertyUpdateResponse> {
+    return this.httpService.put<PropertyUpdateResponse>(`admin/properties/${id}`, property)
       .pipe(
-        map(response => response.data)
+        map(response => response)
       );
   }
 
-  /**
-   * Partially update existing property
-   * @param id Property ID
-   * @param property Partial property data to update
-   */
   patchProperty(id: string, property: Partial<Property>): Observable<Property> {
     return this.httpService.patch<{ data: Property }>(`properties/${id}`, property)
       .pipe(
@@ -71,10 +51,6 @@ export class PropertyService {
       );
   }
 
-  /**
-   * Delete a property
-   * @param id Property ID
-   */
   deleteProperty(id: string): Observable<void> {
     return this.httpService.delete<void>(`properties/${id}`);
   }

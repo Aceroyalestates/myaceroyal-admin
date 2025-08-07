@@ -30,13 +30,13 @@
                     <app-table
                         [data]="properties"
                         [columns]="columns"
-                        [actions]="actions"
-                        [showSelection]="false"
+                        [showSelection]="true"
                         [showPagination]="true"
                         [showSearch]="true"
                         [showFilters]="true"
+                        [loading]="loading"
+                        [enableRowClick]="true"
                         (selectionChange)="onSelectionChange($event)"
-                        (actionClick)="onTableAction($event)"
                         (rowClick)="onRowClick($event)"
                         class="w-full"
                     />
