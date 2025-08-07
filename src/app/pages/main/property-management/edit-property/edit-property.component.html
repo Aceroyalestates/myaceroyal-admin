@@ -13,18 +13,45 @@
     >
     <form nz-form [formGroup]="editForm" (ngSubmit)="submit()">
         <div class="flex flex-row justify-between items-center py-5">
-            <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
-                {{ property?.name }}
-            </h2>
-            <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
+            
+
+            @if(!editingName) {
+                <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+                    {{ property?.name }}
+                </h2>
+                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingName(true)"></app-icon>
+            } @else {
+                <div class="basis-2/3">
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" [nzNoColon]="true">
+                        <span class="text-xs text-gray-500">Property Name</span>
+                    </nz-form-label>
+                    <nz-form-control
+                    nzErrorTip="Please select property name"
+                    >
+                    <input
+                        nz-input
+                        formControlName="name"
+                        placeholder="Enter Property Name"
+                        id="name"
+                        
+                    />
+                    </nz-form-control>
+                </div>
+                <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingName(false)">Done</button>
+            }
+
         </div>
 
       <div class="flex justify-center items-center gap-6 py-5">
-        <img
-            src="{{property?.image}}"
-            alt="user"
-            class="w-2/3 h-full rounded-lg object-cover brightness-50"
-        />
+        <div class="grid grid-cols-3  justify-center items-center gap-6">
+        @for(img of property?.property_images; track img.image_url) {
+          <img
+              src="{{img.image_url}}"
+              alt="property image"
+              class="w-full h-full rounded-lg object-cover hover:scale-105 transition-transform duration-200"
+          />
+        }
+      </div>
         <app-icon class="!text-white !text-sm absolute pointer" name="edit"></app-icon>
       </div>
       <div class="flex flex-col gap-5 w-full">
@@ -68,25 +95,32 @@
             />
             </nz-form-control>
         </div> -->
-        <div>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="location" [nzNoColon]="true">
+        <div class="flex flex-row justify-between items-center py-5">
+            @if(!editingLocation) {
+                <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+                    {{ property?.location }}
+                </h2>
+                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingLocation(true)"></app-icon>
+            } @else {
+                <div class="basis-2/3">
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="location" [nzNoColon]="true">
                 Property Location
-            </nz-form-label
-            >
-            <nz-form-control
-            nzErrorTip="Please enter property location"
-            >
-            <div class="flex justify-between">
+                </nz-form-label
+                >
+                <nz-form-control
+                nzErrorTip="Please enter property location"
+                >
                 <input
                     nz-input
                     formControlName="location"
                     placeholder="Enter Property location"
                     id="location"
-                    class="basis-2/3"
                 />
-            <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-            </div>
-            </nz-form-control>
+                </nz-form-control>
+                </div>
+                <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingLocation(false)">Done</button>
+                
+            }
         </div>
 
         <div>

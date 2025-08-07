@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '@environments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
@@ -45,7 +45,11 @@ export class HttpService {
    * @returns Observable of response type T
    */
   put<T>(endpoint: string, data: any): Observable<T> {
-    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, data)
+    const headers: HttpHeaders = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NDUxMTUzMSwiZXhwIjoxNzU0NTk3OTMxfQ.jZ4ry1d6OCKYbFj7U04R2g9tfGTstadgqYuls2AUur4` // Assuming token is stored in localStorage
+    });
+    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, data, { headers })
       .pipe(
         catchError(this.handleError)
       );

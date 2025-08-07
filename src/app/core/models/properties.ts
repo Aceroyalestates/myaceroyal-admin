@@ -2,6 +2,7 @@ import { IResponse, Pagination } from './generic';
 
 export interface PropertyResponse extends IResponse {
   data: Property[];
+  pagination: Pagination;
 }
 
 export interface Property {
@@ -9,10 +10,13 @@ export interface Property {
   name: string;
   slug: string;
   description: string;
+  type_id: number;
   location: string;
   address: string;
+  listed_by: string;
   is_available: boolean;
   vr_link: string;
+  deleted_at: string | null;
   createdAt: string;
   updatedAt: string;
   property_type: PropertyType;
@@ -22,52 +26,52 @@ export interface Property {
 }
 
 export interface PropertyType {
-  id: number;
   name: string;
 }
 
 export interface PropertyImage {
-  id: string;
   image_url: string;
-  is_cover: boolean;
-  alt_text: string;
+  is_cover: boolean | null;
 }
 
 export interface PropertyUnit {
-  id: string;
-  name: string;
-  price: string;
-  is_available: boolean;
-  unit_type: UnitType;
-  is_sold_out: boolean;
-  total_units: number;
+  id: number;
+  name: string | null;
   unit_type_id: number;
-  unit_sold: number;
+  price: string;
+  total_units: number;
+  units_sold: number;
+  is_sold_out: boolean;
+  unit_type: UnitType;
   property_installment_plans: PropertyInstallmentPlan[];
+}
+
+export interface UnitType {
+  name: string;
 }
 
 export interface PropertyInstallmentPlan {
   id: number;
-  initial_amount: string;
-  is_active: boolean;
   plan_id: number;
-  property_plan: PropertyPlan;
-  start_date: string;
+  initial_amount: string;
   total_price: string;
+  start_date: string;
+  is_active: boolean;
+  property_plan: PropertyPlan;
 }
 
-export interface UnitType {
-  id: number;
-  name: string;
-  default_size: string;
+export interface PropertyPlan {
+  title: string;
 }
 
 export interface PropertyFeature {
-  id: number;
-  name: string;
-  icon: string;
-  feature_id: string;
+  feature_id: number;
   feature: {
-    name: string
+    name: string;
   };
+}
+
+export interface PropertyUpdateResponse {
+  message: string;
+  property: Property;
 }
