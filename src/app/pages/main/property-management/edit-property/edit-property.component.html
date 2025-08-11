@@ -8,9 +8,10 @@
         ]"
       ></app-breadcrumb>
     </div>
-    <div
+    <div *ngIf="property"
       class="flex flex-col gap-12 py-5 px-24 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
     >
+    <h3 *ngIf="isLoading">Loading...</h3>
     <form nz-form [formGroup]="editForm" (ngSubmit)="submit()">
         <div class="flex flex-row justify-between items-center py-5">
             
@@ -19,7 +20,7 @@
                 <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
                     {{ property?.name }}
                 </h2>
-                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingName(true)"></app-icon>
+                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('name', true)"></app-icon>
             } @else {
                 <div class="basis-2/3">
                     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" [nzNoColon]="true">
@@ -33,80 +34,87 @@
                         formControlName="name"
                         placeholder="Enter Property Name"
                         id="name"
-                        
                     />
                     </nz-form-control>
                 </div>
-                <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingName(false)">Done</button>
+                <!-- Set the done button to disabled when isLoading is true -->
+                <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingField('name', false)" [disabled]="isLoading">Done</button>
             }
 
         </div>
 
-      <div class="flex justify-center items-center gap-6 py-5">
-        <div class="grid grid-cols-3  justify-center items-center gap-6">
+      <div class="flex items-center gap-6 py-5">
+        <div class="grid grid-cols-3 items-center gap-6">
         @for(img of property?.property_images; track img.image_url) {
-          <img
+          <div class="relative">
+            <img
               src="{{img.image_url}}"
               alt="property image"
-              class="w-full h-full rounded-lg object-cover hover:scale-105 transition-transform duration-200"
+              class="w-full h-full rounded-lg object-cover hover:scale-105 transition-transform duration-200 hover:brightness-50"
           />
+            <app-icon class="!text-white !text-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-150 hover:!text-red-500" name="trash" (click)="removeImage(img.image_url)"></app-icon>
+          </div>
         }
+        <div class="relative flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300 w-full aspect-square rounded-lg hover:bg-gray-100 !p-12">
+            <input
+                type="file"
+                id="fileInput"
+                (change)="onImageSelected($event)"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            <label for="fileInput" class="block px-4 py-2 bg-primary text-white rounded cursor-pointer">
+                Upload Image
+            </label>
+            <!-- <span *ngIf="selectedFileName" class="ml-2 text-gray-600">{{ selectedFileName }}</span> -->
+        </div>
       </div>
-        <app-icon class="!text-white !text-sm absolute pointer" name="edit"></app-icon>
       </div>
       <div class="flex flex-col gap-5 w-full">
-        
+
         <div class="flex flex-col justify-center gap-y-8 w-full">
         <div class="w-full">
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="category" [nzNoColon]="true">
-            <span>Property Category</span>
-            </nz-form-label>
-            <nz-form-control
-            nzErrorTip="Please select property category"
-            >
-            <div class="flex justify-between">
-                <nz-select
-                    id="category"
-                    formControlName="category"
-                    nzAllowClear
-                    nzPlaceHolder="Select a category for this property"
-                    class="basis-2/3"
-                >
-                    <nz-option nzValue="cat1" nzLabel="Category 1"></nz-option>
-                    <nz-option nzValue="cat2" nzLabel="Category 2"></nz-option>
-                    <nz-option nzValue="cat3" nzLabel="Category 3"></nz-option>
-                </nz-select>
-                <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
+            <p class="!text-[#7A7A7A] !text-sm !font-semibold">Property Category</p>
+            <div class="flex flex-row justify-between items-center">
+                @if(!editingCategory) {
+                <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+                    {{ property?.property_type?.name }} Property
+                </h2>
+                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('property_type', true)"></app-icon>
+            } @else {
+                <div class="basis-2/3">
+                <nz-form-control
+                    nzErrorTip="Please select property category">
+                    <nz-select
+                        id="property_type"
+                        formControlName="property_type"
+                        nzAllowClear
+                        nzPlaceHolder="Select a category for this property"
+                        class="basis-2/3"
+                    >
+                        @for(category of propertyTypeOptions; track category.value) {
+                        <nz-option [nzValue]="category.value" [nzLabel]="category.name"></nz-option>
+                        }
+                    </nz-select>
+                </nz-form-control>
             </div>
-            </nz-form-control>
+
+            <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingField('property_type', false)">Done</button>
+            }
+            </div>
+            
         </div>
-        <!-- <div>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" [nzNoColon]="true">
-            <span>Property Name</span>
-            </nz-form-label>
-            <nz-form-control
-            nzErrorTip="Please enter property name!"
-            >
-            <input
-                nz-input
-                id="name"
-                placeholder="Enter property name"
-                formControlName="name"
-            />
-            </nz-form-control>
-        </div> -->
-        <div class="flex flex-row justify-between items-center py-5">
+        <div class="">
+            <p class="!text-[#7A7A7A] !text-sm !font-semibold">
+            Property Location
+            </p>
+            <div class="flex flex-row justify-between items-center">
             @if(!editingLocation) {
                 <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
                     {{ property?.location }}
                 </h2>
-                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingLocation(true)"></app-icon>
+                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('location', true)"></app-icon>
             } @else {
                 <div class="basis-2/3">
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="location" [nzNoColon]="true">
-                Property Location
-                </nz-form-label
-                >
                 <nz-form-control
                 nzErrorTip="Please enter property location"
                 >
@@ -118,45 +126,49 @@
                 />
                 </nz-form-control>
                 </div>
-                <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingLocation(false)">Done</button>
-                
+
+                <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingField('location', false)">Done</button>
             }
+        </div>
         </div>
 
         <div>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="description" [nzNoColon]="true">
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="description" [nzNoColon]="true" class="!text-gray-400 !text-sm !mb-2">
                 Property Description
-            </nz-form-label
-            >
-            <nz-form-control
-            nzErrorTip="Please enter property description"
-            >
-            <div class="flex justify-between">
-            <textarea
-                nz-input
-                formControlName="description"
-                placeholder="Enter Property description"
-                id="description"
-                rows="4"
-                class="basis-2/3"
-            ></textarea>
-            <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
+            </nz-form-label>
+            <nz-form-control nzErrorTip="Please enter property description">
+            <div class="flex justify-between w-full gap-4">
+                @if(!editingDescription) {
+                <p class="!text-[#4F4F4F] text-normal font-medium !mb-0 !pb-0">
+                    {{ property?.description }}
+                </p>
+                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('description', true)"></app-icon>
+            } @else {
+                <textarea
+                    nz-input
+                    formControlName="description"
+                    placeholder="Enter Property Description"
+                    id="description"
+                    class="basis-2/3 h-24 resize-none"
+                ></textarea>
+                <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingField('description', false)">Done</button>
+            }
             </div>
             </nz-form-control>
         </div>
                 
         </div>
 
-        <div class="flex flex-col gap-1">
+        <!-- <div class="flex flex-col gap-1">
           <p class="!text-[#7A7A7A] !text-medium !mb-2">Amenities</p>
           
           <div class="flex justify-between">
-            <div class="flex gap-4 basis-2/3 flex-wrap">
-                @for(am of ['Tarred Road','24/7 Electricity','Fenced Perimeter']; track am) {
+            <div class="flex gap-4 basis-4/5 flex-wrap">
+                @for(am of property?.property_features; track am) {
                     <div class="flex bg-tertiary items-center gap-2 bg-gray-100 p-2 rounded">
                         <app-icon class="!text-primary text-[10px]" name="power"></app-icon>
                         <h2 class="!text-[#4F4F4F] text-normal font-medium text-[16px] !mb-0">
-                            {{am}}
+                            {{ am?.feature?.name }}
                         </h2>
                     </div>
                 }
@@ -164,6 +176,45 @@
             <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
           </div>
 
+        </div> -->
+         <div class="w-full">
+            <p class="!text-[#7A7A7A] !text-sm !font-semibold">Amenities</p>
+            <div class="flex flex-row justify-between items-center">
+                @if(!editingAmenities) {
+                <div class="flex gap-4 basis-4/5 flex-wrap">
+                    @for(am of property?.property_features; track am) {
+                        <div class="flex bg-tertiary items-center gap-2 bg-gray-100 p-2 rounded">
+                            <app-icon class="!text-primary text-[10px]" name="power"></app-icon>
+                            <h2 class="!text-[#4F4F4F] text-normal font-medium text-[16px] !mb-0">
+                                {{ am?.feature?.name }}
+                            </h2>
+                        </div>
+                    }
+                </div>
+                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('property_features', true)"></app-icon>
+            } @else {
+                <div class="basis-4/5">
+                <nz-form-control
+                    nzErrorTip="Please select property category">
+                    <nz-select
+                        id="property_features"
+                        formControlName="property_features"
+                        nzAllowClear
+                        nzPlaceHolder="Select features for this property"
+                        class="basis-4/5"
+                        nzMode="multiple"
+                    >
+                        @for(pf of property?.property_features; track pf.feature_id) {
+                        <nz-option [nzValue]="pf.feature_id" [nzLabel]="pf.feature.name"></nz-option>
+                        }
+                    </nz-select>
+                </nz-form-control>
+            </div>
+
+            <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingField('property_features', false)">Done</button>
+            }
+            </div>
+            
         </div>
 
         <div class="flex flex-col">

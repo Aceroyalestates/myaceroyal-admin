@@ -75,3 +75,21 @@ export interface PropertyUpdateResponse {
   message: string;
   property: Property;
 }
+
+export interface PropertyTypeOptions {
+  value: number;
+  label: string;
+  name: string;
+}
+
+// {
+//       "id": 1,
+//       "name": "Swimming Pool",
+//       "icon": "fa-swimming-pool"
+//     }
+
+export interface PropertyFeatureAdmin {
+  id: number;
+  name: string;
+  icon: string;
+}

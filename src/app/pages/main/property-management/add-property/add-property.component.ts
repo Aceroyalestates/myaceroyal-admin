@@ -12,6 +12,8 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { PropertyFeatureAdmin, PropertyTypeOptions } from 'src/app/core/models/properties';
+import { PropertyService } from 'src/app/core/services/property.service';
 
 @Component({
   selector: 'app-add-property',
@@ -35,7 +37,10 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 export class AddPropertyComponent implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private destroy$ = new Subject<void>();
-  currentStep = 0;
+  currentStep = 1;
+  isLoading = false;
+  propertyTypeOptions: PropertyTypeOptions[] = [];
+  adminFeatures: PropertyFeatureAdmin[] = [];
 
   // alphabet(): string[] {
   // const children: string[] = [];
@@ -47,23 +52,29 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
 
   readonly listOfOption: string[] = ['Tarred Road', '24/7 Electricity', 'Fenced Perimeter'];
 
+  constructor(private propertyService: PropertyService) {
+  }
+
   formBasic = this.fb.group({
-    category: this.fb.control('', [Validators.required]),
+    property_type: this.fb.control('', [Validators.required]),
     name: this.fb.control('', [Validators.required]),
     location: this.fb.control('', [Validators.required]),
     description: this.fb.control('', [Validators.required])
   });
 
   formAmenities = this.fb.group({
-    amenities: this.fb.control([], [Validators.required])
+    amenities: this.fb.control<PropertyFeatureAdmin[]>([], [Validators.required])
   });
 
   formImages = this.fb.group({
     images: this.fb.control([], [Validators.required])
   });
 
+  formPaymentPlan = this.fb.group({});
+
   ngOnInit(): void {
-    
+    this.getPropertyTypeOptions();
+    this.getPropertyAdminFeatures();
   }
 
   ngOnDestroy(): void {
@@ -114,12 +125,41 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     this.currentStep = 0;
   }
 
-  // confirmationValidator(control: AbstractControl): ValidationErrors | null {
-  //   if (!control.value) {
-  //     return { required: true };
-  //   } else if (control.value !== this.formBasic.controls.password.value) {
-  //     return { confirm: true, error: true };
-  //   }
-  //   return {};
-  // }
+  getPropertyTypeOptions(): void {
+    this.isLoading
+    this.propertyService.getPropertytypesOptions().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Property Type Options:', response);
+        this.propertyTypeOptions = response.data || [];
+        console.log('Property Type Options:', this.propertyTypeOptions);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching property type options:', error);
+      }
+    });
+  }
+
+  getPropertyAdminFeatures(): void {
+    this.isLoading = true;
+    this.propertyService.getPropertytypesOptions2().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Property Features:', response);
+        this.adminFeatures = response.data || [];
+        console.log('Property Features:', this.adminFeatures);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching property features:', error);
+      }
+    });
+  }
+
+  handleSelectedFeatures(selected: PropertyFeatureAdmin[]) {
+    this.formAmenities.patchValue({ amenities: selected });
+    console.log('Selected Features:', selected);
+  }
 }
+  

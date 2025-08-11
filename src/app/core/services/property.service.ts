@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
-import { Property, PropertyResponse, PropertyUpdateResponse } from '../models/properties';
+import { Property, PropertyFeature, PropertyFeatureAdmin, PropertyResponse, PropertyTypeOptions, PropertyUpdateResponse } from '../models/properties';
+import { IResponse } from '../models/generic';
 
 @Injectable({
   providedIn: 'root'
@@ -54,4 +55,31 @@ export class PropertyService {
   deleteProperty(id: string): Observable<void> {
     return this.httpService.delete<void>(`properties/${id}`);
   }
+
+
+  deleteImage(propertyId: string, imageId: string): Observable<{ success?: boolean; message: string }> {
+    return this.httpService.delete<{ success?: boolean; message: string }>(`admin/properties/${propertyId}/images/${imageId}`);
+  }
+
+  getPropertytypesOptions(): Observable<IResponse<PropertyTypeOptions[]>> {
+    return this.httpService.get<IResponse<PropertyTypeOptions[]>>('property-types/dropdown/options')
+      .pipe(
+        map(response => response)
+      );
+  }
+
+  getPropertyFeatures(): Observable<IResponse<PropertyFeatureAdmin[]>> {
+    return this.httpService.get<IResponse<PropertyFeatureAdmin[]>>('admin/features')
+      .pipe(
+        map(response => response)
+      );
+  }
+
+  getPropertytypesOptions2(): Observable<IResponse<PropertyFeatureAdmin[]>> {
+    return this.httpService.get<IResponse<PropertyFeatureAdmin[]>>('admin/features')
+      .pipe(
+        map(response => response)
+      );
+  }
+
 }

@@ -19,7 +19,11 @@ export class HttpService {
    */
   get<T>(endpoint: string, params?: HttpParams | { [param: string]: string | string[] }): Observable<T> {
     const httpParams = params instanceof HttpParams ? params : new HttpParams({ fromObject: params });
-    return this.http.get<T>(`${this.apiUrl}/${endpoint}`, { params: httpParams })
+    const headers: HttpHeaders = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NDk0NTIyMCwiZXhwIjoxNzU1MDMxNjIwfQ.WSPSx-AHhn_G5Z9gmS7TqKdygOAq63Q5MvldCib1U9U`
+    });
+    return this.http.get<T>(`${this.apiUrl}/${endpoint}`, { params: httpParams, headers })
       .pipe(
         catchError(this.handleError)
       );
@@ -47,7 +51,7 @@ export class HttpService {
   put<T>(endpoint: string, data: any): Observable<T> {
     const headers: HttpHeaders = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NDUxMTUzMSwiZXhwIjoxNzU0NTk3OTMxfQ.jZ4ry1d6OCKYbFj7U04R2g9tfGTstadgqYuls2AUur4` // Assuming token is stored in localStorage
+      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NDk0NTIyMCwiZXhwIjoxNzU1MDMxNjIwfQ.WSPSx-AHhn_G5Z9gmS7TqKdygOAq63Q5MvldCib1U9U`
     });
     return this.http.put<T>(`${this.apiUrl}/${endpoint}`, data, { headers })
       .pipe(

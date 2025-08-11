@@ -31,18 +31,17 @@
           <span>Property Category</span>
         </nz-form-label>
         <nz-form-control
-          nzErrorTip="Please select property category"
-        >
-          <nz-select
-            id="category"
-            formControlName="category"
-            nzAllowClear
-            nzPlaceHolder="Select a category for this property"
-          >
-            <nz-option nzValue="cat1" nzLabel="Category 1"></nz-option>
-            <nz-option nzValue="cat2" nzLabel="Category 2"></nz-option>
-            <nz-option nzValue="cat3" nzLabel="Category 3"></nz-option>
-          </nz-select>
+            nzErrorTip="Please select property category">
+            <nz-select
+                id="property_type"
+                formControlName="property_type"
+                nzAllowClear
+                nzPlaceHolder="Select a category for this property"
+                class="basis-2/3">
+                @for(category of propertyTypeOptions; track category.value) {
+                <nz-option [nzValue]="category.value" [nzLabel]="category.name"></nz-option>
+                }
+            </nz-select>
         </nz-form-control>
       </div>
       <div>
@@ -133,18 +132,24 @@
             nzPlacement="bottomRight"
             nzSuffixIcon="dashboard"
             >
-            <nz-option nzCustomContent nzLabel="Tarred Road" nzValue="road">
-                <nz-icon nzType="dashboard" />
-                Tarred Road
+            @for(feature of adminFeatures; track feature.id) {
+            <nz-option [nzValue]="feature" [nzLabel]="feature.name">
+              <ng-template #nzOptionCustomContent>
+                <div class="flex items-center gap-2">
+                  <nz-icon [nzType]="feature.icon" />
+                  {{ feature.name }}
+                </div>
+              </ng-template>
             </nz-option>
-            <nz-option nzCustomContent nzLabel="24/7 Electricity" nzValue="electricity">
+            }
+            <!-- <nz-option nzCustomContent nzLabel="24/7 Electricity" nzValue="electricity">
                 <nz-icon nzType="dashboard" />
                 24/7 Electricity
             </nz-option>
             <nz-option nzCustomContent nzLabel="Fenced Perimeter" nzValue="fence">
                 <nz-icon nzType="eye" />
                 Fenced Perimeter
-            </nz-option>
+            </nz-option> -->
         </nz-select>
         </nz-form-control>
       </div>

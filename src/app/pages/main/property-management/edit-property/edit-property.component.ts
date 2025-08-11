@@ -16,7 +16,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { PropertyService } from 'src/app/core/services/property.service';
-import { Property } from 'src/app/core/models/properties';
+import { Property, PropertyTypeOptions } from 'src/app/core/models/properties';
 
 type EditablePropertyFields = 'name' | 'location' | 'description';
 
@@ -49,8 +49,12 @@ private destroy$ = new Subject<void>();
 editingName = false;
 editingLocation = false;
 editingDescription = false;
+editingCategory = false;
+editingAmenities = false;
+editingImages = false;
 editForm: FormGroup;
-// Define the keys that are allowed to be updated
+isLoading = false;
+propertyTypeOptions: PropertyTypeOptions[] = [];
 
 panels = [
     {
@@ -83,18 +87,45 @@ panels = [
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
+    if (this.id) {
+      this.getPropertyById();
+      this.getPropertyTypeOptions();
+    } else {
+      console.error('Property ID is not provided in the route.');
+    }
+  }
+
+  getPropertyById(): void {
+    this.isLoading = true;
     this.propertyService.getPropertyById(this.id!).subscribe(property => {
         this.property = property;
         console.log('Fetched property:', this.property);
+        this.isLoading = false;
           this.editForm = this.fb.group({
-            category: this.fb.control(this.property?.property_type.name, [Validators.required]),
+            property_type: this.fb.control(this.property?.property_type.name, [Validators.required]),
             name: this.fb.control(this.property?.name, [Validators.required]),
             location: this.fb.control(this.property?.location, [Validators.required]),
             description: this.fb.control(this.property?.description, [Validators.required]),
-            amenities: this.fb.control(this.property?.property_features, [Validators.required]),
+            property_features: this.fb.control(this.property?.property_features, [Validators.required]),
             images: this.fb.control(this.property?.property_images, [Validators.required])
           });
       });
+  }
+
+  getPropertyTypeOptions(): void {
+    this.isLoading
+    this.propertyService.getPropertytypesOptions().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Property Type Options:', response);
+        this.propertyTypeOptions = response.data || [];
+        console.log('Property Type Options:', this.propertyTypeOptions);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching property type options:', error);
+      }
+    });
   }
 
   submit(): void {
@@ -110,41 +141,83 @@ panels = [
     }
   }
 
-  setEditingName(editing: boolean): void {
-    console.log('Editing name:', editing);
-    this.editingName = editing;
-    const updatedValue = this.editForm.get('name')?.value;
-    console.log('Current property name:', this.property?.name);
-    console.log('Form control value:', updatedValue);
-    const isValueChanged: boolean = updatedValue !== this.property?.name;
-    if (!this.editingName && isValueChanged) {
-      this.updateField({name: updatedValue});
-    }
-  }
-
-  setEditingLocation(editing: boolean): void {
-    console.log('Editing location:', editing);
-    this.editingLocation = editing;
-  }
-
-  setEditingDescription(editing: boolean): void {
-    console.log('Editing description:', editing);
-    this.editingDescription = editing;
-  }
-
-
   updateField(field: any): void {
+    console.log('Updating field:', field);
+    this.isLoading = true;
     this.propertyService.updateProperty(this.property!.id, field).subscribe({
       next: (response) => {
         console.log('Property updated successfully:', response);
+        this.isLoading = false;
         // Optionally, you can refresh the property data or show a success message
         this.property = { ...this.property, ...field };
       },
       error: (error) => {
         console.error('Error updating property:', error);
         // Handle error, e.g., show a notification or alert
+        this.isLoading = false;
       }
     });
+  }
+
+  setEditingField(field: 'name' | 'location' | 'description' | 'property_type' | 'property_features' | 'property_images', editing: boolean): void {
+    console.log(`Editing ${field}:`, editing);
+    // Update the corresponding editing property
+    switch (field) {
+      case 'name':
+        this.editingName = editing;
+        break;
+      case 'location':
+        this.editingLocation = editing;
+        break;
+      case 'description':
+        this.editingDescription = editing;
+        break;
+      case 'property_type':
+        this.editingCategory = editing;
+        break;
+      case 'property_features':
+        this.editingAmenities = editing;
+        break;
+    }
+    const updatedValue = this.editForm.get(field)?.value;
+    console.log(`Current property ${field}:`, this.property?.[field]);
+    console.log('Form control value:', updatedValue);
+    const isValueChanged = updatedValue !== this.property?.[field];
+    if (!editing && isValueChanged && updatedValue !== undefined) {
+      this.updateField({ [field]: updatedValue });
+    }
+  }
+
+  removeImage(imageUrl: string): void {
+    this.updatePropertyImages(imageUrl);
+    return console.log('Removing image:', imageUrl);
+    this.propertyService.deleteImage(this.property!.id, imageUrl).subscribe({
+      next: (response) => {
+        console.log('Image removed successfully:', response);
+        // Optionally, you can refresh the property images or show a success message
+        this.updatePropertyImages(imageUrl);
+      },
+      error: (error) => {
+        console.error('Error removing image:', error);
+        // Handle error, e.g., show a notification or alert
+      }
+    });
+  }
+
+  updatePropertyImages(imageUrl: string): void {
+    if (this.property && this.property!.property_images) {
+      this.property!.property_images = this.property!.property_images.filter(img => img.image_url !== imageUrl);
+      // this.updateField({ property_images: this.property!.property_images });
+    }
+  }
+
+  onImageSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+      console.log('Selected file:', file);
+    }
   }
 
   ngOnDestroy(): void {

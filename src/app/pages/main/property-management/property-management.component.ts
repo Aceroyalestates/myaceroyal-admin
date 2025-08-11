@@ -138,6 +138,12 @@ export class PropertyManagementComponent {
       // window.location.href = `/property-management/view/${row.id}`;
     }
 
+    addNewProperty() {
+      console.log('Adding new property');
+      // Navigate to add property page
+      this.router.navigate(['/property-management/add']);
+    }
+
     viewProperty(property: Property) {
       console.log('Viewing property:', property);
       // window.location.href = `/property-management/view/${property.id}`;
