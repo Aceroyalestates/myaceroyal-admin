@@ -38,7 +38,7 @@ import { ImageService } from 'src/app/core/services/image.service';
 export class AddPropertyComponent implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private destroy$ = new Subject<void>();
-  currentStep = 3;
+  currentStep = 0;
   isLoading = false;
   propertyTypeOptions: PropertyTypeOptions[] = [];
   adminFeatures: PropertyFeatureAdmin[] = [];
