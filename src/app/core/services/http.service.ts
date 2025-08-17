@@ -6,10 +6,17 @@ import { catchError, Observable, throwError } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+
 export class HttpService {
   private readonly apiUrl = environment.apiUrl;
+  private readonly defaultHeaders: HttpHeaders;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.defaultHeaders = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NTQ0MDY2NCwiZXhwIjoxNzU1NTI3MDY0fQ.VLYGbED0UB2QAI11lURjOXNn4JGm6o_EzmxXMMD-Z4U`
+    });
+  }
 
   /**
    * Generic GET request
@@ -19,11 +26,7 @@ export class HttpService {
    */
   get<T>(endpoint: string, params?: HttpParams | { [param: string]: string | string[] }): Observable<T> {
     const httpParams = params instanceof HttpParams ? params : new HttpParams({ fromObject: params });
-    const headers: HttpHeaders = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NDk0NTIyMCwiZXhwIjoxNzU1MDMxNjIwfQ.WSPSx-AHhn_G5Z9gmS7TqKdygOAq63Q5MvldCib1U9U`
-    });
-    return this.http.get<T>(`${this.apiUrl}/${endpoint}`, { params: httpParams, headers })
+    return this.http.get<T>(`${this.apiUrl}/${endpoint}`, { params: httpParams, headers: this.defaultHeaders })
       .pipe(
         catchError(this.handleError)
       );
@@ -36,7 +39,8 @@ export class HttpService {
    * @returns Observable of response type T
    */
   post<T>(endpoint: string, data: any): Observable<T> {
-    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, data)
+    
+    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, data, { headers: this.defaultHeaders })
       .pipe(
         catchError(this.handleError)
       );
@@ -49,11 +53,7 @@ export class HttpService {
    * @returns Observable of response type T
    */
   put<T>(endpoint: string, data: any): Observable<T> {
-    const headers: HttpHeaders = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NDk0NTIyMCwiZXhwIjoxNzU1MDMxNjIwfQ.WSPSx-AHhn_G5Z9gmS7TqKdygOAq63Q5MvldCib1U9U`
-    });
-    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, data, { headers })
+    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, data, { headers: this.defaultHeaders })
       .pipe(
         catchError(this.handleError)
       );
@@ -66,7 +66,8 @@ export class HttpService {
    * @returns Observable of response type T
    */
   patch<T>(endpoint: string, data: any): Observable<T> {
-    return this.http.patch<T>(`${this.apiUrl}/${endpoint}`, data)
+    
+    return this.http.patch<T>(`${this.apiUrl}/${endpoint}`, data, { headers: this.defaultHeaders })
       .pipe(
         catchError(this.handleError)
       );

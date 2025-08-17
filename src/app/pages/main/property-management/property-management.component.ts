@@ -134,7 +134,7 @@ export class PropertyManagementComponent {
     onRowClick(row: Property) {
       console.log('Row clicked:', row);
       // Navigate to property details
-      this.router.navigate([`/property-management/view/${row.slug}`, {queryParams: { id: row.id }}]);
+      this.router.navigate([`/property-management/view/${row.slug}`]);
       // window.location.href = `/property-management/view/${row.id}`;
     }
 
@@ -147,7 +147,7 @@ export class PropertyManagementComponent {
     viewProperty(property: Property) {
       console.log('Viewing property:', property);
       // window.location.href = `/property-management/view/${property.id}`;
-      this.router.navigate([`/property-management/view/${property.id}`, ]);
+      this.router.navigate([`/property-management/view/${property.id}`]);
     }
 
     editProperty(property: Property) {

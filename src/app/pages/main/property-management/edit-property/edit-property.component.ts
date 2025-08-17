@@ -16,7 +16,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { PropertyService } from 'src/app/core/services/property.service';
-import { Property, PropertyTypeOptions } from 'src/app/core/models/properties';
+import { Property, PropertyFeatureAdmin, PropertyTypeOptions } from 'src/app/core/models/properties';
 
 type EditablePropertyFields = 'name' | 'location' | 'description';
 
@@ -48,6 +48,7 @@ private fb = inject(NonNullableFormBuilder);
 private destroy$ = new Subject<void>();
 editingName = false;
 editingLocation = false;
+editingAddress = false;
 editingDescription = false;
 editingCategory = false;
 editingAmenities = false;
@@ -55,6 +56,8 @@ editingImages = false;
 editForm: FormGroup;
 isLoading = false;
 propertyTypeOptions: PropertyTypeOptions[] = [];
+adminFeatures: PropertyFeatureAdmin[] = [];
+currentFeatures: number[] = [];
 
 panels = [
     {
@@ -77,19 +80,25 @@ panels = [
       category: this.fb.control(this.property?.property_type.name, [Validators.required]),
       name: this.fb.control(this.property?.name, [Validators.required]),
       location: this.fb.control(this.property?.location, [Validators.required]),
+      address: this.fb.control(this.property?.address, [Validators.required]),
       description: this.fb.control(this.property?.description, [Validators.required]),
       amenities: this.fb.control(this.property?.property_features, [Validators.required]),
       images: this.fb.control(this.property?.property_images, [Validators.required])
     });
+
+    
   }
 
-
+formAmenities = this.fb.group({
+    features: this.fb.control<number[]>(this.currentFeatures, [Validators.required])
+  });
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
     if (this.id) {
       this.getPropertyById();
       this.getPropertyTypeOptions();
+      this.getPropertyAdminFeatures();
     } else {
       console.error('Property ID is not provided in the route.');
     }
@@ -105,10 +114,13 @@ panels = [
             property_type: this.fb.control(this.property?.property_type.name, [Validators.required]),
             name: this.fb.control(this.property?.name, [Validators.required]),
             location: this.fb.control(this.property?.location, [Validators.required]),
+            address: this.fb.control(this.property?.address, [Validators.required]),
             description: this.fb.control(this.property?.description, [Validators.required]),
             property_features: this.fb.control(this.property?.property_features, [Validators.required]),
             images: this.fb.control(this.property?.property_images, [Validators.required])
           });
+
+          property.property_features.forEach(x => this.currentFeatures.push(x.feature_id));
       });
   }
 
@@ -159,7 +171,7 @@ panels = [
     });
   }
 
-  setEditingField(field: 'name' | 'location' | 'description' | 'property_type' | 'property_features' | 'property_images', editing: boolean): void {
+  setEditingField(field: 'name' | 'location' | 'address' | 'description' | 'property_type' | 'property_features' | 'property_images', editing: boolean): void {
     console.log(`Editing ${field}:`, editing);
     // Update the corresponding editing property
     switch (field) {
@@ -168,6 +180,9 @@ panels = [
         break;
       case 'location':
         this.editingLocation = editing;
+        break;
+      case 'address':
+        this.editingAddress = editing;
         break;
       case 'description':
         this.editingDescription = editing;
@@ -218,6 +233,54 @@ panels = [
       formData.append('image', file);
       console.log('Selected file:', file);
     }
+  }
+
+  getPropertyAdminFeatures(): void {
+    this.isLoading = true;
+    this.propertyService.getPropertyFeatures().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Property Features:', response);
+        this.adminFeatures = response.data || [];
+        console.log('Property Features:', this.adminFeatures);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching property features:', error);
+      }
+    });
+  }
+
+  submitFormAmenities(): void {
+    if (this.formAmenities.valid) {
+      console.log('submit', this.formAmenities.value);
+      const data = this.formAmenities.value
+      console.log({ data });
+      this.updateFeatures(data.features ?? []);
+    } else {
+      Object.values(this.formAmenities.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
+
+  updateFeatures(features: number[]): void {
+    this.isLoading = true;
+    console.log('Updating features:', {features});
+    this.propertyService.updateFeatures(this.property!.id, { features }).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Features updated successfully:', response);
+        this.getPropertyById();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error updating features:', error);
+      }
+    });
   }
 
   ngOnDestroy(): void {

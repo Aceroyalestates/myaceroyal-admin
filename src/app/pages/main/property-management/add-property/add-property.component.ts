@@ -12,8 +12,9 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { PropertyFeatureAdmin, PropertyTypeOptions } from 'src/app/core/models/properties';
+import { FeatureRequest, Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions } from 'src/app/core/models/properties';
 import { PropertyService } from 'src/app/core/services/property.service';
+import { ImageService } from 'src/app/core/services/image.service';
 
 @Component({
   selector: 'app-add-property',
@@ -37,10 +38,13 @@ import { PropertyService } from 'src/app/core/services/property.service';
 export class AddPropertyComponent implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private destroy$ = new Subject<void>();
-  currentStep = 1;
+  currentStep = 3;
   isLoading = false;
   propertyTypeOptions: PropertyTypeOptions[] = [];
   adminFeatures: PropertyFeatureAdmin[] = [];
+  propertyTypes: PropertyType[] = [];
+  createdProperty: Property | null = null;
+  uploadedImages: string[] = []
 
   // alphabet(): string[] {
   // const children: string[] = [];
@@ -52,22 +56,23 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
 
   readonly listOfOption: string[] = ['Tarred Road', '24/7 Electricity', 'Fenced Perimeter'];
 
-  constructor(private propertyService: PropertyService) {
+  constructor(private propertyService: PropertyService, private imageService: ImageService) {
   }
 
   formBasic = this.fb.group({
-    property_type: this.fb.control('', [Validators.required]),
+    type_id: this.fb.control(0, [Validators.required]),
     name: this.fb.control('', [Validators.required]),
     location: this.fb.control('', [Validators.required]),
+    address: this.fb.control('', [Validators.required]),
     description: this.fb.control('', [Validators.required])
   });
 
   formAmenities = this.fb.group({
-    amenities: this.fb.control<PropertyFeatureAdmin[]>([], [Validators.required])
+    features: this.fb.control<number[]>([], [Validators.required])
   });
 
   formImages = this.fb.group({
-    images: this.fb.control([], [Validators.required])
+    images: this.fb.control<any[]>([], [Validators.required])
   });
 
   formPaymentPlan = this.fb.group({});
@@ -75,6 +80,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getPropertyTypeOptions();
     this.getPropertyAdminFeatures();
+    this.getPropertyTypes();
   }
 
   ngOnDestroy(): void {
@@ -85,12 +91,28 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   handleChange({ file, fileList }: NzUploadChangeParam): void {
     const status = file.status;
     console.log(file, fileList);
+    if (status !== 'uploading') {
+      console.log(file, fileList);
+    }
+    if (status === 'done') {
+      this.imageService.uploadImage(file.response.data).subscribe({
+        next: (response) => {
+          console.log('Image uploaded successfully:', response);
+          this.uploadedImages.push(response.file.secure_url)
+          // this.formImages.patchValue({ images });
+        },
+        error: (error) => {
+          console.error('Error uploading image:', error);
+        }
+      });
+    }
   }
 
   submitFormBasic(): void {
+    console.log('submit basic form', this.formBasic);
     if (this.formBasic.valid) {
       console.log('submit', this.formBasic.value);
-      this.currentStep = 1;
+      this.createProperty();
     } else {
       Object.values(this.formBasic.controls).forEach((control) => {
         if (control.invalid) {
@@ -104,7 +126,9 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   submitFormAmenities(): void {
     if (this.formAmenities.valid) {
       console.log('submit', this.formAmenities.value);
-      this.currentStep = 2
+      const data = this.formAmenities.value
+      console.log({ data });
+      this.updateFeatures(data.features ?? []);
     } else {
       Object.values(this.formAmenities.controls).forEach((control) => {
         if (control.invalid) {
@@ -143,7 +167,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
 
   getPropertyAdminFeatures(): void {
     this.isLoading = true;
-    this.propertyService.getPropertytypesOptions2().subscribe({
+    this.propertyService.getPropertyFeatures().subscribe({
       next: (response) => {
         this.isLoading = false;
         console.log('Property Features:', response);
@@ -157,9 +181,123 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     });
   }
 
-  handleSelectedFeatures(selected: PropertyFeatureAdmin[]) {
-    this.formAmenities.patchValue({ amenities: selected });
-    console.log('Selected Features:', selected);
+
+  // handleSelectedFeatures(selected: PropertyFeatureAdmin[]) {
+  //   this.formAmenities.patchValue({ features: selected });
+  //   console.log('Selected Features:', selected);
+  // }
+
+  getPropertyTypes() {
+    this.isLoading = true;
+    this.propertyService.getPropertyTypes().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Property Types:', response);
+        this.propertyTypes = response.data || [];
+        console.log('Property Types:', this.propertyTypes);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching property types:', error);
+      }
+    });
+  }
+
+  createProperty() {
+    if (this.formBasic.valid) {
+      this.isLoading = true;
+      const propertyData = this.formBasic.value;
+      this.propertyService.createProperty(propertyData).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          console.log('Property created successfully:', response);
+          // Navigate to the next step or show success message
+          this.createdProperty = response.data!;
+          this.currentStep = 1; // Move to the next step
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error creating property:', error);
+        }
+      });
+    } else {
+      Object.values(this.formBasic.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
+
+  updateFeatures(features: number[]): void {
+    if (this.createdProperty) {
+      this.isLoading = true;
+      console.log('Updating features:', {features});
+      this.propertyService.updateFeatures(this.createdProperty.id, { features }).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          console.log('Features updated successfully:', response);
+          this.currentStep = 2;
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error updating features:', error);
+        }
+      });
+    }
+  }
+
+  updateProperty(property: any): void {
+    console.log('Updating property:', property);
+    if (this.createdProperty) {
+      this.isLoading = true;
+      this.propertyService.updateProperty(this.createdProperty.id, property).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          console.log('Property updated successfully:', response);
+          // Optionally, you can refresh the property data or show a success message
+          this.createdProperty = { ...this.createdProperty, ...response?.data } as Property;
+          this.currentStep = 2;
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error updating property:', error);
+        }
+      });
+    } else {
+      console.warn('No property created to update');
+    }
+  }
+
+  onImageSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      console.log('Selected file:', file);
+      this.isLoading = true;
+      this.imageService.uploadImage(file).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          console.log('Image uploaded successfully: ', response);
+          this.uploadedImages.push(response.file.secure_url);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.log('Error uploading image: ', error);
+        }
+      })
+    } else {
+      console.log('No file selected')
+    }
+  }
+
+  removeImage(imageUrl: string): void {
+    console.log('ImagesUploaded ', this.uploadedImages);
+    // remove from uploaded images
+    this.uploadedImages.filter(x => x != imageUrl);
+    console.log('Images after removing ', this.uploadedImages)
+    return console.log('Removing image:', imageUrl);
+    
   }
 }
   

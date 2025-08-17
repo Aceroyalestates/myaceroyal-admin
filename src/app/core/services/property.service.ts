@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
-import { Property, PropertyFeature, PropertyFeatureAdmin, PropertyResponse, PropertyTypeOptions, PropertyUpdateResponse } from '../models/properties';
+import { FeatureRequest, Property, PropertyCreateRequest, PropertyFeature, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUpdateResponse, UnitType } from '../models/properties';
 import { IResponse } from '../models/generic';
 
 @Injectable({
@@ -31,18 +31,12 @@ export class PropertyService {
       );
   }
 
-  createProperty(property: Partial<Property>): Observable<Property> {
-    return this.httpService.post<{ data: Property }>('properties', property)
-      .pipe(
-        map(response => response.data)
-      );
+  createProperty(property: Partial<PropertyCreateRequest>): Observable<IResponse<Property>> {
+    return this.httpService.post<IResponse<Property>>('admin/properties', property);
   }
 
-  updateProperty(id: string, property: Partial<Property>): Observable<PropertyUpdateResponse> {
-    return this.httpService.put<PropertyUpdateResponse>(`admin/properties/${id}`, property)
-      .pipe(
-        map(response => response)
-      );
+  updateProperty(id: string, property: Partial<PropertyCreateRequest>): Observable<IResponse<Property>> {
+    return this.httpService.put<IResponse<Property>>(`admin/properties/${id}`, property);
   }
 
   patchProperty(id: string, property: Partial<Property>): Observable<Property> {
@@ -75,11 +69,25 @@ export class PropertyService {
       );
   }
 
-  getPropertytypesOptions2(): Observable<IResponse<PropertyFeatureAdmin[]>> {
-    return this.httpService.get<IResponse<PropertyFeatureAdmin[]>>('admin/features')
-      .pipe(
-        map(response => response)
-      );
+  getPropertyTypes(page: number = 1, limit: number = 10, filters?: any): Observable<IResponse<PropertyType[]>> {
+    const params = {
+      page: page.toString(),
+      limit: limit.toString(),
+      ...filters
+    };
+    return this.httpService.get<IResponse<PropertyType[]>>('property-types', params);
+  }
+
+  getUnitTypes(): Observable<IResponse<UnitType[]>> {
+    return this.httpService.get<IResponse<UnitType[]>>('unit-types');
+  }
+
+  updateFeatures(propertyId: string, features: FeatureRequest): Observable<IResponse>{
+    return this.httpService.post<IResponse>(`admin/properties/${propertyId}/features`, features);
+  }
+
+  toggleAvailability(propertyId: string): Observable<IResponse> {
+    return this.httpService.patch<IResponse>(`admin/properties/${propertyId}/toggle-availability`, {});
   }
 
 }
