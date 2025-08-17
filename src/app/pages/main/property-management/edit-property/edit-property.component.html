@@ -8,244 +8,317 @@
         ]"
       ></app-breadcrumb>
     </div>
-    <div
+    <div *ngIf="property"
       class="flex flex-col gap-12 py-5 px-24 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
     >
-    <form nz-form [formGroup]="editForm" (ngSubmit)="submit()">
+      <h3 *ngIf="isLoading">Loading...</h3>
+      <form nz-form [formGroup]="editForm" (ngSubmit)="submit()">
         <div class="flex flex-row justify-between items-center py-5">
-            
-
-            @if(!editingName) {
-                <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
-                    {{ property?.name }}
-                </h2>
-                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingName(true)"></app-icon>
-            } @else {
-                <div class="basis-2/3">
-                    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" [nzNoColon]="true">
-                        <span class="text-xs text-gray-500">Property Name</span>
-                    </nz-form-label>
-                    <nz-form-control
-                    nzErrorTip="Please select property name"
-                    >
-                    <input
-                        nz-input
-                        formControlName="name"
-                        placeholder="Enter Property Name"
-                        id="name"
-                        
-                    />
-                    </nz-form-control>
-                </div>
-                <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingName(false)">Done</button>
-            }
-
-        </div>
-
-      <div class="flex justify-center items-center gap-6 py-5">
-        <div class="grid grid-cols-3  justify-center items-center gap-6">
-        @for(img of property?.property_images; track img.image_url) {
-          <img
-              src="{{img.image_url}}"
-              alt="property image"
-              class="w-full h-full rounded-lg object-cover hover:scale-105 transition-transform duration-200"
-          />
-        }
-      </div>
-        <app-icon class="!text-white !text-sm absolute pointer" name="edit"></app-icon>
-      </div>
-      <div class="flex flex-col gap-5 w-full">
-        
-        <div class="flex flex-col justify-center gap-y-8 w-full">
-        <div class="w-full">
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="category" [nzNoColon]="true">
-            <span>Property Category</span>
-            </nz-form-label>
-            <nz-form-control
-            nzErrorTip="Please select property category"
-            >
-            <div class="flex justify-between">
-                <nz-select
-                    id="category"
-                    formControlName="category"
-                    nzAllowClear
-                    nzPlaceHolder="Select a category for this property"
-                    class="basis-2/3"
-                >
-                    <nz-option nzValue="cat1" nzLabel="Category 1"></nz-option>
-                    <nz-option nzValue="cat2" nzLabel="Category 2"></nz-option>
-                    <nz-option nzValue="cat3" nzLabel="Category 3"></nz-option>
-                </nz-select>
-                <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-            </div>
-            </nz-form-control>
-        </div>
-        <!-- <div>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" [nzNoColon]="true">
-            <span>Property Name</span>
-            </nz-form-label>
-            <nz-form-control
-            nzErrorTip="Please enter property name!"
-            >
-            <input
-                nz-input
-                id="name"
-                placeholder="Enter property name"
-                formControlName="name"
-            />
-            </nz-form-control>
-        </div> -->
-        <div class="flex flex-row justify-between items-center py-5">
-            @if(!editingLocation) {
-                <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
-                    {{ property?.location }}
-                </h2>
-                <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingLocation(true)"></app-icon>
-            } @else {
-                <div class="basis-2/3">
-                <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="location" [nzNoColon]="true">
-                Property Location
-                </nz-form-label
-                >
-                <nz-form-control
-                nzErrorTip="Please enter property location"
-                >
+          @if(!editingName) {
+            <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+              {{ property?.name }}
+            </h2>
+            <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('name', true)"></app-icon>
+          } @else {
+            <div class="basis-2/3">
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" [nzNoColon]="true">
+                <span class="text-xs text-gray-500">Property Name</span>
+              </nz-form-label>
+              <nz-form-control nzErrorTip="Please select property name">
                 <input
-                    nz-input
-                    formControlName="location"
-                    placeholder="Enter Property location"
-                    id="location"
+                  nz-input
+                  formControlName="name"
+                  placeholder="Enter Property Name"
+                  id="name"
                 />
-                </nz-form-control>
-                </div>
-                <button class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer" (click)="setEditingLocation(false)">Done</button>
-                
+              </nz-form-control>
+            </div>
+            <button 
+                class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+                (click)="setEditingField('name', false)" 
+                [disabled]="isLoading"
+            >Done</button>
+          }
+        </div>
+
+        <div class="flex items-center gap-6 py-5">
+          <div class="grid grid-cols-3 items-center gap-6">
+            @for(img of property?.property_images; track img.image_url) {
+              <div class="relative">
+                <img
+                  src="{{img.image_url}}"
+                  alt="property image"
+                  class="w-full h-full rounded-lg object-cover hover:scale-105 transition-transform duration-200 hover:brightness-50"
+                />
+                <app-icon class="!text-white !text-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-150 hover:!text-red-500" name="trash" (click)="removeImage(img.image_url)"></app-icon>
+              </div>
             }
-        </div>
-
-        <div>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="description" [nzNoColon]="true">
-                Property Description
-            </nz-form-label
-            >
-            <nz-form-control
-            nzErrorTip="Please enter property description"
-            >
-            <div class="flex justify-between">
-            <textarea
-                nz-input
-                formControlName="description"
-                placeholder="Enter Property description"
-                id="description"
-                rows="4"
-                class="basis-2/3"
-            ></textarea>
-            <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
+            <div class="relative flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300 w-full aspect-square rounded-lg hover:bg-gray-100 !p-12">
+              <input
+                type="file"
+                id="fileInput"
+                (change)="onImageSelected($event)"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                [disabled]="!isLoading"
+              />
+              <label for="fileInput" class="block px-4 py-2 bg-primary text-white rounded cursor-pointer">
+                Upload Image
+              </label>
             </div>
-            </nz-form-control>
-        </div>
-                
-        </div>
-
-        <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Amenities</p>
-          
-          <div class="flex justify-between">
-            <div class="flex gap-4 basis-2/3 flex-wrap">
-                @for(am of ['Tarred Road','24/7 Electricity','Fenced Perimeter']; track am) {
-                    <div class="flex bg-tertiary items-center gap-2 bg-gray-100 p-2 rounded">
-                        <app-icon class="!text-primary text-[10px]" name="power"></app-icon>
-                        <h2 class="!text-[#4F4F4F] text-normal font-medium text-[16px] !mb-0">
-                            {{am}}
-                        </h2>
-                    </div>
-                }
-            </div>
-            <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
           </div>
-
         </div>
+        <div class="flex flex-col gap-5 w-full">
+          <div class="flex flex-col justify-center gap-y-8 w-full">
+            <div class="w-full">
+              <p class="!text-[#7A7A7A] !text-sm !font-semibold">Property Category</p>
+              <div class="flex flex-row justify-between items-center">
+                @if(!editingCategory) {
+                  <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+                    {{ property?.property_type?.name }} Property
+                  </h2>
+                  <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('property_type', true)"></app-icon>
+                } @else {
+                  <div class="basis-2/3">
+                    <nz-form-control nzErrorTip="Please select property category">
+                      <nz-select
+                        id="property_type"
+                        formControlName="property_type"
+                        nzAllowClear
+                        nzPlaceHolder="Select a category for this property"
+                        class="basis-2/3"
+                      >
+                        @for(category of propertyTypeOptions; track category.value) {
+                          <nz-option [nzValue]="category.value" [nzLabel]="category.name"></nz-option>
+                        }
+                      </nz-select>
+                    </nz-form-control>
+                  </div>
+                 
+                  <button 
+                    class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+                    (click)="setEditingField('property_type', false)"
+                    [disabled]="isLoading"
+                    >Done</button>
+                }
+              </div>
+            </div>
+            <div class="">
+              <p class="!text-[#7A7A7A] !text-sm !font-semibold">Property Location</p>
+              <div class="flex flex-row justify-between items-center">
+                @if(!editingLocation) {
+                  <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+                    {{ property?.location }}
+                  </h2>
+                  <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('location', true)"></app-icon>
+                } @else {
+                  <div class="basis-2/3">
+                    <nz-form-control nzErrorTip="Please enter property location">
+                      <input
+                        nz-input
+                        formControlName="location"
+                        placeholder="Enter Property location"
+                        id="location"
+                      />
+                    </nz-form-control>
+                  </div>
+                  
+                  <button 
+                    class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+                    (click)="setEditingField('location', false)"
+                    [disabled]="isLoading"
+                    >Done</button>
+                }
+              </div>
+            </div>
+            <div class="">
+              <p class="!text-[#7A7A7A] !text-sm !font-semibold">Property Address</p>
+              <div class="flex flex-row justify-between items-center">
+                @if(!editingAddress) {
+                  <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+                    {{ property?.address }}
+                  </h2>
+                  <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('address', true)"></app-icon>
+                } @else {
+                  <div class="basis-2/3">
+                    <nz-form-control nzErrorTip="Please enter property address">
+                      <input
+                        nz-input
+                        formControlName="address"
+                        placeholder="Enter Property address"
+                        id="address"
+                      />
+                    </nz-form-control>
+                  </div>
+                  
+                  <button 
+                    class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+                    (click)="setEditingField('address', false)"
+                    [disabled]="isLoading"
+                    >Done</button>
+                }
+              </div>
+            </div>
+            <div>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="description" [nzNoColon]="true" class="!text-gray-400 !text-sm !mb-2">
+                Property Description
+              </nz-form-label>
+              <nz-form-control nzErrorTip="Please enter property description">
+                <div class="flex justify-between w-full gap-4">
+                  @if(!editingDescription) {
+                    <p class="!text-[#4F4F4F] text-normal font-medium !mb-0 !pb-0">
+                      {{ property?.description }}
+                    </p>
+                    <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('description', true)"></app-icon>
+                  } @else {
+                    <textarea
+                      nz-input
+                      formControlName="description"
+                      placeholder="Enter Property Description"
+                      id="description"
+                      class="basis-2/3 h-24 resize-none"
+                    ></textarea>
+                    
+                    <button 
+                        class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+                        (click)="setEditingField('description', false)"
+                        [disabled]="isLoading"
+                    >Done</button>
+                  }
+                </div>
+              </nz-form-control>
+            </div>
+          </div>
+        </div>
+      </form>
+      <!-- Second form starts here, outside the first form -->
+      <form nz-form [formGroup]="formAmenities" (ngSubmit)="submitFormAmenities()">
+        <div class="w-full">
+          <p class="!text-[#7A7A7A] !text-sm !font-semibold">Amenities</p>
+          <div class="flex flex-row justify-between items-center">
+            @if(!editingAmenities) {
+              <div class="flex gap-4 basis-4/5 flex-wrap">
+                @for(am of property?.property_features; track am) {
+                  <div class="flex bg-tertiary items-center gap-2 bg-gray-100 p-2 rounded">
+                    <app-icon class="!text-primary text-[10px]" name="power"></app-icon>
+                    <h2 class="!text-[#4F4F4F] text-normal font-medium text-[16px] !mb-0">
+                      {{ am?.feature?.name }}
+                    </h2>
+                  </div>
+                }
+              </div>
+              <app-icon 
+                class="!text-primary !text-sm cursor-pointer" 
+                name="edit" 
+                (click)="setEditingField('property_features', true)"
+                ></app-icon>
+            } @else {
+              <div class="basis-4/5">
+                <nz-form-control nzErrorTip="Please select property category">
+                  <nz-select
+                    id="property_features"
+                    formControlName="features"
+                    nzAllowClear
+                    nzPlaceHolder="Select features for this property"
+                    class="basis-4/5"
+                    nzMode="multiple"
+                  >
+                    <!-- @for(pf of adminFeatures; track pf.id) {
+                      <nz-option [nzValue]="pf.id" [nzLabel]="pf.name"></nz-option>
+                    } -->
+                      @for(feature of adminFeatures; track feature.id) {
+                        <nz-option [nzValue]="feature.id" [nzLabel]="feature.name">
+                        <ng-template #nzOptionCustomContent>
+                            <div class="flex items-center gap-2">
+                            <nz-icon [nzType]="feature.icon" />
+                            {{ feature.name }}
+                            </div>
+                        </ng-template>
+                        </nz-option>
+                    }
+                  </nz-select>
+                </nz-form-control>
+              </div>
+              <button 
+                class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+                (click)="setEditingField('property_features', false)"
+                [disabled]="isLoading"
+                >Done</button>
+            }
+          </div>
+        </div>
+      </form>
 
-        <div class="flex flex-col">
-            <div class="flex justify-between items-center mt-4">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">Unit</p>
-            <p class="!text-[#7A7A7A] !text-primary !mb-2">+  Add Unit</p>
+      <div class="flex flex-col">
+        <div class="flex justify-between items-center mt-4">
+          <p class="!text-[#7A7A7A] !text-medium !mb-2">Unit</p>
+          <p class="!text-[#7A7A7A] !text-primary !mb-2">+ Add Unit</p>
         </div>
         <div class="flex">
-            <nz-collapse class="w-full" [nzExpandIconPosition]="'end'">
-                @for (panel of panels; track panel) {
-                    <nz-collapse-panel [nzHeader]="panel.name" [nzActive]="panel.active" [nzShowArrow]="panel.arrow">
-                        <div class="flex flex-col gap-4">
-                            <div class="flex justify-between items-center">
-                                <div class="flex flex-col">
-                                    <p class="!text-[#7A7A7A] !text-medium !mb-2">Unit Type</p>
-                                    <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
-                                        {{ panel.name }}
-                                    </h5>
-                                </div>
-                                <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-                            </div>
-
-                            <div class="flex justify-between items-center">
-                                <div class="flex flex-col">
-                                    <p class="!text-[#7A7A7A] !text-medium !mb-2">Amount</p>
-                                    <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
-                                        {{ '50000' | currency: 'NGN' }}
-                                    </h5>
-                                </div>
-                                <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-                            </div>
-
-                            <div class="flex justify-between items-center">
-                                <div class="flex flex-col">
-                                    <p class="!text-[#7A7A7A] !text-medium !mb-2">Installment Type</p>
-                                    <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
-                                        3 Month Installment
-                                    </h5>
-                                </div>
-                                <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-                            </div>
-
-                            <div class="flex justify-between items-center">
-                                <div class="flex flex-col">
-                                    <p class="!text-[#7A7A7A] !text-medium !mb-2">Initial Amount</p>
-                                    <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
-                                        {{ '30000' | currency: 'NGN' }}
-                                    </h5>
-                                </div>
-                                <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-                            </div>
-
-                            <div class="flex justify-between items-center">
-                                <div class="flex flex-col">
-                                    <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Amount</p>
-                                    <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
-                                        {{ '50000' | currency: 'NGN' }}
-                                    </h5>
-                                </div>
-                                <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-                            </div>
-                            <p class="!text-[#7A7A7A] !text-primary !mb-2">+  Add Installment</p>
-                        </div>
-                    </nz-collapse-panel>
-                }
-            </nz-collapse>
+          <nz-collapse class="w-full" [nzExpandIconPosition]="'end'">
+            @for (panel of panels; track panel) {
+              <nz-collapse-panel [nzHeader]="panel.name" [nzActive]="panel.active" [nzShowArrow]="panel.arrow">
+                <div class="flex flex-col gap-4">
+                  <div class="flex justify-between items-center">
+                    <div class="flex flex-col">
+                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Unit Type</p>
+                      <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
+                        {{ panel.name }}
+                      </h5>
+                    </div>
+                    <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <div class="flex flex-col">
+                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Amount</p>
+                      <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
+                        {{ '50000' | currency: 'NGN' }}
+                      </h5>
+                    </div>
+                    <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <div class="flex flex-col">
+                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Installment Type</p>
+                      <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
+                        3 Month Installment
+                      </h5>
+                    </div>
+                    <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <div class="flex flex-col">
+                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Initial Amount</p>
+                      <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
+                        {{ '30000' | currency: 'NGN' }}
+                      </h5>
+                    </div>
+                    <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <div class="flex flex-col">
+                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Amount</p>
+                      <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
+                        {{ '50000' | currency: 'NGN' }}
+                      </h5>
+                    </div>
+                    <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
+                  </div>
+                  <p class="!text-[#7A7A7A] !text-primary !mb-2">+ Add Installment</p>
+                </div>
+              </nz-collapse-panel>
+            }
+          </nz-collapse>
         </div>
-        </div>
-        
       </div>
-        <div class="flex items-center justify-end gap-6 my-12">
+
+      <div class="flex items-center justify-end gap-6 my-12">
         <button
-            type="submit"
-            class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+          type="submit"
+          class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
         >
-            Save Property
+          Save Property
         </button>
-        </div>
-
-  </form>
+      </div>
     </div>
-
   </div>
- 
 </main>

@@ -25,10 +25,6 @@ export interface Property {
   property_features: PropertyFeature[];
 }
 
-export interface PropertyType {
-  name: string;
-}
-
 export interface PropertyImage {
   image_url: string;
   is_cover: boolean | null;
@@ -37,17 +33,10 @@ export interface PropertyImage {
 export interface PropertyUnit {
   id: number;
   name: string | null;
-  unit_type_id: number;
   price: string;
-  total_units: number;
-  units_sold: number;
-  is_sold_out: boolean;
+  is_available: boolean;
   unit_type: UnitType;
   property_installment_plans: PropertyInstallmentPlan[];
-}
-
-export interface UnitType {
-  name: string;
 }
 
 export interface PropertyInstallmentPlan {
@@ -74,4 +63,65 @@ export interface PropertyFeature {
 export interface PropertyUpdateResponse {
   message: string;
   property: Property;
+}
+
+export interface PropertyTypeOptions {
+  value: number;
+  label: string;
+  name: string;
+}
+
+export interface PropertyType {
+    id: number;
+    name: string;
+    label: string | null;
+    deleted_at: string | null;
+    createdAt: string;
+    updatedAt: string;
+    properties: Partial<Property>[];
+}
+
+export interface PropertyFeatureAdmin {
+  id: number;
+  name: string;
+  icon: string;
+}
+
+export interface UnitType {
+  id: number;
+  name: string;
+  type_id: string;
+  label: string | null;
+  default_size: string | null;
+}
+
+export interface PropertyCreateRequest {
+    name: string;
+    description: string;
+    type_id: number;
+    location: string;
+    address?: string;
+    vr_link?: string;
+    property_images?: PropertyImage[];
+    features: number[];
+    property_units?: PropertyUnitCreate[];
+    payment_plans?: InstallmentPlanCreate[];
+}
+
+interface PropertyUnitCreate {
+    unit_type_id: number;
+    price: string;
+    total_units: number;
+}
+
+interface InstallmentPlanCreate {
+    unit_id: string;
+    plan_id: string;
+    initial_amount: string;
+    total_price: string;
+    start_date: string;
+}
+
+export interface FeatureRequest {
+    features: number[];
 }

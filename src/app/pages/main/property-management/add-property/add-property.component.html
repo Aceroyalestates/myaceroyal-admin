@@ -31,18 +31,17 @@
           <span>Property Category</span>
         </nz-form-label>
         <nz-form-control
-          nzErrorTip="Please select property category"
-        >
-          <nz-select
-            id="category"
-            formControlName="category"
-            nzAllowClear
-            nzPlaceHolder="Select a category for this property"
-          >
-            <nz-option nzValue="cat1" nzLabel="Category 1"></nz-option>
-            <nz-option nzValue="cat2" nzLabel="Category 2"></nz-option>
-            <nz-option nzValue="cat3" nzLabel="Category 3"></nz-option>
-          </nz-select>
+            nzErrorTip="Please select property category">
+            <nz-select
+                id="type_id"
+                formControlName="type_id"
+                nzAllowClear
+                nzPlaceHolder="Select a category for this property"
+                class="basis-2/3">
+                @for(category of propertyTypeOptions; track category.value) {
+                <nz-option [nzValue]="category.value" [nzLabel]="category.name"></nz-option>
+                }
+            </nz-select>
         </nz-form-control>
       </div>
       <div>
@@ -78,6 +77,22 @@
       </div>
 
       <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="address" [nzNoColon]="true">
+          <span>Property Address</span>
+        </nz-form-label>
+        <nz-form-control
+          nzErrorTip="Please enter property address!"
+        >
+          <input
+            nz-input
+            id="address"
+            placeholder="Enter property address"
+            formControlName="address"
+          />
+        </nz-form-control>
+      </div>
+
+      <div>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="description" [nzNoColon]="true">
             Property Description
         </nz-form-label
@@ -100,7 +115,8 @@
     <div class="flex items-center justify-end gap-6 my-12">
       <button
         type="submit"
-        class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+        class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
+        [disabled]="isLoading"
       >
         Save & Continue
       </button>
@@ -124,27 +140,33 @@
           nzErrorTip="Please select property amenities"
         >
           <nz-select
-            id="amenities"
+            id="features"
             nzShowSearch 
             nzAllowClear 
             nzPlaceHolder="Select property amenities" 
-            formControlName="amenities"
+            formControlName="features"
             nzMode="multiple"
             nzPlacement="bottomRight"
             nzSuffixIcon="dashboard"
             >
-            <nz-option nzCustomContent nzLabel="Tarred Road" nzValue="road">
-                <nz-icon nzType="dashboard" />
-                Tarred Road
+            @for(feature of adminFeatures; track feature.id) {
+            <nz-option [nzValue]="feature.id" [nzLabel]="feature.name">
+              <ng-template #nzOptionCustomContent>
+                <div class="flex items-center gap-2">
+                  <nz-icon [nzType]="feature.icon" />
+                  {{ feature.name }}
+                </div>
+              </ng-template>
             </nz-option>
-            <nz-option nzCustomContent nzLabel="24/7 Electricity" nzValue="electricity">
+            }
+            <!-- <nz-option nzCustomContent nzLabel="24/7 Electricity" nzValue="electricity">
                 <nz-icon nzType="dashboard" />
                 24/7 Electricity
             </nz-option>
             <nz-option nzCustomContent nzLabel="Fenced Perimeter" nzValue="fence">
                 <nz-icon nzType="eye" />
                 Fenced Perimeter
-            </nz-option>
+            </nz-option> -->
         </nz-select>
         </nz-form-control>
       </div>
@@ -154,10 +176,8 @@
     <div class="flex items-center justify-end gap-6 my-12">
       <button
         type="submit"
-        class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
-      >
-        Save & Continue
-      </button>
+        class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
+        [disabled]="isLoading">Save & Continue</button>
     </div>
   </form>
   </div>
@@ -173,11 +193,10 @@
     </p>
 
     <div class="flex flex-col mt-8">
-        <div class="flex gap-4">
+        <!-- <div class="flex gap-4">
             <nz-upload
             nzType="drag"
-            [nzMultiple]="true"
-            nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+            [nzMultiple]="false"
             (nzChange)="handleChange($event)"
             nzAccept="image/*"
             >
@@ -190,15 +209,40 @@
                     Support for a single or bulk upload.
                 </p>
             </div>
-        </nz-upload>
+            </nz-upload>
+        </div> -->
+        <div class="flex items-center gap-6 py-5">
+        <div class="grid grid-cols-3 items-center gap-6">
+        @for(img of uploadedImages; track img) {
+          <div class="relative">
+            <img
+              src="{{img}}"
+              alt="property image"
+              class="w-full h-full rounded-lg object-cover hover:scale-105 transition-transform duration-200 hover:brightness-50"
+          />
+            <app-icon class="!text-white !text-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-150 hover:!text-red-500" name="trash" (click)="removeImage(img)"></app-icon>
+          </div>
+        }
+        <div class="relative flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300 w-full aspect-square rounded-lg hover:bg-gray-100 !p-12">
+            <input
+                type="file"
+                id="fileInput"
+                (change)="onImageSelected($event)"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+            <label for="fileInput" class="flex justify-center w-fit px-4 py-2 bg-primary text-white rounded cursor-pointer">
+                Upload
+            </label>
+            <!-- <span *ngIf="selectedFileName" class="ml-2 text-gray-600">{{ selectedFileName }}</span> -->
         </div>
+      </div>
+      </div>
         <div class="flex items-center justify-end gap-6 my-12">
-            <button
-                (click)="submitImage()"
-                class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
-            >
-                Save & Continue
-            </button>
+             <button
+                type="submit"
+                class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
+                [disabled]="isLoading || uploadedImages.length < 4">Save & Continue
+              </button>
         </div>
     </div>
     

@@ -16,6 +16,8 @@ export class ViewPropertyComponent {
 id: string = '';
 // properties: Property[] = Properties;
 property: Property | null = null;
+isAvailable = false;
+isLoading = false;
 
 panels = [
     {
@@ -48,6 +50,7 @@ panels = [
         this.property = property;
         console.log('Fetched property:', this.property);
         this.property = property;
+        this.isAvailable = property.is_available;
       });
       console.log({property: this.property})
       if (!this.property) {
@@ -56,7 +59,23 @@ panels = [
     });
   }
 
-  gotoEdit() {
-    this.router.navigateByUrl(`property-management/edit/${this.id}`);
+  gotoEdit(): void {
+    console.log('going to edit ', this.id)
+    this.router.navigate([`property-management/edit/${this.id}`]);
+  }
+
+  toggleAvailability() {
+    console.log({id: this.id});
+    this.isLoading = true
+    this.propertyService.toggleAvailability(this.property!.id).subscribe({
+      next: (response) => {
+        this.isAvailable = response.data.is_available;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error toggling availability: ', error);
+        this.isLoading = false;
+      }
+    });
   }
 }
