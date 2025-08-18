@@ -14,7 +14,7 @@
       class="flex gap-6 py-5 px-7 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
     >
       <img
-        src="images/user.png"
+        [src]="user.avatar || 'images/user.png'"
         alt="user"
         class="w-full max-w-[230px] h-full rounded-lg object-cover"
       />
@@ -51,7 +51,7 @@
             <h2
               class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
             >
-              2
+              {{user.financial_transactions.total_assets ||  '0'}}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
@@ -59,7 +59,7 @@
             <h2
               class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
             >
-              &#8358; 300,000,000
+              &#8358; {{user.financial_transactions.total_purchases ||  '0'}}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
@@ -86,7 +86,7 @@
             <h2
               class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
-              &#8358; 300,000,000
+              &#8358; {{user.financial_transactions.total_assets ||  '0'}}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
@@ -94,7 +94,7 @@
             <h2
               class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
-              &#8358; 20,000,000
+              &#8358; {{user.financial_transactions.outstanding_bills ||  '0'}}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
@@ -104,7 +104,7 @@
             <h2
               class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
-              4
+              {{user.financial_transactions.number_of_installments ||  '0'}}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
@@ -114,7 +114,7 @@
             <h2
               class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
-              &#8358; 450,000
+              &#8358; {{user.financial_transactions.next_installment_payment ||  '0'}}
             </h2>
           </div>
         </div>

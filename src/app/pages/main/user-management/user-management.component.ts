@@ -7,6 +7,7 @@ import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { User } from 'src/app/core/models/users';
 import { DashboardService } from 'src/app/core/services/dashboard.service';
+import { CustomerService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-user-management',
@@ -71,17 +72,18 @@ export class UserManagementComponent {
 
   selectedPeople = signal<User[]>([]);
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(private customerService: CustomerService) {}
 
   ngOnInit(): void {
     this.loadUsers()
   }
   loadUsers() {
-    this.dashboardService.getUsers(1, PAGE_SIZE, {}).subscribe({
+    this.customerService.getCustomerUsers(1, PAGE_SIZE, {}).subscribe({
       next: (response) => {
         // Preprocess users to add unit_type_name
         this.users = response.data.map(user => ({
           ...user,
+          createdAt: new Date(user.createdAt).toLocaleDateString(),
           is_active: user.is_active === true?"Active":"Inactive"
         }));
         this.loading = false;
