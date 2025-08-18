@@ -17,6 +17,7 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { PropertyService } from 'src/app/core/services/property.service';
 import { Property, PropertyFeatureAdmin, PropertyTypeOptions } from 'src/app/core/models/properties';
+import { ImageService } from 'src/app/core/services/image.service';
 
 type EditablePropertyFields = 'name' | 'location' | 'description';
 
@@ -58,6 +59,7 @@ isLoading = false;
 propertyTypeOptions: PropertyTypeOptions[] = [];
 adminFeatures: PropertyFeatureAdmin[] = [];
 currentFeatures: number[] = [];
+uploadedImages: string[] = []
 
 panels = [
     {
@@ -74,7 +76,8 @@ panels = [
 
   constructor(
     private route: ActivatedRoute, 
-    private propertyService: PropertyService
+    private propertyService: PropertyService,
+    private imageService: ImageService
   ) {
       this.editForm = this.fb.group({
       category: this.fb.control(this.property?.property_type.name, [Validators.required]),
@@ -229,9 +232,22 @@ formAmenities = this.fb.group({
   onImageSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      const formData = new FormData();
-      formData.append('image', file);
       console.log('Selected file:', file);
+      this.isLoading = true;
+      this.imageService.uploadImage(file).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          console.log('Image uploaded successfully: ', response);
+          this.uploadedImages.push(response.file.secure_url);
+          this.getPropertyById(); // Refresh property data to include new image
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.log('Error uploading image: ', error);
+        }
+      })
+    } else {
+      console.log('No file selected')
     }
   }
 

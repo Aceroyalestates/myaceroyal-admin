@@ -9,13 +9,17 @@ import { catchError, Observable, throwError } from 'rxjs';
 
 export class HttpService {
   private readonly apiUrl = environment.apiUrl;
-  private readonly defaultHeaders: HttpHeaders;
+  private defaultHeaders = new HttpHeaders({
+    'Accept': 'application/json',
+    'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NTU0NTg4NiwiZXhwIjoxNzU1NjMyMjg2fQ.gRpC4yWEsfHbmuSm3QojvGpwJs8JYh9swKxKm-oXKzI`
+  });
 
   constructor(private http: HttpClient) {
-    this.defaultHeaders = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NTQ0MDY2NCwiZXhwIjoxNzU1NTI3MDY0fQ.VLYGbED0UB2QAI11lURjOXNn4JGm6o_EzmxXMMD-Z4U`
-    });
+    // this.defaultHeaders = new HttpHeaders({
+    //   // 'Content-Type': 'application/json',
+    //   'Accept': 'application/json',
+    //   'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NTU0NTg4NiwiZXhwIjoxNzU1NjMyMjg2fQ.gRpC4yWEsfHbmuSm3QojvGpwJs8JYh9swKxKm-oXKzI`
+    // });
   }
 
   /**
@@ -38,9 +42,25 @@ export class HttpService {
    * @param data Payload to send
    * @returns Observable of response type T
    */
-  post<T>(endpoint: string, data: any): Observable<T> {
+  // post<T>(endpoint: string, data: any): Observable<T> {
     
-    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, data, { headers: this.defaultHeaders })
+  //   return this.http.post<T>(`${this.apiUrl}/${endpoint}`, data, { headers: this.defaultHeaders })
+  //     .pipe(
+  //       catchError(this.handleError)
+  //     );
+  // }
+
+  post<T>(endpoint: string, data: any): Observable<T> {
+    let headers = this.defaultHeaders;
+
+    // If data is FormData, do not set Content-Type to allow browser to handle it
+    if (data instanceof FormData) {
+      headers = this.defaultHeaders; // Keep Accept and Authorization, but avoid Content-Type conflict
+    } else {
+      headers = this.defaultHeaders.set('Content-Type', 'application/json'); // For JSON payloads
+    }
+
+    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, data, { headers })
       .pipe(
         catchError(this.handleError)
       );
