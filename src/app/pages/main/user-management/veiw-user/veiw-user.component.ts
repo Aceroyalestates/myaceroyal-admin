@@ -13,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { User } from 'src/app/core/models/users';
 import { forkJoin } from 'rxjs';
 import { Property } from 'src/app/core/models/properties';
+import { CustomerService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-veiw-user',
@@ -70,7 +71,7 @@ export class ViewUserComponent implements OnInit {
   selectedPeople = signal<Person[]>([]);
 
   constructor(
-    private dashboardService: DashboardService,
+    private customerService: CustomerService,
     private activatedRoute: ActivatedRoute
   ) {
     // Optional effect to react to selected people changes
@@ -88,14 +89,10 @@ export class ViewUserComponent implements OnInit {
   }
 
   getUser(id: string) {
-    forkJoin([
-      this.dashboardService.getUserById(id),
-      this.dashboardService.getAdminPropertyById(id),
-    ]).subscribe({
-      next: ([user, property]) => {
+    this.customerService.getUserById(id).subscribe({
+      next: (user) => {
         this.loading = false;
         this.user = user;
-        this.properties = property;
       },
       error: (error) => {
         this.loading = false;

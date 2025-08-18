@@ -78,6 +78,7 @@ export class DashboardComponent implements OnInit {
       this.dashboardService.getUsers(1, PAGE_SIZE, {}),
     ]).subscribe({
       next: ([response1, response2]) => {
+        console.log("This is the perperty response", response1);
         this.properties = response1.data;
         this.users = response2.data.map((user) => ({
           ...user,

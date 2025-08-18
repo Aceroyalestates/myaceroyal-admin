@@ -1,9 +1,10 @@
-@if(!loading){<main class="flex flex-col w-full">
+@if(!loading){
+<main class="flex flex-col w-full">
   <div class="flex flex-col mb-10">
     <app-breadcrumb
       [items]="[
         { label: 'Admin Management', url: '/admin-management' },
-        { label: user.full_name}
+        { label: user.full_name }
       ]"
     ></app-breadcrumb>
     <div class="flex items-center justify-end gap-6 my-12">
@@ -22,39 +23,43 @@
         class="w-full max-w-[230px] h-full rounded-lg object-cover"
       />
 
-      <div class="flex flex-wrap items-center justify-between w-11/12 gap-x-16">
+      <div class="flex flex-wrap items-center justify-between w-11/12 max-h-[200px]">
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Full Name</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            {{user.full_name}}
+            {{ user.full_name }}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Email Address</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            {{user.email}}
+            {{ user.email }}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Unique ID</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            {{user.id}}
+            {{ user.id }}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Role(s)</p>
-          <span class="flex gap-2 items-center"
-            ><p
+          <span class="flex gap-2 items-center">
+            @if (user && user.role_id ===1) {
+
+            <p
               class="!px-2 !py-[2px] rounded-full bg-[#34A8531F] !text-[#1FAF38] border border-[#34A85333] font-medium text-center text-medium"
             >
               General Admin
             </p>
+            } @else {
             <p
               class="!px-2 !py-[2px] bg-[#E41C241F] !text-[#E41C24] border border-[#E41C2433] rounded-full font-medium text-center text-medium"
             >
               Finance Admin
-            </p></span
-          >
+            </p>
+            }
+          </span>
         </div>
       </div>
     </div>
@@ -69,8 +74,8 @@
       nzPlaceHolder="Edit Role"
       class="!w-[515px]"
     >
-      <nz-option nzValue="general" nzLabel="General Admin"></nz-option>
-      <nz-option nzValue="finance" nzLabel="Finance Admin"></nz-option>
+      <nz-option [nzValue]="1" nzLabel="General Admin"></nz-option>
+      <nz-option [nzValue]="2" nzLabel="Finance Admin"></nz-option>
     </nz-select>
   </div>
   <div class="flex items-center justify-between mb-10">
@@ -88,17 +93,18 @@
       <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
     </nz-select>
   </div>
-    <app-table
-      [data]="people"
-      [columns]="columns"
-      [actions]="actions"
-      [showSelection]="true"
-      [showPagination]="true"
-      [showSearch]="true"
-      [showFilters]="true"
-      (selectionChange)="onSelectionChange($event)"
-      (actionClick)="onTableAction($event)"
-      (rowClick)="onRowClick($event)"
-      class="w-full"
-    />
-</main>}
+  <app-table
+    [data]="people"
+    [columns]="columns"
+    [actions]="actions"
+    [showSelection]="true"
+    [showPagination]="true"
+    [showSearch]="true"
+    [showFilters]="true"
+    (selectionChange)="onSelectionChange($event)"
+    (actionClick)="onTableAction($event)"
+    (rowClick)="onRowClick($event)"
+    class="w-full"
+  />
+</main>
+}
