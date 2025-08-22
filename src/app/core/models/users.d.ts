@@ -1,4 +1,4 @@
-import { IResponse } from "./generic";
+import { IResponse, Activity } from './generic';
 
 export interface UsersResponse extends IResponse {
   data: User[];
@@ -31,3 +31,6 @@ export interface User {
   };
 }
 
+export interface ActivityLogsResponse extends IResponse {
+  data: Activity[];
+}

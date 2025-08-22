@@ -3,7 +3,7 @@ import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
 import { User, UsersResponse } from '../models/users';
 import { PAGE_SIZE } from '../constants';
-import { Property, PropertyResponse } from '../models/properties';
+import { Role } from '../models/generic';
 
 @Injectable({
   providedIn: 'root',
@@ -30,9 +30,15 @@ export class AdminService {
       .pipe(map((response) => response.data));
   }
 
-  createUser(user: Partial<User>): Observable<User> {
+  addAdmin(user: {
+    full_name: string
+    email: string
+    phone: string
+    password: string
+    role_id: number;
+  }): Observable<User> {
     return this.httpService
-      .post<{ data: User }>('users/admin', user)
+      .post<{ data: User }>('users/admin', {...user})
       .pipe(map((response) => response.data));
   }
 
@@ -42,7 +48,11 @@ export class AdminService {
       .pipe(map((response) => response.data));
   }
 
-  deleteUser(id: string): Observable<void> {
-    return this.httpService.delete<void>(`users/admin/${id}`);
+  suspendAdmin(id: string): Observable<void> {
+    return this.httpService.delete<void>(`/users/admin/${id}/deactivate`);
+  }
+
+  getRoles(): Observable<{ message: string; data: Role[] }> {
+    return this.httpService.get<{ message: string; data: Role[] }>('roles');
   }
 }

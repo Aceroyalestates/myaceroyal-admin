@@ -1,0 +1,35 @@
+<nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Payment Received"
+  (nzOnCancel)="handleCancel()"
+>
+  <div *nzModalContent class="bg-background !rounded-lg px-5">
+    <div class="mb-6 px-2">
+      <h2 class="!mb-2 !text-[#7A7A7A] !text-medium font-medium">
+        <!-- {{ activity.user.full_name }} just made a payment of ₦{{ activity.amount }} -->
+          {{activity.action}} - {{activity.description}}
+      </h2>
+      <p class="!text-[#7A7A7A] !text-medium font-medium">
+    Status: {{activity.user_id}}
+    </p>
+    </div>
+    <p class="!text-[#7A7A7A] !text-medium font-normal !mb-6">
+      Kindly note that we would need to verify and make sure that the cheque has
+      been cleared before this can be referred to as a successful transaction
+    </p>
+    <div>
+      <h2 class="!text-[#7A7A7A] !text-medium font-normal !mb-2">
+        Kindly write the cheque/Bank Draft in the name of
+      </h2>
+      <p class="!text-primary !text-medium font-medium">
+        ACEROYAL ESTATE HOMES LTD.
+      </p>
+    </div>
+  </div>
+  <div *nzModalFooter class="flex justify-end gap-4 pb-5">
+    <button class="py-2 px-8 rounded-lg bg-[#FBFBFB]">Cancel</button>
+    <button class="py-2 px-8 rounded-full !text-background bg-primary">
+      Continue
+    </button>
+  </div>
+</nz-modal>
