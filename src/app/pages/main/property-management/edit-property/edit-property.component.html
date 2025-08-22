@@ -16,7 +16,7 @@
         <div class="flex flex-row justify-between items-center py-5">
           @if(!editingName) {
             <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
-              {{ property?.name }}
+              {{ property.name }}
             </h2>
             <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('name', true)"></app-icon>
           } @else {
@@ -33,9 +33,9 @@
                 />
               </nz-form-control>
             </div>
-            <button 
-                class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
-                (click)="setEditingField('name', false)" 
+            <button
+                class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+                (click)="setEditingField('name', false)"
                 [disabled]="isLoading"
             >Done</button>
           }
@@ -43,7 +43,7 @@
 
         <div class="flex items-center gap-6 py-5">
           <div class="grid grid-cols-3 items-center gap-6">
-            @for(img of property?.property_images; track img.image_url) {
+            @for(img of property.property_images; track img.image_url) {
               <div class="relative">
                 <img
                   src="{{img.image_url}}"
@@ -74,7 +74,7 @@
               <div class="flex flex-row justify-between items-center">
                 @if(!editingCategory) {
                   <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
-                    {{ property?.property_type?.name }} Property
+                    {{ property.property_type.name }} Property
                   </h2>
                   <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('property_type', true)"></app-icon>
                 } @else {
@@ -93,9 +93,9 @@
                       </nz-select>
                     </nz-form-control>
                   </div>
-                 
-                  <button 
-                    class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+
+                  <button
+                    class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                     (click)="setEditingField('property_type', false)"
                     [disabled]="isLoading"
                     >Done</button>
@@ -107,7 +107,7 @@
               <div class="flex flex-row justify-between items-center">
                 @if(!editingLocation) {
                   <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
-                    {{ property?.location }}
+                    {{ property.location }}
                   </h2>
                   <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('location', true)"></app-icon>
                 } @else {
@@ -121,9 +121,9 @@
                       />
                     </nz-form-control>
                   </div>
-                  
-                  <button 
-                    class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+
+                  <button
+                    class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                     (click)="setEditingField('location', false)"
                     [disabled]="isLoading"
                     >Done</button>
@@ -135,7 +135,7 @@
               <div class="flex flex-row justify-between items-center">
                 @if(!editingAddress) {
                   <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
-                    {{ property?.address }}
+                    {{ property.address }}
                   </h2>
                   <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('address', true)"></app-icon>
                 } @else {
@@ -149,9 +149,9 @@
                       />
                     </nz-form-control>
                   </div>
-                  
-                  <button 
-                    class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+
+                  <button
+                    class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                     (click)="setEditingField('address', false)"
                     [disabled]="isLoading"
                     >Done</button>
@@ -166,7 +166,7 @@
                 <div class="flex justify-between w-full gap-4">
                   @if(!editingDescription) {
                     <p class="!text-[#4F4F4F] text-normal font-medium !mb-0 !pb-0">
-                      {{ property?.description }}
+                      {{ property.description }}
                     </p>
                     <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('description', true)"></app-icon>
                   } @else {
@@ -177,9 +177,9 @@
                       id="description"
                       class="basis-2/3 h-24 resize-none"
                     ></textarea>
-                    
-                    <button 
-                        class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+
+                    <button
+                        class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                         (click)="setEditingField('description', false)"
                         [disabled]="isLoading"
                     >Done</button>
@@ -197,18 +197,18 @@
           <div class="flex flex-row justify-between items-center">
             @if(!editingAmenities) {
               <div class="flex gap-4 basis-4/5 flex-wrap">
-                @for(am of property?.property_features; track am) {
+                @for(am of property.property_features; track am) {
                   <div class="flex bg-tertiary items-center gap-2 bg-gray-100 p-2 rounded">
                     <app-icon class="!text-primary text-[10px]" name="power"></app-icon>
                     <h2 class="!text-[#4F4F4F] text-normal font-medium text-[16px] !mb-0">
-                      {{ am?.feature?.name }}
+                      {{ am.feature.name }}
                     </h2>
                   </div>
                 }
               </div>
-              <app-icon 
-                class="!text-primary !text-sm cursor-pointer" 
-                name="edit" 
+              <app-icon
+                class="!text-primary !text-sm cursor-pointer"
+                name="edit"
                 (click)="setEditingField('property_features', true)"
                 ></app-icon>
             } @else {
@@ -238,8 +238,8 @@
                   </nz-select>
                 </nz-form-control>
               </div>
-              <button 
-                class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed" 
+              <button
+                class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                 (click)="setEditingField('property_features', false)"
                 [disabled]="isLoading"
                 >Done</button>
