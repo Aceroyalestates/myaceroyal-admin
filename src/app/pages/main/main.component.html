@@ -1,4 +1,7 @@
 <nz-layout class="app-layout">
+
+<app-loader />
+<app-error-modal />
   <nz-sider
     class="menu-sidebar"
     nzCollapsible
@@ -137,8 +140,6 @@
       <div class="inner-content">
         <router-outlet></router-outlet>
 
-        <app-loader />
-        <app-error-modal />
       </div>
     </nz-content>
   </nz-layout>
