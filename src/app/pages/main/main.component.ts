@@ -19,7 +19,6 @@ import { AuthService } from 'src/app/core/services/auth/auth.service';
     NzMenuModule,
     SharedModule,
     NzMenuModule,
-    LoaderComponent, ErrorModalComponent
   ],
   templateUrl: './main.component.html',
   styleUrl: './main.component.css',
