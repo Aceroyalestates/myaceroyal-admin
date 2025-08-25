@@ -5,12 +5,15 @@ import {
   TableAction,
 } from 'src/app/shared/components/table/table.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { Metrics, People } from 'src/app/core/constants';
+import { Metrics, PAGE_SIZE, People } from 'src/app/core/constants';
 import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { User } from 'src/app/core/models/users';
 import { AdminService } from 'src/app/core/services/admin.service';
+import { DashboardService } from 'src/app/core/services/dashboard.service';
+import { forkJoin } from 'rxjs';
+import { Activity, Role } from 'src/app/core/models/generic';
 
 @Component({
   selector: 'app-admin-details',
@@ -25,53 +28,49 @@ export class AdminDetailsComponent implements OnInit {
 
   lucy!: string;
   role!: string;
+  roles: Role[] = [];
   people: Person[] = People;
   id: string = '';
   user!: User;
+  activities!: Activity[];
 
   columns: TableColumn[] = [
     {
-      key: 'name',
-      title: 'Name',
-      sortable: true,
+      key: 'activity',
+      title: 'Activity',
+      sortable: false,
       type: 'text',
     },
     {
-      key: 'email',
-      title: 'Email',
+      key: 'date',
+      title: 'Date',
       sortable: true,
       type: 'text',
     },
-    {
-      key: 'age',
-      title: 'Age',
-      sortable: true,
-      type: 'text',
-    },
+    // {
+    //   key: 'is_active',
+    //   title: 'Status',
+    //   sortable: true,
+    //   type: 'status',
+    // },
   ];
+  // actions: TableAction[] = [
+  //   {
+  //     key: 'view',
+  //     label: 'View',
+  //     icon: 'eye',
+  //     color: 'red',
+  //     tooltip: 'View details',
+  //   },
+  // ];
 
-  actions: TableAction[] = [
-    {
-      key: 'view',
-      label: 'View',
-      icon: 'eye',
-      color: 'blue',
-      tooltip: 'View details',
-    },
-    {
-      key: 'edit',
-      label: 'Edit',
-      icon: 'edit',
-      color: 'green',
-      tooltip: 'Edit user',
-    },
-  ];
-
-  selectedPeople = signal<Person[]>([]);
+  selectedPeople = signal<Activity[]>([]);
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private dashboardService: DashboardService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -79,14 +78,26 @@ export class AdminDetailsComponent implements OnInit {
     this.activatedRoute.params.subscribe({
       next: (param) => (this.id = param['id']),
     });
-    this.getUser(this.id)
+    this.getUser(this.id);
   }
 
   getUser(id: string) {
-    this.adminService.getUserById(id).subscribe({
-      next: (user) => {
+    this.loading = true;
+    forkJoin([
+      this.adminService.getUserById(id),
+      this.dashboardService.getActivityLogs(1, PAGE_SIZE, {}),
+      this.adminService.getRoles(),
+    ]).subscribe({
+      next: ([user, activities, roles]) => {
         this.loading = false;
         this.user = user;
+        this.activities = activities.data.map((activity) => ({
+          ...activity,
+          activity: activity.action + " - "+ activity.description,
+          date: new Date(activity.createdAt).toLocaleDateString(),
+          // is_active: user.is_active === true ? 'Active' : 'Inactive',
+        }));
+        this.roles = roles.data;
       },
       error: (error) => {
         this.loading = false;
@@ -94,39 +105,28 @@ export class AdminDetailsComponent implements OnInit {
       },
     });
   }
-  onSelectionChange(selected: Person[]) {
+
+  suspendAdmin() {
+    this.loading = true;
+    this.adminService.suspendAdmin(this.id).subscribe({
+      next: () => {
+        this.router.navigate(['/main/admin-management']);
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('An error occured: ', error.message);
+        this.loading = false;
+      },
+    });
+  }
+
+  onSelectionChange(selected: Activity[]) {
     this.selectedPeople.set(selected);
     console.log('Selected people:', this.selectedPeople());
   }
 
-  onTableAction(event: { action: string; row: Person }) {
-    console.log('Table action:', event.action, 'Row:', event.row);
-    switch (event.action) {
-      case 'view':
-        this.viewUser(event.row);
-        break;
-      case 'edit':
-        this.editUser(event.row);
-        break;
-    }
-  }
 
-  onRowClick(row: Person) {
-    // Navigate to user details
-    window.location.href = `/user-management/view/${row.id}/${row.name}`;
-  }
-
-  viewUser(user: Person) {
-    console.log('Viewing user:', user);
-    window.location.href = `/user-management/view/${user.id}/${user.name}`;
-  }
-
-  editUser(user: Person) {
-    console.log('Editing user:', user);
-    // Implement edit functionality
-  }
-
-  handleSelectedData(selected: Person[]) {
+  handleSelectedData(selected: Activity[]) {
     this.selectedPeople.set(selected);
     console.log(this.selectedPeople);
   }

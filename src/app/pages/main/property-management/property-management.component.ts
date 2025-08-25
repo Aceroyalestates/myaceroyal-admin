@@ -23,20 +23,20 @@ export class PropertyManagementComponent {
 
   properties: Property[] = [];
   columns: TableColumn[] = [
-      { 
-        key: 'name', 
+      {
+        key: 'name',
         title: 'Property Name',
         sortable: true,
         type: 'text'
       },
-      { 
-        key: 'location', 
+      {
+        key: 'location',
         title: 'Location',
         sortable: true,
         type: 'text'
       },
-      { 
-        key: 'property_type.name', 
+      {
+        key: 'property_type.name',
         title: 'Property Type',
         sortable: true,
         filterable: true,
@@ -48,7 +48,7 @@ export class PropertyManagementComponent {
           { label: 'Office', value: 'Office' }
         ]
       },
-      { 
+      {
         key: 'unit_type_name',
         title: 'Unit Type',
         sortable: true,
@@ -61,14 +61,14 @@ export class PropertyManagementComponent {
           { label: 'Studio', value: 'Studio' }
         ]
       },
-      { 
-        key: 'quantity', 
+      {
+        key: 'quantity',
         title: 'Listings',
         sortable: true,
         type: 'text'
       },
-      { 
-        key: 'unit_price', 
+      {
+        key: 'unit_price',
         title: 'Unit Price',
         sortable: true,
         type: 'text',
@@ -102,7 +102,7 @@ export class PropertyManagementComponent {
     selectedproperty = signal<Property[]>([]);
 
     constructor(
-      private propertyService: PropertyService, 
+      private propertyService: PropertyService,
       private router: Router
     ) {
       effect(() => {
@@ -134,20 +134,20 @@ export class PropertyManagementComponent {
     onRowClick(row: Property) {
       console.log('Row clicked:', row);
       // Navigate to property details
-      this.router.navigate([`/property-management/view/${row.slug}`]);
+      this.router.navigate([`/main/property-management/view/${row.slug}`]);
       // window.location.href = `/property-management/view/${row.id}`;
     }
 
     addNewProperty() {
       console.log('Adding new property');
       // Navigate to add property page
-      this.router.navigate(['/property-management/add']);
+      this.router.navigate(['/main/property-management/add']);
     }
 
     viewProperty(property: Property) {
       console.log('Viewing property:', property);
       // window.location.href = `/property-management/view/${property.id}`;
-      this.router.navigate([`/property-management/view/${property.id}`]);
+      this.router.navigate([`/main/property-management/view/${property.id}`]);
     }
 
     editProperty(property: Property) {

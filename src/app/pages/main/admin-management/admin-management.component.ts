@@ -119,13 +119,13 @@ export class AdminManagementComponent implements OnInit {
 
   onRowClick(row: User) {
     // Navigate to details page
-    window.location.href = `/admin-management/details/${row.id}`;
+    window.location.href = `/main/admin-management/details/${row.id}`;
   }
 
   viewAdmin(admin: User) {
     console.log('Viewing admin:', admin);
     // Navigate to details page
-    window.location.href = `/admin-management/details/${admin.id}`;
+    window.location.href = `/main/admin-management/details/${admin.id}`;
   }
 
   editAdmin(admin: User) {

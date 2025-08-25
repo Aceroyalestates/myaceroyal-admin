@@ -12,3 +12,37 @@ export interface Pagination {
   limit: number;
   pages: number;
 }
+
+export interface Activity {
+  id: number;
+  user_id: string;
+  role_id: number;
+  action: string;
+  description: string;
+  entity_type: string;
+  entity_id: string;
+  ip_address: string;
+  user_agent: string;
+  metadata: {
+    plan_id: number;
+    quantity: number;
+    amount_paid: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+  user: {
+    email: string;
+    id: string;
+    full_name: string;
+    role_id: number;
+    role: {
+      name: string;
+    };
+  };
+}
+
+export interface Role {
+  value: number;
+  label: string;
+  name: string;
+}
