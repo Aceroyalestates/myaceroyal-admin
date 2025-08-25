@@ -2,7 +2,7 @@
   <div class="flex flex-col mb-10">
     <app-breadcrumb
       [items]="[
-        { label: 'Property Management', url: '/property-management' },
+        { label: 'Property Management', url: '/main/property-management' },
         { label: 'Add New Property' }
       ]"
     ></app-breadcrumb>
@@ -109,7 +109,7 @@
           ></textarea>
         </nz-form-control>
       </div>
-            
+
     </div>
 
     <div class="flex items-center justify-end gap-6 my-12">
@@ -141,9 +141,9 @@
         >
           <nz-select
             id="features"
-            nzShowSearch 
-            nzAllowClear 
-            nzPlaceHolder="Select property amenities" 
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="Select property amenities"
             formControlName="features"
             nzMode="multiple"
             nzPlacement="bottomRight"
@@ -170,7 +170,7 @@
         </nz-select>
         </nz-form-control>
       </div>
-            
+
     </div>
 
     <div class="flex items-center justify-end gap-6 my-12">
@@ -248,7 +248,7 @@
               </button>
         </div>
     </div>
-    
+
   </div>
   }
 
@@ -263,7 +263,7 @@
         </p>
 
         <div class="flex flex-col mt-8">
-            <button 
+            <button
               class="flex justify-end !text-primary"
               (click)="addUnitType()"
               >+  Add Unit</button>
@@ -380,11 +380,11 @@
                 </button>
             </div>
         </div>
-        
+
       </div>
     </form>
-    
+
   }
  </div>
-  
+
 </main>

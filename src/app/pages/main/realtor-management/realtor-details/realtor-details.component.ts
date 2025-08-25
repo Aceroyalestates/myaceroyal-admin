@@ -111,12 +111,12 @@ export class RealtorDetailsComponent {
 
   onRowClick(row: Person) {
     // Navigate to user details
-    window.location.href = `/user-management/view/${row.id}/${row.name}`;
+    window.location.href = `/main/user-management/view/${row.id}/${row.name}`;
   }
 
   viewUser(user: Person) {
     console.log('Viewing user:', user);
-    window.location.href = `/user-management/view/${user.id}/${user.name}`;
+    window.location.href = `/main/user-management/view/${user.id}/${user.name}`;
   }
 
   editUser(user: Person) {

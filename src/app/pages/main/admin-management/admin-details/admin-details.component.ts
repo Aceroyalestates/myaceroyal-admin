@@ -110,7 +110,7 @@ export class AdminDetailsComponent implements OnInit {
     this.loading = true;
     this.adminService.suspendAdmin(this.id).subscribe({
       next: () => {
-        this.router.navigate(['/admin-management']);
+        this.router.navigate(['/main/admin-management']);
         this.loading = false;
       },
       error: (error) => {

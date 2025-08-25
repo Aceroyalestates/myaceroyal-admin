@@ -132,12 +132,12 @@ export class RealtorManagementComponent {
 
   onRowClick(row: User) {
     // Navigate to realtor details
-    window.location.href = `/realtor-management/details/${row.id}`;
+    window.location.href = `/main/realtor-management/details/${row.id}`;
   }
 
   viewRealtor(realtor: User) {
     console.log('Viewing realtor:', realtor);
-    window.location.href = `/realtor-management/details/${realtor.id}`;
+    window.location.href = `/main/realtor-management/details/${realtor.id}`;
   }
 
   editRealtor(realtor: User) {

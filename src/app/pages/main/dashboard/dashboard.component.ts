@@ -124,7 +124,7 @@ export class DashboardComponent implements OnInit {
   }
     onRowClick(row: Activity) {
       // Navigate to user details
-      window.location.href = `/user-management/view/${row.id}/${row.user.full_name}`;
+      window.location.href = `/main/user-management/view/${row.id}/${row.user.full_name}`;
     }
 
     viewUser(activity: Activity) {

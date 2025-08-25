@@ -119,12 +119,12 @@ export class UserManagementComponent {
   }
 
   onRowClick(row: User) {
-    window.location.href = `/user-management/view/${row.id}`;
+    window.location.href = `/main/user-management/view/${row.id}`;
   }
 
   viewUser(user: User) {
     console.log('Viewing user:', user);
-    window.location.href = `/user-management/view/${user.id}`;
+    window.location.href = `/main/user-management/view/${user.id}`;
   }
 
   editUser(user: User) {

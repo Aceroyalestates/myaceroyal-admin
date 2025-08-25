@@ -18,7 +18,8 @@ export class ViewUserPropertyComponent {
   lucy!: string;
   people: Person[] = People;
   paymentSchedules = PaymentSchedules;
-  getRowLink = (row: Person) => `/user-management/view/${row.id}/${row.name}`;
+  getRowLink = (row: Person) =>
+    `/main/user-management/view/${row.id}/${row.name}`;
   columns: ColumnDef<Person>[] = [
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'email', header: 'Email' },
