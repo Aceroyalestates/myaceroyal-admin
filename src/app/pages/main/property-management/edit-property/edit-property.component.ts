@@ -4,7 +4,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
-import { NonNullableFormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { NonNullableFormBuilder, Validators, ReactiveFormsModule, FormGroup, FormArray } from '@angular/forms';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -16,10 +16,9 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { PropertyService } from 'src/app/core/services/property.service';
-import { Property, PropertyFeatureAdmin, PropertyTypeOptions } from 'src/app/core/models/properties';
+import { Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions, PropertyUnitRequest } from 'src/app/core/models/properties';
 import { ImageService } from 'src/app/core/services/image.service';
 
-type EditablePropertyFields = 'name' | 'location' | 'description';
 
 @Component({
   selector: 'app-edit-property',
@@ -55,11 +54,14 @@ editingCategory = false;
 editingAmenities = false;
 editingImages = false;
 editForm: FormGroup;
+unitTypeForm: FormGroup;
 isLoading = false;
 propertyTypeOptions: PropertyTypeOptions[] = [];
 adminFeatures: PropertyFeatureAdmin[] = [];
 currentFeatures: number[] = [];
-uploadedImages: string[] = []
+uploadedImages: string[] = [];
+propertyTypes: PropertyType[] = [];
+unitTypesOptions: any[] = [];
 
 panels = [
     {
@@ -89,6 +91,9 @@ panels = [
       images: this.fb.control(this.property?.property_images, [Validators.required])
     });
 
+    this.unitTypeForm = this.fb.group({
+      unit_types: this.fb.array([])
+    });
     
   }
 
@@ -96,15 +101,43 @@ formAmenities = this.fb.group({
     features: this.fb.control<number[]>(this.currentFeatures, [Validators.required])
   });
 
-  ngOnInit(): void {
+  unitForm = this.fb.group({
+    unit_type_id: this.fb.control(this.property?.property_units[0].id, [Validators.required]),
+    price: this.fb.control(this.property?.property_units[0].price, [Validators.required]),
+    total_units: this.fb.control(this.property?.property_units.length, [Validators.required]),
+  });
+
+ ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
     if (this.id) {
       this.getPropertyById();
       this.getPropertyTypeOptions();
       this.getPropertyAdminFeatures();
+      this.getPropertyTypes();
+      this.getUnitTypes();
     } else {
       console.error('Property ID is not provided in the route.');
     }
+    this.addUnitType();
+  }
+
+  // Getter for the unit_types FormArray
+  get unitTypes(): FormArray {
+    return this.unitTypeForm.get('unit_types') as FormArray;
+  }
+
+  // Create a new unit type form group
+  createUnitType(): FormGroup {
+    return this.fb.group({
+      unit_type_id: ['', [Validators.required]],
+      price: ['', [Validators.required, Validators.min(0)]],
+      total_units: ['', [Validators.required, Validators.min(1)]]
+    });
+  }
+
+  // Add a new unit type to the FormArray
+  addUnitType(): void {
+    this.unitTypes.push(this.createUnitType());
   }
 
   getPropertyById(): void {
@@ -124,6 +157,9 @@ formAmenities = this.fb.group({
           });
 
           property.property_features.forEach(x => this.currentFeatures.push(x.feature_id));
+          this.uploadedImages = [];
+          property.property_images.forEach(x => this.uploadedImages.push(x.image_url));
+          console.log({uploadedImages: this.uploadedImages})
       });
   }
 
@@ -206,20 +242,20 @@ formAmenities = this.fb.group({
     }
   }
 
-  removeImage(imageUrl: string): void {
-    this.updatePropertyImages(imageUrl);
-    return console.log('Removing image:', imageUrl);
-    this.propertyService.deleteImage(this.property!.id, imageUrl).subscribe({
-      next: (response) => {
-        console.log('Image removed successfully:', response);
-        // Optionally, you can refresh the property images or show a success message
-        this.updatePropertyImages(imageUrl);
-      },
-      error: (error) => {
-        console.error('Error removing image:', error);
-        // Handle error, e.g., show a notification or alert
-      }
-    });
+  removeImage(imageId: number): void {
+    this.removeImageFromProperty(imageId);
+    return console.log('Removing image:', imageId);
+    // this.propertyService.deleteImage(this.property!.id, imageId).subscribe({
+    //   next: (response) => {
+    //     console.log('Image removed successfully:', response);
+    //     // Optionally, you can refresh the property images or show a success message
+    //     this.updatePropertyImages(imageUrl);
+    //   },
+    //   error: (error) => {
+    //     console.error('Error removing image:', error);
+    //     // Handle error, e.g., show a notification or alert
+    //   }
+    // });
   }
 
   updatePropertyImages(imageUrl: string): void {
@@ -227,6 +263,30 @@ formAmenities = this.fb.group({
       this.property!.property_images = this.property!.property_images.filter(img => img.image_url !== imageUrl);
       // this.updateField({ property_images: this.property!.property_images });
     }
+  }
+
+  removeImageFromProperty(imageId: number): void {
+    console.log('Removing image from property:', imageId);
+    // console.log('Images before removal:', this.uploadedImages);
+    // console.log('Removing image:', imageUrl);
+    // this.isLoading = true;
+    // const uploadedImages = this.uploadedImages.filter(x => x !== imageUrl);
+    // console.log('Images before removal api call:', uploadedImages);
+    // this.addPropertyImages(uploadedImages);
+    this.propertyService.deleteImage(this.property!.id, imageId).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Image removed successfully:', response);
+        // Remove the image URL from the uploadedImages array
+        // this.uploadedImages = this.uploadedImages.filter(x => x !== imageUrl);
+        // console.log('Images after removal:', this.uploadedImages);
+        this.getPropertyById();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error removing image:', error);
+      }
+    });
   }
 
   onImageSelected(event: any): void {
@@ -238,8 +298,7 @@ formAmenities = this.fb.group({
         next: (response) => {
           this.isLoading = false;
           console.log('Image uploaded successfully: ', response);
-          this.uploadedImages.push(response.file.secure_url);
-          this.getPropertyById(); // Refresh property data to include new image
+          this.addPropertyImages([response.data.file.secure_url]);
         },
         error: (error) => {
           this.isLoading = false;
@@ -283,6 +342,23 @@ formAmenities = this.fb.group({
     }
   }
 
+  submitUnit(): void {
+    if (this.unitForm.valid) {
+      console.log('submit', this.unitForm.value);
+      const data = this.unitForm.value;
+      console.log({ data });
+      // Call a method to handle unit submission
+      // this.createUnit(data);
+    } else {
+      Object.values(this.unitForm.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
+
   updateFeatures(features: number[]): void {
     this.isLoading = true;
     console.log('Updating features:', {features});
@@ -295,6 +371,104 @@ formAmenities = this.fb.group({
       error: (error) => {
         this.isLoading = false;
         console.error('Error updating features:', error);
+      }
+    });
+  }
+
+  getPropertyTypes() {
+    this.isLoading = true;
+    this.propertyService.getPropertyTypes().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Property Types:', response);
+        this.propertyTypes = response.data || [];
+        console.log('Property Types:', this.propertyTypes);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching property types:', error);
+      }
+    });
+  }
+
+  getUnitTypes() {
+    this.isLoading = true;
+    this.propertyService.getUnitTypes().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Unit Types:', response);
+        this.unitTypesOptions = response.data || [];
+        console.log('Unit Types:', this.unitTypesOptions);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching unit types:', error);
+      }
+    });
+  }
+
+  addPropertyImages(images: string[]): void {
+    this.isLoading = true;
+    console.log('Adding images to property:', {images});
+    this.propertyService.addImagesToProperty(this.property!.id, { images }).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Images added successfully:', response);
+        this.getPropertyById();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error adding images:', error);
+      }
+    });
+  }
+
+  addUnit(): void {
+    console.log('Adding unit with data:', this.unitForm.value);
+  }
+  removeUnit(unit: any): void {
+    console.log('Removing unit:', unit);
+  }
+
+  removeUnitType(index: number): void {
+    if (this.unitTypes.length > 1) {
+      this.unitTypes.removeAt(index);
+    }
+  }
+
+  submitUnits(): void {
+    console.log('Submitting units:', this.unitTypeForm.value);
+    console.log()
+    if (this.unitTypeForm.valid) {
+      console.log('submit', this.unitTypeForm.value);
+      const data = this.unitTypeForm.value;
+     
+      console.log('Payload for unit submission:', data);
+      console.log({ data });
+      // Call a method to handle unit submission
+      this.createUnits(data);
+    } else {
+      Object.values(this.unitTypeForm.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
+
+  createUnits(data: PropertyUnitRequest): void {
+    this.isLoading = true;
+    console.log('Creating units:', { data });
+    this.propertyService.addPropertyUnit(this.property!.id, data).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Units created successfully:', response);
+        this.getPropertyById();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error creating units:', error);
       }
     });
   }

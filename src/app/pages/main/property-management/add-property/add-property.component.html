@@ -228,7 +228,9 @@
                 type="file"
                 id="fileInput"
                 (change)="onImageSelected($event)"
-                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                [disabled]="isLoading"
+                accept="image/*"
             />
             <label for="fileInput" class="flex justify-center w-fit px-4 py-2 bg-primary text-white rounded cursor-pointer">
                 Upload
@@ -241,7 +243,8 @@
              <button
                 type="submit"
                 class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
-                [disabled]="isLoading || uploadedImages.length < 4">Save & Continue
+                [disabled]="isLoading || uploadedImages.length < 4"
+                (click)="submitImage()">Save & Continue
               </button>
         </div>
     </div>
@@ -250,97 +253,137 @@
   }
 
   @if (currentStep == 3) {
-    <div
-      class="flex flex-col gap-2 py-5 px-24 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
-    >
-    <h1 class="!text-primary">Payment Plan</h1>
-    <p class="!text-medium !text-[#7A7A7A]">
-      Set payment plan for this property
-    </p>
+    <form nz-form [formGroup]="unitTypeForm" (ngSubmit)="submitUnit()" class="w-full">
+      <div
+          class="flex flex-col gap-2 py-5 px-24 border border-[#EBEBEB] rounded-lg w-full bg-background mb-8"
+        >
+        <h1 class="!text-primary">Payment Plan</h1>
+        <p class="!text-medium !text-[#7A7A7A]">
+          Set payment plan for this property
+        </p>
 
-    <div class="flex flex-col mt-8">
-        <div class="flex justify-end !text-primary">+  Add Unit</div>
-        <div class="flex flex-col gap-4 bg-gray-50 p-8 w-full rounded border border-gray-200">
-            <!-- <div class="flex flex-col gap-4">
-                <label for="unitType"> Unit Type</label>
-                <input 
-                    type="text" 
-                    placeholder="Enter unit type" 
-                    class="border border-gray-200 rounded px-4 py-2 outline-none placeholder-gray-100::placeholder"> 
-            </div> -->
-            @for(in of ['Unit Type', 'Amount']; track in) {
-                <div class="flex flex-col gap-2">
-                <span class="text-medium text-gray-600">{{ in }}</span>
-                <nz-form-control
-                nzErrorTip="Please {{in}}"
-                >
-                <input
-                    nz-input
-                    class="!bg-gray-50"
-                    placeholder="Enter {{in}}"
-                />
-                </nz-form-control>
-            </div>
-            }
-            <nz-divider></nz-divider>
-            <div class="flex justify-end !text-primary text-medium">+  Add Installment</div>
-            <div class="flex justify-between items-center border-b border-gray-200 pb-2 !text-[#7A7A7A]">
-                <h2 class="!text-medium">Installment Details</h2>
-                <app-icon name="trash"></app-icon>
-                <!-- <nz-icon type="bin"></nz-icon> -->
-            </div>
-            @for(in of ['Installment Type', 'Initial Deposite', 'Total Amount']; track in) {
-                <div class="flex flex-col gap-2">
-                <span class="text-medium text-gray-600">{{ in }}</span>
-                <nz-form-control
-                nzErrorTip="Please {{in}}"
-                >
-                <input
-                    nz-input
-                    class="!bg-gray-50"
-                    placeholder="Enter {{in}}"
-                />
-                </nz-form-control>
-            </div>
-            }
+        <div class="flex flex-col mt-8">
+            <button 
+              class="flex justify-end !text-primary"
+              (click)="addUnitType()"
+              >+  Add Unit</button>
+            <div class="flex flex-col gap-4 bg-gray-50 p-8 w-full rounded border border-gray-200">
 
-            <nz-divider></nz-divider>
+                <div *ngFor="let unitType of unitTypes.controls; let i = index" [formGroupName]="i">
+                  <div class="my-2">
+                    <label for="unit_type_id" class="text-gray-500 text-xs font-medium">
+                    Unit Type
+                  </label>
+                  <nz-form-control
+                    nzErrorTip="Please enter a unit type"
+                    >
+                    <nz-select
+                      id="unit_type_id"
+                      formControlName="unit_type_id"
+                      nzPlaceHolder="Select a unit type for this property"
+                      class="!bg-gray-50"
+                      [nzSize]="'large'"
+                    >
+                      @for (type of unitTypesOptions; track type.id) {
+                        <nz-option [nzValue]="type.id" [nzLabel]="type.name"></nz-option>
+                      }
+                    </nz-select>
+                    </nz-form-control>
+                  </div>
+                    <div class="my-2">
+                      <label for="price" class="text-gray-500 text-xs font-medium">
+                      Amount
+                    </label>
+                    <nz-form-control
+                      nzErrorTip="Please enter a price"
+                      >
+                      <input
+                        nz-input
+                        formControlName="price"
+                        id="price"
+                        class="!bg-gray-50"
+                        placeholder="Enter amount"
+                      />
+                    </nz-form-control>
+                    </div>
+                    <div class="mt-2">
+                      <label for="total_units" class="text-gray-500 text-xs font-medium">
+                      Total Units
+                    </label>
+                  <nz-form-control
+                    nzErrorTip="Please enter a total units"
+                    >
+                    <input
+                      nz-input
+                      formControlName="total_units"
+                      id="total_units"
+                      class="!bg-gray-50"
+                      placeholder="Enter total units"
+                    />
+                  </nz-form-control>
+                    </div>
+                </div>
+                <nz-divider></nz-divider>
+                <div class="flex justify-end !text-primary text-medium">+  Add Installment</div>
+                <div class="flex justify-between items-center border-b border-gray-200 pb-2 !text-[#7A7A7A]">
+                    <h2 class="!text-medium">Installment Details</h2>
+                    <app-icon name="trash"></app-icon>
+                    <!-- <nz-icon type="bin"></nz-icon> -->
+                </div>
+                @for(in of ['Installment Type', 'Initial Deposite', 'Total Amount']; track in) {
+                    <div class="flex flex-col gap-2">
+                    <span class="text-medium text-gray-600">{{ in }}</span>
+                    <nz-form-control
+                    nzErrorTip="Please {{in}}"
+                    >
+                    <input
+                        nz-input
+                        class="!bg-gray-50"
+                        placeholder="Enter {{in}}"
+                    />
+                    </nz-form-control>
+                </div>
+                }
 
-            <div class="flex justify-between items-center border-b border-gray-200 pb-2 !text-[#7A7A7A]">
-                <h2 class="!text-medium">Installment Details</h2>
-                <app-icon name="trash"></app-icon>
-                <!-- <nz-icon type="bin"></nz-icon> -->
+                <nz-divider></nz-divider>
+
+                <div class="flex justify-between items-center border-b border-gray-200 pb-2 !text-[#7A7A7A]">
+                    <h2 class="!text-medium">Installment Details</h2>
+                    <app-icon name="trash"></app-icon>
+                    <!-- <nz-icon type="bin"></nz-icon> -->
+                </div>
+                @for(in of ['Installment Type', 'Initial Deposite', 'Total Amount']; track in) {
+                    <div class="flex flex-col gap-2">
+                    <span class="text-medium text-gray-600">{{ in }}</span>
+                    <nz-form-control
+                    nzErrorTip="Please {{in}}"
+                    >
+                    <input
+                        nz-input
+                        class="!bg-gray-50"
+                        placeholder="Enter {{in}}"
+                    />
+                    </nz-form-control>
+                </div>
+                }
+                <div class="flex justify-end gap-2 !text-[#7A7A7A]">
+                    <app-icon name="trash"></app-icon>
+                    Delete Unit
+                </div>
             </div>
-            @for(in of ['Installment Type', 'Initial Deposite', 'Total Amount']; track in) {
-                <div class="flex flex-col gap-2">
-                <span class="text-medium text-gray-600">{{ in }}</span>
-                <nz-form-control
-                nzErrorTip="Please {{in}}"
+            <div class="flex items-center justify-end gap-6 my-12">
+                <button
+                    (click)="submit()"
+                    class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
                 >
-                <input
-                    nz-input
-                    class="!bg-gray-50"
-                    placeholder="Enter {{in}}"
-                />
-                </nz-form-control>
-            </div>
-            }
-            <div class="flex justify-end gap-2 !text-[#7A7A7A]">
-                <app-icon name="trash"></app-icon>
-                Delete Unit
+                    Create Property
+                </button>
             </div>
         </div>
-        <div class="flex items-center justify-end gap-6 my-12">
-            <button
-                (click)="submit()"
-                class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
-            >
-                Create Property
-            </button>
-        </div>
-    </div>
+        
+      </div>
+    </form>
     
-  </div>
   }
  </div>
   

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
-import { ImageResponse } from '../models/images';
+import { ImageResponse, ImageUploadApiResponse } from '../models/images';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -36,7 +36,7 @@ export class ImageService {
     category: string = 'image',
     transformation: { width: number; height: number; crop: string } = { width: 800, height: 600, crop: 'fit' },
     tags: string[] = ['property', 'featured']
-  ): Observable<ImageResponse> {
+  ): Observable<ImageUploadApiResponse> {
     const formData = new FormData();
     formData.append('file', file, file.name);
     // formData.append('folder', folder);
@@ -55,6 +55,6 @@ export class ImageService {
       // Authorization header will be handled by HttpService (e.g., via an interceptor)
     };
 
-    return this.httpService.post<ImageResponse>('uploads/single', formData);
+    return this.httpService.post<ImageUploadApiResponse>('uploads/single', formData);
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
-import { FeatureRequest, Property, PropertyCreateRequest, PropertyFeature, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUpdateResponse, UnitType } from '../models/properties';
+import { FeatureRequest, Property, PropertyCreateRequest, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUnitRequest, UnitType } from '../models/properties';
 import { IResponse } from '../models/generic';
 
 @Injectable({
@@ -50,8 +50,12 @@ export class PropertyService {
     return this.httpService.delete<void>(`properties/${id}`);
   }
 
+  addImagesToProperty(propertyId: string, data: any): Observable<IResponse<Property>> {
+    return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/images`, data);
+  }
 
-  deleteImage(propertyId: string, imageId: string): Observable<{ success?: boolean; message: string }> {
+
+  deleteImage(propertyId: string, imageId: number): Observable<{ success?: boolean; message: string }> {
     return this.httpService.delete<{ success?: boolean; message: string }>(`admin/properties/${propertyId}/images/${imageId}`);
   }
 
@@ -79,7 +83,7 @@ export class PropertyService {
   }
 
   getUnitTypes(): Observable<IResponse<UnitType[]>> {
-    return this.httpService.get<IResponse<UnitType[]>>('unit-types');
+    return this.httpService.get<IResponse<UnitType[]>>('admin/unit-types');
   }
 
   updateFeatures(propertyId: string, features: FeatureRequest): Observable<IResponse>{
@@ -88,6 +92,14 @@ export class PropertyService {
 
   toggleAvailability(propertyId: string): Observable<IResponse> {
     return this.httpService.patch<IResponse>(`admin/properties/${propertyId}/toggle-availability`, {});
+  }
+
+  getInstallmentPlans(): Observable<IResponse<any[]>> {
+    return this.httpService.get<IResponse<any[]>>('admin/installment-plans');
+  }
+
+  addPropertyUnit(propertyId: string, unit: PropertyUnitRequest): Observable<IResponse<Property>> {
+    return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/units`, unit);
   }
 
 }
