@@ -11,7 +11,7 @@ export class HttpService {
   private readonly apiUrl = environment.apiUrl;
   private defaultHeaders = new HttpHeaders({
     'Accept': 'application/json',
-    'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NTU0NTg4NiwiZXhwIjoxNzU1NjMyMjg2fQ.gRpC4yWEsfHbmuSm3QojvGpwJs8JYh9swKxKm-oXKzI`
+    'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NjEzMDE0NiwiZXhwIjoxNzU2MjE2NTQ2fQ.DDY9sqkcLde6daGkiy4ITOigZ4AraIWjwZ8FjNvyCOw`
   });
 
   constructor(private http: HttpClient) {
@@ -99,7 +99,7 @@ export class HttpService {
    * @returns Observable of response type T
    */
   delete<T>(endpoint: string): Observable<T> {
-    return this.http.delete<T>(`${this.apiUrl}/${endpoint}`)
+    return this.http.delete<T>(`${this.apiUrl}/${endpoint}`, { headers: this.defaultHeaders })
       .pipe(
         catchError(this.handleError)
       );

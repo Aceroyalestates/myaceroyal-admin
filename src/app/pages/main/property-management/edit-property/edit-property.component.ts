@@ -16,10 +16,9 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { PropertyService } from 'src/app/core/services/property.service';
-import { Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions } from 'src/app/core/models/properties';
+import { Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions, PropertyUnitRequest } from 'src/app/core/models/properties';
 import { ImageService } from 'src/app/core/services/image.service';
 
-type EditablePropertyFields = 'name' | 'location' | 'description';
 
 @Component({
   selector: 'app-edit-property',
@@ -62,6 +61,7 @@ adminFeatures: PropertyFeatureAdmin[] = [];
 currentFeatures: number[] = [];
 uploadedImages: string[] = [];
 propertyTypes: PropertyType[] = [];
+unitTypesOptions: any[] = [];
 
 panels = [
     {
@@ -114,6 +114,7 @@ formAmenities = this.fb.group({
       this.getPropertyTypeOptions();
       this.getPropertyAdminFeatures();
       this.getPropertyTypes();
+      this.getUnitTypes();
     } else {
       console.error('Property ID is not provided in the route.');
     }
@@ -156,6 +157,9 @@ formAmenities = this.fb.group({
           });
 
           property.property_features.forEach(x => this.currentFeatures.push(x.feature_id));
+          this.uploadedImages = [];
+          property.property_images.forEach(x => this.uploadedImages.push(x.image_url));
+          console.log({uploadedImages: this.uploadedImages})
       });
   }
 
@@ -238,20 +242,20 @@ formAmenities = this.fb.group({
     }
   }
 
-  removeImage(imageUrl: string): void {
-    this.removeImageFromProperty(imageUrl);
-    return console.log('Removing image:', imageUrl);
-    this.propertyService.deleteImage(this.property!.id, imageUrl).subscribe({
-      next: (response) => {
-        console.log('Image removed successfully:', response);
-        // Optionally, you can refresh the property images or show a success message
-        this.updatePropertyImages(imageUrl);
-      },
-      error: (error) => {
-        console.error('Error removing image:', error);
-        // Handle error, e.g., show a notification or alert
-      }
-    });
+  removeImage(imageId: number): void {
+    this.removeImageFromProperty(imageId);
+    return console.log('Removing image:', imageId);
+    // this.propertyService.deleteImage(this.property!.id, imageId).subscribe({
+    //   next: (response) => {
+    //     console.log('Image removed successfully:', response);
+    //     // Optionally, you can refresh the property images or show a success message
+    //     this.updatePropertyImages(imageUrl);
+    //   },
+    //   error: (error) => {
+    //     console.error('Error removing image:', error);
+    //     // Handle error, e.g., show a notification or alert
+    //   }
+    // });
   }
 
   updatePropertyImages(imageUrl: string): void {
@@ -261,16 +265,22 @@ formAmenities = this.fb.group({
     }
   }
 
-  removeImageFromProperty(imageUrl: string): void {
-    console.log('Images before removal:', this.uploadedImages);
-    this.isLoading = true;
-    this.propertyService.deleteImage(this.property!.id, imageUrl).subscribe({
+  removeImageFromProperty(imageId: number): void {
+    console.log('Removing image from property:', imageId);
+    // console.log('Images before removal:', this.uploadedImages);
+    // console.log('Removing image:', imageUrl);
+    // this.isLoading = true;
+    // const uploadedImages = this.uploadedImages.filter(x => x !== imageUrl);
+    // console.log('Images before removal api call:', uploadedImages);
+    // this.addPropertyImages(uploadedImages);
+    this.propertyService.deleteImage(this.property!.id, imageId).subscribe({
       next: (response) => {
         this.isLoading = false;
         console.log('Image removed successfully:', response);
         // Remove the image URL from the uploadedImages array
-        this.uploadedImages = this.uploadedImages.filter(x => x !== imageUrl);
-        console.log('Images after removal:', this.uploadedImages);
+        // this.uploadedImages = this.uploadedImages.filter(x => x !== imageUrl);
+        // console.log('Images after removal:', this.uploadedImages);
+        this.getPropertyById();
       },
       error: (error) => {
         this.isLoading = false;
@@ -288,8 +298,7 @@ formAmenities = this.fb.group({
         next: (response) => {
           this.isLoading = false;
           console.log('Image uploaded successfully: ', response);
-          this.uploadedImages.push(response.data.file.secure_url);
-          this.getPropertyById(); // Refresh property data to include new image
+          this.addPropertyImages([response.data.file.secure_url]);
         },
         error: (error) => {
           this.isLoading = false;
@@ -382,6 +391,38 @@ formAmenities = this.fb.group({
     });
   }
 
+  getUnitTypes() {
+    this.isLoading = true;
+    this.propertyService.getUnitTypes().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Unit Types:', response);
+        this.unitTypesOptions = response.data || [];
+        console.log('Unit Types:', this.unitTypesOptions);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching unit types:', error);
+      }
+    });
+  }
+
+  addPropertyImages(images: string[]): void {
+    this.isLoading = true;
+    console.log('Adding images to property:', {images});
+    this.propertyService.addImagesToProperty(this.property!.id, { images }).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Images added successfully:', response);
+        this.getPropertyById();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error adding images:', error);
+      }
+    });
+  }
+
   addUnit(): void {
     console.log('Adding unit with data:', this.unitForm.value);
   }
@@ -397,24 +438,17 @@ formAmenities = this.fb.group({
 
   submitUnits(): void {
     console.log('Submitting units:', this.unitTypeForm.value);
-    if (this.unitForm.valid) {
-      console.log('submit', this.unitForm.value);
-      const data = this.unitForm.value;
-      const payload = {
-        unit_types: [
-          {
-            unit_type_id: data.unit_type_id,
-            price: data.price,
-            total_units: data.total_units
-          }
-        ]
-      };
-      console.log('Payload for unit submission:', payload);
+    console.log()
+    if (this.unitTypeForm.valid) {
+      console.log('submit', this.unitTypeForm.value);
+      const data = this.unitTypeForm.value;
+     
+      console.log('Payload for unit submission:', data);
       console.log({ data });
       // Call a method to handle unit submission
-      // this.createUnit(data);
+      this.createUnits(data);
     } else {
-      Object.values(this.unitForm.controls).forEach((control) => {
+      Object.values(this.unitTypeForm.controls).forEach((control) => {
         if (control.invalid) {
           control.markAsDirty();
           control.updateValueAndValidity({ onlySelf: true });
@@ -423,15 +457,21 @@ formAmenities = this.fb.group({
     }
   }
 
-//   {
-//   "unit_types": [
-//     {
-//       "unit_type_id": 2,
-//       "price": 500000,
-//       "total_units": 3
-//     }
-//   ]
-// }
+  createUnits(data: PropertyUnitRequest): void {
+    this.isLoading = true;
+    console.log('Creating units:', { data });
+    this.propertyService.addPropertyUnit(this.property!.id, data).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Units created successfully:', response);
+        this.getPropertyById();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error creating units:', error);
+      }
+    });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
-import { FeatureRequest, Property, PropertyCreateRequest, PropertyFeature, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUpdateResponse, UnitType } from '../models/properties';
+import { FeatureRequest, Property, PropertyCreateRequest, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUnitRequest, UnitType } from '../models/properties';
 import { IResponse } from '../models/generic';
 
 @Injectable({
@@ -52,10 +52,10 @@ export class PropertyService {
 
   addImagesToProperty(propertyId: string, data: any): Observable<IResponse<Property>> {
     return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/images`, data);
-  }//admin/properties/123e4567-e89b-12d3-a456-426614174000/images
+  }
 
 
-  deleteImage(propertyId: string, imageId: string): Observable<{ success?: boolean; message: string }> {
+  deleteImage(propertyId: string, imageId: number): Observable<{ success?: boolean; message: string }> {
     return this.httpService.delete<{ success?: boolean; message: string }>(`admin/properties/${propertyId}/images/${imageId}`);
   }
 
@@ -83,7 +83,7 @@ export class PropertyService {
   }
 
   getUnitTypes(): Observable<IResponse<UnitType[]>> {
-    return this.httpService.get<IResponse<UnitType[]>>('unit-types');
+    return this.httpService.get<IResponse<UnitType[]>>('admin/unit-types');
   }
 
   updateFeatures(propertyId: string, features: FeatureRequest): Observable<IResponse>{
@@ -96,6 +96,10 @@ export class PropertyService {
 
   getInstallmentPlans(): Observable<IResponse<any[]>> {
     return this.httpService.get<IResponse<any[]>>('admin/installment-plans');
+  }
+
+  addPropertyUnit(propertyId: string, unit: PropertyUnitRequest): Observable<IResponse<Property>> {
+    return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/units`, unit);
   }
 
 }

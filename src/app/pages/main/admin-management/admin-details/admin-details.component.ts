@@ -10,7 +10,7 @@ import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ActivatedRoute } from '@angular/router';
 import { User } from 'src/app/core/models/users';
-import { DashboardService } from '../../../../core/services/dashboard.service';
+import { AdminService } from 'src/app/core/services/admin.service';
 
 @Component({
   selector: 'app-admin-details',
@@ -71,7 +71,7 @@ export class AdminDetailsComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private dashboardService: DashboardService
+    private adminService: AdminService
   ) {}
 
   ngOnInit(): void {
@@ -83,7 +83,7 @@ export class AdminDetailsComponent implements OnInit {
   }
 
   getUser(id: string) {
-    this.dashboardService.getUserById(id).subscribe({
+    this.adminService.getUserById(id).subscribe({
       next: (user) => {
         this.loading = false;
         this.user = user;

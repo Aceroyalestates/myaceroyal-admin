@@ -18,4 +18,16 @@ export interface User {
   is_active: boolean | string;
   createdAt: string;
   updatedAt: string;
+
+  financial_transactions: {
+    total_assets: number;
+    outstanding_bills: number;
+    number_of_installments: number;
+    next_installment_payment: number;
+    next_payment_due_date: string;
+    total_purchases: number;
+    completed_payments: number;
+    pending_payments: number;
+  };
 }
+

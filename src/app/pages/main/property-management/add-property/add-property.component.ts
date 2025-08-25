@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -38,13 +38,14 @@ import { ImageService } from 'src/app/core/services/image.service';
 export class AddPropertyComponent implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private destroy$ = new Subject<void>();
-  currentStep = 0;
+  currentStep = 3;
   isLoading = false;
   propertyTypeOptions: PropertyTypeOptions[] = [];
   adminFeatures: PropertyFeatureAdmin[] = [];
   propertyTypes: PropertyType[] = [];
   createdProperty: Property | null = null;
   uploadedImages: string[] = [];
+  unitTypesOptions: any[] = []; 
 
   // alphabet(): string[] {
   // const children: string[] = [];
@@ -75,17 +76,41 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     images: this.fb.control<any[]>([], [Validators.required])
   });
 
+  unitTypeForm = this.fb.group({
+      unit_types: this.fb.array([])
+    });
+
   formPaymentPlan = this.fb.group({});
 
   ngOnInit(): void {
     this.getPropertyTypeOptions();
     this.getPropertyAdminFeatures();
     this.getPropertyTypes();
+    this.getUnitTypes();
+    this.addUnitType();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  get unitTypes(): FormArray {
+    return this.unitTypeForm.get('unit_types') as FormArray;
+  }
+
+  // Create a new unit type form group
+  createUnitType(): FormGroup {
+    return this.fb.group({
+      unit_type_id: ['', [Validators.required]],
+      price: ['', [Validators.required, Validators.min(0)]],
+      total_units: ['', [Validators.required, Validators.min(1)]]
+    });
+  }
+
+  // Add a new unit type to the FormArray
+  addUnitType(): void {
+    this.unitTypes.push(this.createUnitType());
   }
 
   handleChange({ file, fileList }: NzUploadChangeParam): void {
@@ -165,7 +190,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   }
 
   getPropertyTypeOptions(): void {
-    this.isLoading
+    this.isLoading = true;
     this.propertyService.getPropertytypesOptions().subscribe({
       next: (response) => {
         this.isLoading = false;
@@ -176,6 +201,26 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
       error: (error) => {
         this.isLoading = false;
         console.error('Error fetching property type options:', error);
+      }
+    });
+  }
+
+  submitUnit(): void {
+    console.log('submit unit types', this.unitTypeForm);
+  }
+
+  getUnitTypes() {
+    this.isLoading = true;
+    this.propertyService.getUnitTypes().subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Unit Types:', response);
+        this.unitTypesOptions = response.data || [];
+        console.log('Unit Types:', this.unitTypesOptions);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error fetching unit types:', error);
       }
     });
   }

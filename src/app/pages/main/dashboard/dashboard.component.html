@@ -81,10 +81,17 @@
     </p>
     <div class="flex items-center gap-7">
       @for(property of properties; track property.id){
-      <div class="flex-1 flex-col shadow-[6px_6px_21.3px_3px_#EBEBEB5E] max-w-3/6">
+      <div
+        class="flex-1 flex-col shadow-[6px_6px_21.3px_3px_#EBEBEB5E] max-w-3/6"
+      >
         <img
-          [src]="property.property_images[0].image_url"
-          [alt]="property.property_features[0].feature.name"
+          [src]="
+            property.property_images.length
+              ? property.property_images[0].image_url
+              : 'assets/images/property-image.jpg'
+          "
+          [alt]="property.property_features.length
+              ?property.property_features[0].feature.name:''"
           class="w-full h-full max-h-[308px] rounded-[5px] object-cover"
         />
         <div
@@ -103,7 +110,8 @@
               <app-icon name="map-pin"></app-icon>{{ property.location }}
             </p>
             <p class="flex items-center gap-1 text-[#7A7A7A] text-medium">
-              <app-icon name="double-arrow"></app-icon>{{ property.property_units.length }}
+              <app-icon name="double-arrow"></app-icon
+              >{{ property.property_units.length }}
             </p>
           </div>
           <div class="flex flex-col gap-2">

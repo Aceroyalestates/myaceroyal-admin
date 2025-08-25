@@ -26,6 +26,7 @@ export interface Property {
 }
 
 export interface PropertyImage {
+  id: number;
   image_url: string;
   is_cover: boolean | null;
 }
@@ -106,6 +107,9 @@ export interface PropertyCreateRequest {
     features: number[];
     property_units?: PropertyUnitCreate[];
     payment_plans?: InstallmentPlanCreate[];
+}
+export interface PropertyUnitRequest {
+  unit_types: PropertyUnitCreate[];
 }
 
 interface PropertyUnitCreate {

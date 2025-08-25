@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnInit, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { Metrics, People } from 'src/app/core/constants';
-import { Person } from 'src/app/core/types/general';
+import { Metrics, PAGE_SIZE } from 'src/app/core/constants';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { RealtorService } from 'src/app/core/services/realtor.service';
+import { User } from 'src/app/core/models/users';
 
 @Component({
   selector: 'app-realtor-management',
@@ -13,28 +14,47 @@ import { SharedModule } from 'src/app/shared/shared.module';
   styleUrls: ['./realtor-management.component.css'],
 })
 export class RealtorManagementComponent {
+  loading = false;
+  error: string | null = null;
   userMetrics = Metrics;
+  users!: User[];
   lucy!: string;
-  people: Person[] = People;
-  
   columns: TableColumn[] = [
-    { 
-      key: 'name', 
+    {
+      key: 'full_name',
       title: 'Name',
       sortable: true,
-      type: 'text'
+      type: 'text',
     },
-    { 
-      key: 'email', 
-      title: 'Email',
+    {
+      key: 'email',
+      title: 'Email Address',
       sortable: true,
-      type: 'text'
+      type: 'text',
     },
-    { 
-      key: 'age', 
-      title: 'Age',
+    {
+      key: 'phone_number',
+      title: 'Phone Number',
       sortable: true,
-      type: 'text'
+      type: 'text',
+    },
+    {
+      key: 'gender',
+      title: 'Gender',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'createdAt',
+      title: 'Date',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'is_active',
+      title: 'Status',
+      sortable: true,
+      type: 'status',
     },
   ];
 
@@ -44,39 +64,58 @@ export class RealtorManagementComponent {
       label: 'View',
       icon: 'eye',
       color: 'blue',
-      tooltip: 'View details'
+      tooltip: 'View details',
     },
     {
       key: 'edit',
       label: 'Edit',
       icon: 'edit',
       color: 'green',
-      tooltip: 'Edit realtor'
+      tooltip: 'Edit realtor',
     },
     {
       key: 'delete',
       label: 'Delete',
       icon: 'delete',
       color: 'red',
-      tooltip: 'Delete realtor'
-    }
+      tooltip: 'Delete realtor',
+    },
   ];
 
-  selectedPeople = signal<Person[]>([]);
+  selectedPeople = signal<User[]>([]);
 
-  constructor() {
-    // Optional effect to react to selected people changes
-    effect(() => {
-      console.log('Selected people from table:', this.selectedPeople());
+  constructor(private realtorService: RealtorService) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+  loadUsers() {
+    this.realtorService.getRealtorUsers(1, PAGE_SIZE, {}).subscribe({
+      next: (response) => {
+        // Preprocess users to add unit_type_name
+        this.users = response.data.map((user) => ({
+          ...user,
+          createdAt: new Date(user.createdAt).toLocaleDateString(),
+          is_active: user.is_active === true ? 'Active' : 'Inactive',
+        }));
+        this.loading = false;
+        console.log(this.users); // Property array
+        console.log(response.pagination); // Pagination info
+      },
+      error: (error) => {
+        console.error('Error fetching users:', error);
+        this.loading = false;
+        this.error = 'Failed to load users';
+      },
     });
   }
 
-  onSelectionChange(selected: Person[]) {
+  onSelectionChange(selected: User[]) {
     this.selectedPeople.set(selected);
     console.log('Selected people:', this.selectedPeople());
   }
 
-  onTableAction(event: { action: string; row: Person }) {
+  onTableAction(event: { action: string; row: User }) {
     console.log('Table action:', event.action, 'Row:', event.row);
     switch (event.action) {
       case 'view':
@@ -91,27 +130,27 @@ export class RealtorManagementComponent {
     }
   }
 
-  onRowClick(row: Person) {
+  onRowClick(row: User) {
     // Navigate to realtor details
     window.location.href = `/realtor-management/details/${row.id}`;
   }
 
-  viewRealtor(realtor: Person) {
+  viewRealtor(realtor: User) {
     console.log('Viewing realtor:', realtor);
     window.location.href = `/realtor-management/details/${realtor.id}`;
   }
 
-  editRealtor(realtor: Person) {
+  editRealtor(realtor: User) {
     console.log('Editing realtor:', realtor);
     // Implement edit functionality
   }
 
-  deleteRealtor(realtor: Person) {
+  deleteRealtor(realtor: User) {
     console.log('Deleting realtor:', realtor);
     // Implement delete functionality
   }
 
-  handleSelectedData(selected: Person[]) {
+  handleSelectedData(selected: User[]) {
     this.selectedPeople.set(selected);
     console.log(this.selectedPeople);
   }

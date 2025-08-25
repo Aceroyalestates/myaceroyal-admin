@@ -5,6 +5,9 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Metrics, People } from 'src/app/core/constants';
 import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { User } from 'src/app/core/models/users';
+import { ActivatedRoute } from '@angular/router';
+import { RealtorService } from 'src/app/core/services/realtor.service';
 
 @Component({
   selector: 'app-realtor-details',
@@ -14,27 +17,33 @@ import { SharedModule } from 'src/app/shared/shared.module';
 })
 export class RealtorDetailsComponent {
   userMetrics = Metrics;
+  loading = false;
+  error: string | null = null;
+
   lucy!: string;
+  role!: string;
   people: Person[] = People;
-  
+  id: string = '';
+  user!: User;
+
   columns: TableColumn[] = [
-    { 
-      key: 'name', 
+    {
+      key: 'name',
       title: 'Name',
       sortable: true,
-      type: 'text'
+      type: 'text',
     },
-    { 
-      key: 'email', 
+    {
+      key: 'email',
       title: 'Email',
       sortable: true,
-      type: 'text'
+      type: 'text',
     },
-    { 
-      key: 'age', 
+    {
+      key: 'age',
       title: 'Age',
       sortable: true,
-      type: 'text'
+      type: 'text',
     },
   ];
 
@@ -44,23 +53,42 @@ export class RealtorDetailsComponent {
       label: 'View',
       icon: 'eye',
       color: 'blue',
-      tooltip: 'View details'
+      tooltip: 'View details',
     },
     {
       key: 'edit',
       label: 'Edit',
       icon: 'edit',
       color: 'green',
-      tooltip: 'Edit user'
-    }
+      tooltip: 'Edit user',
+    },
   ];
 
   selectedPeople = signal<Person[]>([]);
 
-  constructor() {
-    // Optional effect to react to selected people changes
-    effect(() => {
-      console.log('Selected people from table:', this.selectedPeople());
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private realtorService: RealtorService
+  ) {}
+
+  ngOnInit(): void {
+    this.loading = true;
+    this.activatedRoute.params.subscribe({
+      next: (param) => (this.id = param['id']),
+    });
+    this.getUser(this.id);
+  }
+
+  getUser(id: string) {
+    this.realtorService.getRealtorById (id).subscribe({
+      next: (user) => {
+        this.loading = false;
+        this.user = user;
+      },
+      error: (error) => {
+        this.loading = false;
+        console.error('An error occured: ', error.message);
+      },
     });
   }
 
