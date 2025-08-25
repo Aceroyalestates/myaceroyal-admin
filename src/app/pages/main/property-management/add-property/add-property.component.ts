@@ -44,7 +44,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   adminFeatures: PropertyFeatureAdmin[] = [];
   propertyTypes: PropertyType[] = [];
   createdProperty: Property | null = null;
-  uploadedImages: string[] = []
+  uploadedImages: string[] = [];
 
   // alphabet(): string[] {
   // const children: string[] = [];
@@ -98,7 +98,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
       this.imageService.uploadImage(file.response.data).subscribe({
         next: (response) => {
           console.log('Image uploaded successfully:', response);
-          this.uploadedImages.push(response.file.secure_url)
+          this.uploadedImages.push(response.data.file.secure_url)
           // this.formImages.patchValue({ images });
         },
         error: (error) => {
@@ -141,7 +141,22 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
 
   submitImage(): void {
     console.log('submit image');
-    this.currentStep = 3
+    const data = {
+      images: this.uploadedImages
+    }
+    console.log({ data });
+    this.isLoading = true;
+    this.propertyService.addImagesToProperty(this.createdProperty!.id, data).subscribe({
+      next: (response) => {
+        console.log('Images added successfully:', response);
+        this.currentStep = 3; // Move to the next step
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error adding images:', error);
+      }
+    });
   }
 
   submit(): void {
@@ -279,7 +294,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isLoading = false;
           console.log('Image uploaded successfully: ', response);
-          this.uploadedImages.push(response.file.secure_url);
+          this.uploadedImages.push(response.data.file.secure_url);
         },
         error: (error) => {
           this.isLoading = false;
@@ -292,12 +307,9 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   }
 
   removeImage(imageUrl: string): void {
-    console.log('ImagesUploaded ', this.uploadedImages);
-    // remove from uploaded images
-    this.uploadedImages.filter(x => x != imageUrl);
-    console.log('Images after removing ', this.uploadedImages)
-    return console.log('Removing image:', imageUrl);
-    
+    console.log('Images before removal:', this.uploadedImages);
+    // Remove the image URL from the uploadedImages array
+    this.uploadedImages = this.uploadedImages.filter(x => x !== imageUrl);
+    console.log('Images after removal:', this.uploadedImages);
   }
 }
-  

@@ -228,7 +228,9 @@
                 type="file"
                 id="fileInput"
                 (change)="onImageSelected($event)"
-                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                [disabled]="isLoading"
+                accept="image/*"
             />
             <label for="fileInput" class="flex justify-center w-fit px-4 py-2 bg-primary text-white rounded cursor-pointer">
                 Upload
@@ -241,7 +243,8 @@
              <button
                 type="submit"
                 class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
-                [disabled]="isLoading || uploadedImages.length < 4">Save & Continue
+                [disabled]="isLoading || uploadedImages.length < 4"
+                (click)="submitImage()">Save & Continue
               </button>
         </div>
     </div>

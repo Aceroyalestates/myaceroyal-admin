@@ -17,7 +17,7 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   }
   
   // Add Content-Type only for requests that need it
-  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
+  if ((req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') && !(req.body instanceof FormData)) {
     headers['Content-Type'] = 'application/json';
   }
 

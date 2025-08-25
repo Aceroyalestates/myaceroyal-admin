@@ -50,6 +50,10 @@ export class PropertyService {
     return this.httpService.delete<void>(`properties/${id}`);
   }
 
+  addImagesToProperty(propertyId: string, data: any): Observable<IResponse<Property>> {
+    return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/images`, data);
+  }//admin/properties/123e4567-e89b-12d3-a456-426614174000/images
+
 
   deleteImage(propertyId: string, imageId: string): Observable<{ success?: boolean; message: string }> {
     return this.httpService.delete<{ success?: boolean; message: string }>(`admin/properties/${propertyId}/images/${imageId}`);
@@ -88,6 +92,10 @@ export class PropertyService {
 
   toggleAvailability(propertyId: string): Observable<IResponse> {
     return this.httpService.patch<IResponse>(`admin/properties/${propertyId}/toggle-availability`, {});
+  }
+
+  getInstallmentPlans(): Observable<IResponse<any[]>> {
+    return this.httpService.get<IResponse<any[]>>('admin/installment-plans');
   }
 
 }

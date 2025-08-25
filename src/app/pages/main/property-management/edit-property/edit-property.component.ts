@@ -239,7 +239,7 @@ formAmenities = this.fb.group({
   }
 
   removeImage(imageUrl: string): void {
-    this.updatePropertyImages(imageUrl);
+    this.removeImageFromProperty(imageUrl);
     return console.log('Removing image:', imageUrl);
     this.propertyService.deleteImage(this.property!.id, imageUrl).subscribe({
       next: (response) => {
@@ -261,6 +261,24 @@ formAmenities = this.fb.group({
     }
   }
 
+  removeImageFromProperty(imageUrl: string): void {
+    console.log('Images before removal:', this.uploadedImages);
+    this.isLoading = true;
+    this.propertyService.deleteImage(this.property!.id, imageUrl).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        console.log('Image removed successfully:', response);
+        // Remove the image URL from the uploadedImages array
+        this.uploadedImages = this.uploadedImages.filter(x => x !== imageUrl);
+        console.log('Images after removal:', this.uploadedImages);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.error('Error removing image:', error);
+      }
+    });
+  }
+
   onImageSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -270,7 +288,7 @@ formAmenities = this.fb.group({
         next: (response) => {
           this.isLoading = false;
           console.log('Image uploaded successfully: ', response);
-          this.uploadedImages.push(response.file.secure_url);
+          this.uploadedImages.push(response.data.file.secure_url);
           this.getPropertyById(); // Refresh property data to include new image
         },
         error: (error) => {
