@@ -50,9 +50,10 @@
                   alt="property image"
                   class="w-full h-full rounded-lg object-cover hover:scale-105 transition-transform duration-200 hover:brightness-50"
                 />
-                <app-icon class="!text-white !text-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-150 hover:!text-red-500" name="trash" (click)="removeImage(img.image_url)"></app-icon>
+                <app-icon class="!text-white !text-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-150 hover:!text-red-500" name="trash" (click)="removeImage(img.id)"></app-icon>
               </div>
             }
+            
             <div class="relative flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300 w-full aspect-square rounded-lg hover:bg-gray-100 !p-12">
               <input
                 type="file"
@@ -61,8 +62,11 @@
                 class="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                 [disabled]="isLoading"
               />
-              <label for="fileInput" class="block px-4 py-2 bg-primary text-white rounded cursor-pointer">
+              <label for="fileInput" class="block px-4 py-2 bg-primary text-white rounded cursor-pointer" *ngIf="!isLoading">
                 Upload Image
+              </label>
+              <label class="block px-4 py-2 bg-primary text-white rounded cursor-pointer" *ngIf="isLoading">
+                Loading...
               </label>
             </div>
           </div>
@@ -248,73 +252,100 @@
         </div>
       </form>
 
-      <div class="flex flex-col">
-        <div class="flex justify-between items-center mt-4">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Unit</p>
-          <p class="!text-[#7A7A7A] !text-primary !mb-2">+ Add Unit</p>
-        </div>
-        <div class="flex">
-          <nz-collapse class="w-full" [nzExpandIconPosition]="'end'">
-            @for (panel of panels; track panel) {
-              <nz-collapse-panel [nzHeader]="panel.name" [nzActive]="panel.active" [nzShowArrow]="panel.arrow">
-                <div class="flex flex-col gap-4">
-                  <div class="flex justify-between items-center">
-                    <div class="flex flex-col">
-                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Unit Type</p>
-                      <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
-                        {{ panel.name }}
-                      </h5>
-                    </div>
-                    <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-                  </div>
-                  <div class="flex justify-between items-center">
-                    <div class="flex flex-col">
-                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Amount</p>
-                      <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
-                        {{ '50000' | currency: 'NGN' }}
-                      </h5>
-                    </div>
-                    <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-                  </div>
-                  <div class="flex justify-between items-center">
-                    <div class="flex flex-col">
-                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Installment Type</p>
-                      <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
-                        3 Month Installment
-                      </h5>
-                    </div>
-                    <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-                  </div>
-                  <div class="flex justify-between items-center">
-                    <div class="flex flex-col">
-                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Initial Amount</p>
-                      <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
-                        {{ '30000' | currency: 'NGN' }}
-                      </h5>
-                    </div>
-                    <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-                  </div>
-                  <div class="flex justify-between items-center">
-                    <div class="flex flex-col">
-                      <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Amount</p>
-                      <h5 class="!text-[#4F4F4F] text-normal font-medium !mb-0">
-                        {{ '50000' | currency: 'NGN' }}
-                      </h5>
-                    </div>
-                    <app-icon class="!text-primary !text-sm" name="edit"></app-icon>
-                  </div>
-                  <p class="!text-[#7A7A7A] !text-primary !mb-2">+ Add Installment</p>
+      <form nz-form [formGroup]="unitTypeForm" (ngSubmit)="submitUnit()" class="w-full">
+        <div class="flex flex-col gap-6">
+          <!-- Header Section -->
+          <div class="flex justify-between items-center">
+            <h3 class="text-gray-400 text-base font-medium">Unit</h3>
+            <button
+              type="button"
+              class="!text-primary hover:text-red-800 text-sm font-medium cursor-pointer :disabled:!text-gray-200 disabled:cursor-not-allowed"
+              (click)="addUnitType()"
+              [disabled]="isLoading"
+            >
+              + Add Unit
+            </button>
+          </div>
+
+          <!-- Form Fields -->
+          <div formArrayName="unit_types" class="flex flex-col gap-6 bg-gray-100 p-6 pb-18 rounded-lg border border-gray-200">
+            <!-- @for(unit of unitTypes.controls; track unit) { -->
+              <div *ngFor="let unitType of unitTypes.controls; let i = index" [formGroupName]="i">
+                <!-- Unit Type -->
+                <div class="flex flex-col gap-2 mb-2">
+                  <label for="unit_type_id" class="text-gray-500 text-xs font-medium">
+                    Unit Type
+                  </label>
+                  <nz-form-control nzErrorTip="Please select a unit type">
+                    <nz-select
+                      id="unit_type_id"
+                      formControlName="unit_type_id"
+                      nzPlaceHolder="Select a unit type for this property"
+                      class="w-full"
+                      [nzSize]="'large'"
+                    >
+                      @for (type of unitTypesOptions; track type.id) {
+                        <nz-option [nzValue]="type.id" [nzLabel]="type.name"></nz-option>
+                      }
+                    </nz-select>
+                  </nz-form-control>
                 </div>
-              </nz-collapse-panel>
-            }
-          </nz-collapse>
+
+                <!-- Amount -->
+                <div class="flex flex-col gap-2 my-12 mb-2">
+                  <label for="price" class="text-gray-500 text-xs font-medium">
+                    Amount
+                  </label>
+                  <nz-form-control nzErrorTip="Please enter a valid price">
+                    <input
+                      nz-input
+                      formControlName="price"
+                      placeholder="Enter property price"
+                      id="price"
+                      class="w-full"
+                      [nzSize]="'large'"
+                    />
+                  </nz-form-control>
+                </div>
+
+                <!-- Total Units -->
+                <div class="flex flex-col gap-2 mt-12">
+                  <label for="total_units" class="text-gray-500 text-xs font-medium">
+                    Total Units
+                  </label>
+                  <nz-form-control nzErrorTip="Please enter a valid total units">
+                    <input
+                      nz-input
+                      formControlName="total_units"
+                      placeholder="Enter total units"
+                      id="total_units"
+                      class="w-full"
+                      [nzSize]="'large'"
+                    />
+                  </nz-form-control>
+                </div>
+                <div class="flex justify-end mt-12">
+                  <button
+                    type="button"
+                    class="!text-red-500 hover:!text-red-800 text-sm font-medium cursor-pointer :disabled:!text-gray-200 disabled:cursor-not-allowed"
+                    (click)="removeUnitType(i)"
+                    [disabled]="isLoading || unitTypes.length <= 1"
+                  >
+                    Remove Unit
+                  </button>
+              </div>
+          </div>
+            <!-- } -->
         </div>
-      </div>
+        </div>
+      </form>
 
       <div class="flex items-center justify-end gap-6 my-12">
         <button
           type="submit"
-          class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+          class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
+          [disabled]="isLoading || unitTypeForm.invalid"
+          (click)="submitUnits()"
         >
           Save Property
         </button>

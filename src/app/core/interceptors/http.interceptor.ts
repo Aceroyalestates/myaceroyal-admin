@@ -13,10 +13,15 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const token = authService.getToken();
 
   const headers: { [key: string]: string } = {};
-  
+
   // Add Authorization header if token exists
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  // Add Content-Type only for requests that need it
+  if ((req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') && !(req.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
   }
 
   const clonedReq = req.clone({ setHeaders: headers });
@@ -79,9 +84,9 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
           statusText: errorStatusText,
           error,
         });
-        
+
         errorModalService.showAuthError('Your session has expired. Please log in again.');
-        
+
         // Delay logout to allow the user to read the modal
         setTimeout(() => {
           authService.logout(); // Ensure logout logic redirects the user
