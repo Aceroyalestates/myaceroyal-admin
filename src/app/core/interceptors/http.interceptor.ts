@@ -20,7 +20,10 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   // Add Content-Type only for requests that need it
-  if ((req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') && !(req.body instanceof FormData)) {
+  if (
+    (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') &&
+    !(req.body instanceof FormData)
+  ) {
     headers['Content-Type'] = 'application/json';
   }
 
@@ -41,7 +44,8 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     // Handle the response
     catchError((error) => {
       const status = error.status;
-      const errorMessage = error.message || 'Unknown error occurred.';
+      const errorMessage =
+        error.error.message || error.message || 'Unknown error occurred.';
       const errorStatusText = error.statusText || 'Unknown status';
 
       // Log the error for debugging
@@ -73,7 +77,10 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Handle general errors (4xx and 5xx)
       if (status >= 400 && status < 600) {
-        errorModalService.showServerError(status, `An error occurred: ${status} ${errorStatusText}. Please try again later.`);
+        errorModalService.showServerError(
+          status,
+          `An error occurred: ${environment.production ? errorMessage : errorMessage + ' ' + errorStatusText}. Please try again later.`,
+        );
       }
 
       // Handle unauthorized (401) or forbidden (403)
@@ -85,7 +92,9 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
           error,
         });
 
-        errorModalService.showAuthError('Your session has expired. Please log in again.');
+        errorModalService.showAuthError(
+          'Your session has expired. Please log in again.'
+        );
 
         // Delay logout to allow the user to read the modal
         setTimeout(() => {

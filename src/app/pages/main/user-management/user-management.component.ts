@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, signal } from '@angular/core';
-import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
+import { Component, effect, signal, ViewChild } from '@angular/core';
+import { TableColumn, TableAction, TableComponent } from 'src/app/shared/components/table/table.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Metrics, PAGE_SIZE, People } from 'src/app/core/constants';
 import { Person } from 'src/app/core/types/general';
@@ -16,6 +16,7 @@ import { CustomerService } from 'src/app/core/services/user.service';
   styleUrls: ['./user-management.component.css'],
 })
 export class UserManagementComponent {
+  @ViewChild('userTable') userTable!: TableComponent;
   loading = false;
   error: string | null = null;
   userMetrics = Metrics;
@@ -138,5 +139,13 @@ export class UserManagementComponent {
   handleSelectedData(selected: User[]) {
     this.selectedPeople.set(selected);
     console.log(this.selectedPeople);
+  }
+
+  triggerExport() {
+    if (this.userTable) {
+      this.userTable.triggerExport();
+    } else {
+      console.warn('Table component not found');
+    }
   }
 }

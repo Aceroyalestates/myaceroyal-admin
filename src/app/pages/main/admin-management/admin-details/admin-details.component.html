@@ -9,6 +9,8 @@
     ></app-breadcrumb>
     <div class="flex items-center justify-end gap-6 my-12">
       <button
+        (click)="suspendAdmin()"
+        type="button"
         class="place-self-end rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
       >
         Suspend Admin
@@ -17,13 +19,15 @@
     <div
       class="flex gap-6 py-5 px-7 border border-[#EBEBEB] rounded-lg w-11/12 bg-background"
     >
+    <div class="flex flex-col gap-4  max-h-[250px]">
       <img
         [src]="user.avatar || 'images/user.png'"
         [alt]="user.full_name"
-        class="w-full max-w-[230px] h-full rounded-lg object-cover"
+        class="w-full max-w-[230px] h-full rounded-lg object-center"
       />
+      </div>
 
-      <div class="flex flex-wrap items-center justify-between w-11/12 max-h-[200px]">
+      <div class="grid grid-cols-2 items-center justify-between w-11/12 max-h-[200px]">
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Full Name</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
@@ -45,20 +49,13 @@
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Role(s)</p>
           <span class="flex gap-2 items-center">
-            @if (user && user.role_id ===1) {
-
+           
             <p
-              class="!px-2 !py-[2px] rounded-full bg-[#34A8531F] !text-[#1FAF38] border border-[#34A85333] font-medium text-center text-medium"
+              class="font-medium text-center text-medium"
             >
-              General Admin
+              {{ user.role.label }}
             </p>
-            } @else {
-            <p
-              class="!px-2 !py-[2px] bg-[#E41C241F] !text-[#E41C24] border border-[#E41C2433] rounded-full font-medium text-center text-medium"
-            >
-              Finance Admin
-            </p>
-            }
+            
           </span>
         </div>
       </div>

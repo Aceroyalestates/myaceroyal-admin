@@ -14,6 +14,7 @@ import { User } from 'src/app/core/models/users';
 import { forkJoin } from 'rxjs';
 import { Property } from 'src/app/core/models/properties';
 import { CustomerService } from 'src/app/core/services/user.service';
+import { AdminService } from 'src/app/core/services/admin.service';
 
 @Component({
   selector: 'app-veiw-user',
@@ -29,49 +30,68 @@ export class ViewUserComponent implements OnInit {
   error: string | null = null;
   user!: User;
   people: Person[] = People;
-  properties!: Property;
+  properties!: Property[];
   columns: TableColumn[] = [
     {
-      key: 'name',
-      title: 'Name',
+      key: 'unit.property.name',
+      title: 'Property Name',
       sortable: true,
       type: 'text',
     },
     {
-      key: 'email',
-      title: 'Email',
+      key: 'unit.property.location',
+      title: 'Location',
       sortable: true,
       type: 'text',
     },
     {
-      key: 'age',
-      title: 'Age',
+      key: 'unit.unit_type.name',
+      title: 'Unit type',
       sortable: true,
       type: 'text',
     },
+    {
+      key: 'quantity',
+      title: 'Unit Qty',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'total_price',
+      title: 'Price',
+      sortable: true,
+      type: 'text',
+    },
+    {
+      key: 'plan.is_active',
+      title: 'Payment Status',
+      sortable: true,
+      type: 'text',
+    },
+    
   ];
 
-  actions: TableAction[] = [
-    {
-      key: 'view',
-      label: 'View',
-      icon: 'eye',
-      color: 'blue',
-      tooltip: 'View details',
-    },
-    {
-      key: 'edit',
-      label: 'Edit',
-      icon: 'edit',
-      color: 'green',
-      tooltip: 'Edit user',
-    },
-  ];
-
+  // actions: TableAction[] = [
+  //   {
+  //     key: 'view',
+  //     label: 'View',
+  //     icon: 'eye',
+  //     color: 'blue',
+  //     tooltip: 'View details',
+  //   },
+  //   {
+  //     key: 'edit',
+  //     label: 'Edit',
+  //     icon: 'edit',
+  //     color: 'green',
+  //     tooltip: 'Edit user',
+  //   },
+  // ];
   selectedPeople = signal<Person[]>([]);
 
   constructor(
     private customerService: CustomerService,
+    private adminService: AdminService,
     private activatedRoute: ActivatedRoute
   ) {
     // Optional effect to react to selected people changes
@@ -89,10 +109,14 @@ export class ViewUserComponent implements OnInit {
   }
 
   getUser(id: string) {
-    this.customerService.getUserById(id).subscribe({
-      next: (user) => {
+    forkJoin({
+      user: this.customerService.getUserById(id),
+      properties: this.adminService.getUserProperties(1, id, 10, {}, true),
+    }).subscribe({
+      next: ({ user, properties }) => {
         this.loading = false;
         this.user = user;
+        this.properties = properties.data;
       },
       error: (error) => {
         this.loading = false;
