@@ -12,7 +12,7 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { FeatureRequest, Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions } from 'src/app/core/models/properties';
+import { Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions } from 'src/app/core/models/properties';
 import { PropertyService } from 'src/app/core/services/property.service';
 import { ImageService } from 'src/app/core/services/image.service';
 
@@ -35,6 +35,7 @@ import { ImageService } from 'src/app/core/services/image.service';
   templateUrl: './add-property.component.html',
   styleUrl: './add-property.component.css'
 })
+
 export class AddPropertyComponent implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private destroy$ = new Subject<void>();
@@ -46,14 +47,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   createdProperty: Property | null = null;
   uploadedImages: string[] = [];
   unitTypesOptions: any[] = []; 
-
-  // alphabet(): string[] {
-  // const children: string[] = [];
-  // for (let i = 10; i < 36; i++) {
-  //   children.push(i.toString(36) + i);
-  // }
-  // return children;
-  // }
 
   readonly listOfOption: string[] = ['Tarred Road', '24/7 Electricity', 'Fenced Perimeter'];
 
@@ -77,8 +70,8 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   });
 
   unitTypeForm = this.fb.group({
-      unit_types: this.fb.array([])
-    });
+    unit_types: this.fb.array([])
+  });
 
   formPaymentPlan = this.fb.group({});
 
@@ -99,7 +92,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     return this.unitTypeForm.get('unit_types') as FormArray;
   }
 
-  // Create a new unit type form group
   createUnitType(): FormGroup {
     return this.fb.group({
       unit_type_id: ['', [Validators.required]],
@@ -108,7 +100,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Add a new unit type to the FormArray
   addUnitType(): void {
     this.unitTypes.push(this.createUnitType());
   }
@@ -124,7 +115,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         next: (response) => {
           console.log('Image uploaded successfully:', response);
           this.uploadedImages.push(response.data.file.secure_url)
-          // this.formImages.patchValue({ images });
         },
         error: (error) => {
           console.error('Error uploading image:', error);
@@ -174,7 +164,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     this.propertyService.addImagesToProperty(this.createdProperty!.id, data).subscribe({
       next: (response) => {
         console.log('Images added successfully:', response);
-        this.currentStep = 3; // Move to the next step
+        this.currentStep = 3; 
         this.isLoading = false;
       },
       error: (error) => {
@@ -241,12 +231,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     });
   }
 
-
-  // handleSelectedFeatures(selected: PropertyFeatureAdmin[]) {
-  //   this.formAmenities.patchValue({ features: selected });
-  //   console.log('Selected Features:', selected);
-  // }
-
   getPropertyTypes() {
     this.isLoading = true;
     this.propertyService.getPropertyTypes().subscribe({
@@ -271,7 +255,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isLoading = false;
           console.log('Property created successfully:', response);
-          // Navigate to the next step or show success message
           this.createdProperty = response.data!;
           this.currentStep = 1; // Move to the next step
         },
@@ -316,7 +299,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isLoading = false;
           console.log('Property updated successfully:', response);
-          // Optionally, you can refresh the property data or show a success message
           this.createdProperty = { ...this.createdProperty, ...response?.data } as Property;
           this.currentStep = 2;
         },
@@ -353,7 +335,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
 
   removeImage(imageUrl: string): void {
     console.log('Images before removal:', this.uploadedImages);
-    // Remove the image URL from the uploadedImages array
     this.uploadedImages = this.uploadedImages.filter(x => x !== imageUrl);
     console.log('Images after removal:', this.uploadedImages);
   }
