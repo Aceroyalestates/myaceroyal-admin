@@ -7,6 +7,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Subject, takeUntil } from 'rxjs';
+import { Role } from 'src/app/core/models/generic';
 import { AdminService } from 'src/app/core/services/admin.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 
@@ -28,6 +29,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 export class AddAdminComponent implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private destroy$ = new Subject<void>();
+  roles: Role[] = [];
   isLoading = false;
   error: string | null = null;
 
@@ -63,6 +65,12 @@ export class AddAdminComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         this.form.controls.checkPassword.updateValueAndValidity();
+      });
+
+      this.adminService.getRoles().pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response) => {
+          this.roles = response.data;
+        },
       });
   }
 

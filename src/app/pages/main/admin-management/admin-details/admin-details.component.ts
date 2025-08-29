@@ -47,22 +47,9 @@ export class AdminDetailsComponent implements OnInit {
       sortable: true,
       type: 'text',
     },
-    // {
-    //   key: 'is_active',
-    //   title: 'Status',
-    //   sortable: true,
-    //   type: 'status',
-    // },
+   
   ];
-  // actions: TableAction[] = [
-  //   {
-  //     key: 'view',
-  //     label: 'View',
-  //     icon: 'eye',
-  //     color: 'red',
-  //     tooltip: 'View details',
-  //   },
-  // ];
+
 
   selectedPeople = signal<Activity[]>([]);
 

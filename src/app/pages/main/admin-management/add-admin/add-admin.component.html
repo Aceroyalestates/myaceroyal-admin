@@ -146,15 +146,12 @@
             nzAllowClear
             nzPlaceHolder="Select role"
           >
-            <nz-option [nzValue]="1" nzLabel="1"></nz-option>
-            <nz-option [nzValue]="2" nzLabel="2"></nz-option>
-            <nz-option [nzValue]="3" nzLabel="3"></nz-option>
-            <nz-option [nzValue]="4" nzLabel="4"></nz-option>
-            <nz-option [nzValue]="5" nzLabel="5"></nz-option>
+            @for (role of roles; track role.value) {
+              <nz-option [nzValue]="role.value" nzLabel="{{ role.label }}"></nz-option>
+            }
           </nz-select>
         </nz-form-control>
       </div>
-      <h2 class="!font-medium !text-medium">{{ form.get("role")?.value }}</h2>
     </div>
 
     <div class="flex items-center justify-end gap-6 my-12">

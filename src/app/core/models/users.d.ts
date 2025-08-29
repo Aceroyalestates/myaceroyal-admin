@@ -29,6 +29,7 @@ export interface User {
     completed_payments: number;
     pending_payments: number;
   };
+  role: Role;
 }
 
 export interface ActivityLogsResponse extends IResponse {
