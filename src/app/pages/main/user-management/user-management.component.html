@@ -1,7 +1,7 @@
 <main class="flex flex-col w-full">
   <div class="flex flex-col gap-12">
     <app-breadcrumb
-      [items]="[{ label: 'User Management', url: '/user-management' }]"
+      [items]="[{ label: 'User Management', url: '/main/user-management' }]"
     ></app-breadcrumb>
     <div class="flex items-center gap-9 mb-12">
       @for(metric of userMetrics; track metric.id){
@@ -45,12 +45,14 @@
     <button
       class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
       [ngStyle]="{ color: '#FFF' }"
+      (click)="triggerExport()"
     >
       Export
     </button>
   </div>
 
   <app-table
+    #userTable
     [data]="users"
     [columns]="columns"
     [actions]="actions"

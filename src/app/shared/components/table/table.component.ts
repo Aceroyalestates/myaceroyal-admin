@@ -105,6 +105,7 @@ export class TableComponent implements OnInit, OnChanges {
   }>();
   @Output() rowClick = new EventEmitter<any>();
   @Output() pageChange = new EventEmitter<{ page: number; size: number }>();
+  @Output() exportRequest = new EventEmitter<void>();
 
   @ContentChild('customCell') customCellTemplate!: TemplateRef<any>;
   @ViewChild('searchInput') searchInput!: ElementRef;
@@ -460,6 +461,9 @@ export class TableComponent implements OnInit, OnChanges {
 
   // Export functionality
   exportToCSV(): void {
+    // Emit event for parent to handle if needed
+    this.exportRequest.emit();
+    
     const headers = this.columns.map((col) => col.title).join(',');
     const rows = this.filteredData.map((row) =>
       this.columns
@@ -483,5 +487,10 @@ export class TableComponent implements OnInit, OnChanges {
       link.click();
       document.body.removeChild(link);
     }
+  }
+
+  // Public method to trigger export from parent component
+  public triggerExport(): void {
+    this.exportToCSV();
   }
 }

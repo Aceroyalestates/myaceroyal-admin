@@ -2,7 +2,7 @@
   <div class="flex flex-col mb-10">
     <app-breadcrumb
       [items]="[
-        { label: 'Admin Management', url: '/admin-management' },
+        { label: 'Admin Management', url: '/main/admin-management' },
         { label: 'Add New Admin' }
       ]"
     ></app-breadcrumb>
@@ -11,7 +11,7 @@
     </p>
   </div>
   <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstName">
           <span>First Name</span>
@@ -20,6 +20,7 @@
           [nzSm]="14"
           [nzXs]="24"
           nzErrorTip="Please input your first name!"
+          class="!min-w-full"
         >
           <input
             nz-input
@@ -35,6 +36,7 @@
         </nz-form-label>
         <nz-form-control
           [nzSm]="14"
+          class="!min-w-full"
           [nzXs]="24"
           nzErrorTip="Please input your last name!"
         >
@@ -53,6 +55,7 @@
         <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
+          class="!min-w-full"
           nzErrorTip="The input is not valid E-mail!"
         >
           <input
@@ -64,19 +67,26 @@
         </nz-form-control>
       </div>
       <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="uniqueId">
-          <span>Unique ID</span>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phone">
+          <span>Phone Number</span>
         </nz-form-label>
         <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
-          nzErrorTip="Please create a Unique ID"
+          class="!min-w-full"
+          nzErrorTip="Please Enter a Phone Number"
         >
           <input
             nz-input
-            id="uniqueId"
-            placeholder="Create Unique ID"
-            formControlName="uniqueId"
+            id="phone"
+            placeholder="Enter Phone Number"
+            formControlName="phone"
+            maxlength="11"
+            pattern="[0-9]*"
+            type="tel"
+            inputmode="numeric"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            minlength="11"
           />
         </nz-form-control>
       </div>
@@ -87,6 +97,7 @@
         <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
+          class="!min-w-full"
           nzErrorTip="Please input your password!"
         >
           <input
@@ -102,7 +113,9 @@
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkPassword"
           >Confirm Password</nz-form-label
         >
-        <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
+        <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl"
+            class="!min-w-full"
+        >
           <input
             nz-input
             type="password"
@@ -124,6 +137,7 @@
         <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
+          class="!min-w-full !md:min-w-3/6 "
           nzErrorTip="Please select a nation!"
         >
           <nz-select
@@ -132,21 +146,19 @@
             nzAllowClear
             nzPlaceHolder="Select role"
           >
-            <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-            <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
-            <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
-            <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
-            <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
+            @for (role of roles; track role.value) {
+              <nz-option [nzValue]="role.value" nzLabel="{{ role.label }}"></nz-option>
+            }
           </nz-select>
         </nz-form-control>
       </div>
-      <h2 class="!font-medium !text-medium">{{ form.get("role")?.value }}</h2>
     </div>
 
     <div class="flex items-center justify-end gap-6 my-12">
       <button
         type="submit"
-        class="place-self-end rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+        class="place-self-end rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="form.invalid"
       >
         Save & Create Admin
       </button>

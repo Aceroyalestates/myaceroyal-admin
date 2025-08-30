@@ -1,7 +1,7 @@
 <main class="flex flex-col w-full">
   <div class="flex flex-col gap-12 mb-16">
     <app-breadcrumb
-      [items]="[{ label: 'Dashboard', url: '/dashboard' }]"
+      [items]="[{ label: 'Dashboard', url: '/main/dashboard' }]"
     ></app-breadcrumb>
     <div class="flex items-center gap-9">
       @for(metric of metrics; track metric.id){
@@ -90,8 +90,11 @@
               ? property.property_images[0].image_url
               : 'assets/images/property-image.jpg'
           "
-          [alt]="property.property_features.length
-              ?property.property_features[0].feature.name:''"
+          [alt]="
+            property.property_features.length
+              ? property.property_features[0].feature.name
+              : ''
+          "
           class="w-full h-full max-h-[308px] rounded-[5px] object-cover"
         />
         <div
@@ -102,7 +105,7 @@
               {{ property.name }}
             </p>
             <p class="text-primary font-medium text-[20px] text-normal">
-              &#8358; {{ property.property_units[0].price }}
+              &#8358; {{ property.property_units.length > 0 ? property.property_units[0].price : 'N/A' }}
             </p>
           </div>
           <div class="flex flex-col gap-2 mb-6">
@@ -173,13 +176,16 @@
       </nz-select>
     </div>
     <app-table
-      [data]="users"
+      [data]="activities"
       [columns]="columns"
+      [actions]="actions"
       [showSelection]="false"
       [showPagination]="true"
       [showSearch]="true"
       [showFilters]="true"
+      (actionClick)="onTableAction($event)"
       class="w-full"
     />
   </div>
+  <app-payment-details [isVisible]="isVisible" [activity]="activity" (handleClose)="handleAccountDetailsClose()"></app-payment-details>
 </main>

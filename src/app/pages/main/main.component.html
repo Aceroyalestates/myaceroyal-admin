@@ -1,4 +1,7 @@
 <nz-layout class="app-layout">
+
+<app-loader />
+<app-error-modal />
   <nz-sider
     class="menu-sidebar"
     nzCollapsible
@@ -19,7 +22,7 @@
           <app-icon name="dashboard"></app-icon>
 
           <a
-            [routerLink]="['/dashboard']"
+            [routerLink]="['/main/dashboard']"
             routerLinkActive="!bg-primary !text-[#fff]"
             [routerLinkActiveOptions]="{ exact: true }"
             >Dashboard</a
@@ -29,7 +32,7 @@
           <app-icon name="property"></app-icon>
 
           <a
-            [routerLink]="['/property-management']"
+            [routerLink]="['/main/property-management']"
             routerLinkActive="!bg-primary !text-[#fff]"
             >Property Management</a
           >
@@ -38,7 +41,7 @@
           <app-icon name="user-round"></app-icon>
 
           <a
-            [routerLink]="['/admin-management']"
+            [routerLink]="['/main/admin-management']"
             routerLinkActive="!bg-primary !text-[#fff]"
             >Admin Management</a
           >
@@ -47,7 +50,7 @@
           <app-icon name="user-round"></app-icon>
 
           <a
-            [routerLink]="['/user-management']"
+            [routerLink]="['/main/user-management']"
             routerLinkActive="!bg-primary !text-[#fff]"
             >User Management</a
           >
@@ -56,7 +59,7 @@
           <app-icon name="purse"></app-icon>
 
           <a
-            [routerLink]="['/finance-management']"
+            [routerLink]="['/main/finance-management']"
             routerLinkActive="!bg-primary !text-[#fff]"
             >Finance Management</a
           >
@@ -65,7 +68,7 @@
           <app-icon name="bag"></app-icon>
 
           <a
-            [routerLink]="['/subscription-form']"
+            [routerLink]="['/main/subscription-form']"
             routerLinkActive="!bg-primary !text-[#fff]"
             >Subsciption Form</a
           >
@@ -74,7 +77,7 @@
           <app-icon name="bag"></app-icon>
 
           <a
-            [routerLink]="['/realtor-management']"
+            [routerLink]="['/main/realtor-management']"
             routerLinkActive="!bg-primary !text-[#fff]"
             >Realtor Management</a
           >
@@ -82,9 +85,7 @@
       </ul>
     </div>
     <div class="pt-8 flex flex-col px-[30px] pb-6 gap-0">
-      <h1 class="font-medium text-sm !text-primary uppercase mb-0">
-        SETTINGS
-      </h1>
+      <h1 class="font-medium text-sm !text-primary uppercase mb-0">SETTINGS</h1>
       <ul nz-menu class="menu">
         <li nz-menu-item class="menu-item" nzMatchRouter>
           <app-icon name="bell"></app-icon>
@@ -95,7 +96,7 @@
             >Notifications</a
           >
         </li>
-        <li nz-menu-item class="menu-item" nzMatchRouter>
+        <li nz-menu-item class="menu-item" (click)="logout()">
           <app-icon name="exit"></app-icon>
 
           <a>Sign Out</a>
@@ -138,6 +139,7 @@
     <nz-content>
       <div class="inner-content">
         <router-outlet></router-outlet>
+
       </div>
     </nz-content>
   </nz-layout>
