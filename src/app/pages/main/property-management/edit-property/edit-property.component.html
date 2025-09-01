@@ -24,7 +24,7 @@
               <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" [nzNoColon]="true">
                 <span class="text-xs text-gray-500">Property Name</span>
               </nz-form-label>
-              <nz-form-control nzErrorTip="Please select property name">
+              <nz-form-control nzErrorTip="Please enter property name">
                 <input
                   nz-input
                   formControlName="name"
@@ -34,23 +34,28 @@
               </nz-form-control>
             </div>
             <button
-                class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
-                (click)="setEditingField('name', false)"
-                [disabled]="isLoading"
+              class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+              (click)="setEditingField('name', false)"
+              [disabled]="isLoading"
             >Done</button>
           }
         </div>
 
         <div class="flex items-center gap-6 py-5">
           <div class="grid grid-cols-3 items-center gap-6">
-            @for(img of property.property_images; track img.image_url) {
+            @for(img of property.property_images; track img.id) {
               <div class="relative">
                 <img
                   src="{{img.image_url}}"
                   alt="property image"
                   class="w-full h-full rounded-lg object-cover hover:scale-105 transition-transform duration-200 hover:brightness-50"
                 />
-                <app-icon class="!text-white !text-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-150 hover:!text-red-500" name="trash" (click)="removeImage(img.id)"></app-icon>
+                <app-icon
+                  class="!text-white !text-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-150 hover:!text-red-500"
+                  name="trash"
+                  (click)="removeImage(img.id)"
+                  [class.disabled]="isLoading"
+                ></app-icon>
               </div>
             }
 
@@ -65,7 +70,7 @@
               <label for="fileInput" class="block px-4 py-2 bg-primary text-white rounded cursor-pointer" *ngIf="!isLoading">
                 Upload Image
               </label>
-              <label class="block px-4 py-2 bg-primary text-white rounded cursor-pointer" *ngIf="isLoading">
+              <label class="block px-4 py-2 bg-primary text-white rounded cursor-not-allowed" *ngIf="isLoading">
                 Loading...
               </label>
             </div>
@@ -97,12 +102,11 @@
                       </nz-select>
                     </nz-form-control>
                   </div>
-
                   <button
                     class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                     (click)="setEditingField('property_type', false)"
                     [disabled]="isLoading"
-                    >Done</button>
+                  >Done</button>
                 }
               </div>
             </div>
@@ -125,12 +129,11 @@
                       />
                     </nz-form-control>
                   </div>
-
                   <button
                     class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                     (click)="setEditingField('location', false)"
                     [disabled]="isLoading"
-                    >Done</button>
+                  >Done</button>
                 }
               </div>
             </div>
@@ -153,12 +156,11 @@
                       />
                     </nz-form-control>
                   </div>
-
                   <button
                     class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                     (click)="setEditingField('address', false)"
                     [disabled]="isLoading"
-                    >Done</button>
+                  >Done</button>
                 }
               </div>
             </div>
@@ -181,11 +183,10 @@
                       id="description"
                       class="basis-2/3 h-24 resize-none"
                     ></textarea>
-
                     <button
-                        class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
-                        (click)="setEditingField('description', false)"
-                        [disabled]="isLoading"
+                      class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+                      (click)="setEditingField('description', false)"
+                      [disabled]="isLoading"
                     >Done</button>
                   }
                 </div>
@@ -194,14 +195,13 @@
           </div>
         </div>
       </form>
-      <!-- Second form starts here, outside the first form -->
       <form nz-form [formGroup]="formAmenities" (ngSubmit)="submitFormAmenities()">
         <div class="w-full">
           <p class="!text-[#7A7A7A] !text-sm !font-semibold">Amenities</p>
           <div class="flex flex-row justify-between items-center">
             @if(!editingAmenities) {
               <div class="flex gap-4 basis-4/5 flex-wrap">
-                @for(am of property.property_features; track am) {
+                @for(am of property.property_features; track am.feature_id) {
                   <div class="flex bg-tertiary items-center gap-2 bg-gray-100 p-2 rounded">
                     <app-icon class="!text-primary text-[10px]" name="power"></app-icon>
                     <h2 class="!text-[#4F4F4F] text-normal font-medium text-[16px] !mb-0">
@@ -214,10 +214,10 @@
                 class="!text-primary !text-sm cursor-pointer"
                 name="edit"
                 (click)="setEditingField('property_features', true)"
-                ></app-icon>
+              ></app-icon>
             } @else {
               <div class="basis-4/5">
-                <nz-form-control nzErrorTip="Please select property category">
+                <nz-form-control nzErrorTip="Please select at least one feature">
                   <nz-select
                     id="property_features"
                     formControlName="features"
@@ -226,18 +226,15 @@
                     class="basis-4/5"
                     nzMode="multiple"
                   >
-                    <!-- @for(pf of adminFeatures; track pf.id) {
-                      <nz-option [nzValue]="pf.id" [nzLabel]="pf.name"></nz-option>
-                    } -->
-                      @for(feature of adminFeatures; track feature.id) {
-                        <nz-option [nzValue]="feature.id" [nzLabel]="feature.name">
+                    @for(feature of adminFeatures; track feature.id) {
+                      <nz-option [nzValue]="feature.id" [nzLabel]="feature.name">
                         <ng-template #nzOptionCustomContent>
-                            <div class="flex items-center gap-2">
+                          <div class="flex items-center gap-2">
                             <nz-icon [nzType]="feature.icon" />
                             {{ feature.name }}
-                            </div>
+                          </div>
                         </ng-template>
-                        </nz-option>
+                      </nz-option>
                     }
                   </nz-select>
                 </nz-form-control>
@@ -246,97 +243,200 @@
                 class="bg-transparent !text-primary !text-sm font-semibold cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                 (click)="setEditingField('property_features', false)"
                 [disabled]="isLoading"
-                >Done</button>
+              >Done</button>
             }
           </div>
         </div>
       </form>
 
-      <form nz-form [formGroup]="unitTypeForm" (ngSubmit)="submitUnit()" class="w-full">
+      <form nz-form [formGroup]="unitTypeForm" class="w-full">
         <div class="flex flex-col gap-6">
-          <!-- Header Section -->
           <div class="flex justify-between items-center">
             <h3 class="text-gray-400 text-base font-medium">Unit</h3>
             <button
               type="button"
-              class="!text-primary hover:text-red-800 text-sm font-medium cursor-pointer :disabled:!text-gray-200 disabled:cursor-not-allowed"
+              class="!text-primary hover:text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
               (click)="addUnitType()"
               [disabled]="isLoading"
             >
               + Add Unit
             </button>
           </div>
-
-          <!-- Form Fields -->
-          <div formArrayName="unit_types" class="flex flex-col gap-6 bg-gray-100 p-6 pb-18 rounded-lg border border-gray-200">
-            <!-- @for(unit of unitTypes.controls; track unit) { -->
-              <div *ngFor="let unitType of unitTypes.controls; let i = index" [formGroupName]="i">
-                <!-- Unit Type -->
-                <div class="flex flex-col gap-2 mb-2">
-                  <label for="unit_type_id" class="text-gray-500 text-xs font-medium">
-                    Unit Type
-                  </label>
-                  <nz-form-control nzErrorTip="Please select a unit type">
-                    <nz-select
-                      id="unit_type_id"
-                      formControlName="unit_type_id"
-                      nzPlaceHolder="Select a unit type for this property"
-                      class="w-full"
-                      [nzSize]="'large'"
-                    >
-                      @for (type of unitTypesOptions; track type.id) {
-                        <nz-option [nzValue]="type.id" [nzLabel]="type.name"></nz-option>
-                      }
-                    </nz-select>
-                  </nz-form-control>
-                </div>
-
-                <!-- Amount -->
-                <div class="flex flex-col gap-2 my-12 mb-2">
-                  <label for="price" class="text-gray-500 text-xs font-medium">
-                    Amount
-                  </label>
-                  <nz-form-control nzErrorTip="Please enter a valid price">
-                    <input
-                      nz-input
-                      formControlName="price"
-                      placeholder="Enter property price"
-                      id="price"
-                      class="w-full"
-                      [nzSize]="'large'"
-                    />
-                  </nz-form-control>
-                </div>
-
-                <!-- Total Units -->
-                <div class="flex flex-col gap-2 mt-12">
-                  <label for="total_units" class="text-gray-500 text-xs font-medium">
-                    Total Units
-                  </label>
-                  <nz-form-control nzErrorTip="Please enter a valid total units">
-                    <input
-                      nz-input
-                      formControlName="total_units"
-                      placeholder="Enter total units"
-                      id="total_units"
-                      class="w-full"
-                      [nzSize]="'large'"
-                    />
-                  </nz-form-control>
-                </div>
-                <div class="flex justify-end mt-12">
-                  <button
-                    type="button"
-                    class="!text-red-500 hover:!text-red-800 text-sm font-medium cursor-pointer :disabled:!text-gray-200 disabled:cursor-not-allowed"
-                    (click)="removeUnitType(i)"
-                    [disabled]="isLoading || unitTypes.length <= 1"
+          <div *ngIf="unitTypesOptions.length; else noUnitTypes" formArrayName="unit_types" class="flex flex-col gap-6 bg-gray-100 p-6 pb-18 rounded-lg border border-gray-200">
+            <div *ngFor="let unitType of unitTypes.controls; let i = index; trackBy: trackByUnitType" [formGroupName]="i">
+              <div class="flex flex-col gap-2 mb-2">
+                <label [for]="'unit_type_id_' + i" class="text-gray-500 text-xs font-medium">
+                  Unit Type
+                </label>
+                <nz-form-control nzErrorTip="Please select a unit type">
+                  <nz-select
+                    [id]="'unit_type_id_' + i"
+                    formControlName="unit_type_id"
+                    nzPlaceHolder="Select a unit type for this property"
+                    class="w-full"
+                    [nzSize]="'large'"
                   >
-                    Remove Unit
-                  </button>
+                    @for (type of unitTypesOptions; track type.id) {
+                      <nz-option [nzValue]="type.id" [nzLabel]="type.name"></nz-option>
+                    }
+                  </nz-select>
+                </nz-form-control>
               </div>
+              <div class="flex flex-col gap-2 my-12 mb-2">
+                <label [for]="'price_' + i" class="text-gray-500 text-xs font-medium">
+                  Amount
+                </label>
+                <nz-form-control nzErrorTip="Please enter a valid price">
+                  <input
+                    nz-input
+                    [id]="'price_' + i"
+                    formControlName="price"
+                    placeholder="Enter property price"
+                    class="w-full"
+                    [nzSize]="'large'"
+                  />
+                </nz-form-control>
+              </div>
+              <div class="flex flex-col gap-2 mt-12">
+                <label [for]="'total_units_' + i" class="text-gray-500 text-xs font-medium">
+                  Total Units
+                </label>
+                <nz-form-control nzErrorTip="Please enter a valid total units">
+                  <input
+                    nz-input
+                    [id]="'total_units_' + i"
+                    formControlName="total_units"
+                    placeholder="Enter total units"
+                    class="w-full"
+                    [nzSize]="'large'"
+                  />
+                </nz-form-control>
+              </div>
+              <div class="flex justify-between items-center mt-12">
+                <button
+                  type="button"
+                  class="!text-red-500 hover:!text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+                  (click)="removeUnitType(i)"
+                  [disabled]="isLoading || unitTypes.length <= 1"
+                >
+                  Remove Unit
+                </button>
+                <button
+                  type="button"
+                  class="!text-primary hover:text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+                  (click)="addInstallmentPlan(i)"
+                  [disabled]="isLoading || !unitTypes.at(i).valid"
+                >
+                  + Add Installment Plan
+                </button>
+              </div>
+
+              <!-- Installment Plans -->
+              <div formArrayName="installment_plans" class="flex flex-col gap-4 mt-6 pl-4">
+
+                <div *ngFor="let plan of getInstallmentPlans(i).controls; let j = index; trackBy: trackByPlan" [formGroupName]="j">
+                  <div class="flex w-full justify-between items-center border-b border-gray-300 pb-2 mb-4 pr-">
+                    <p class="text-gray-500 text-lg font-medium">Installment Details</p>
+                    <app-icon
+                      class="!text-gray-500 !text-sm cursor-pointer"
+                      name="trash"
+                      (click)="removeInstallmentPlan(i, j)"
+                      [class.disabled]="isLoading"
+                    ></app-icon>
+                  </div>
+                  <div class="flex flex-col gap-2 mb-2">
+                    <label [for]="'plan_id_' + i + '_' + j" class="text-gray-500 text-xs font-medium">
+                      Installment Type
+                    </label>
+                    <nz-form-control>
+                      <nz-select
+                        [id]="'plan_id_' + i + '_' + j"
+                        formControlName="plan_id"
+                        nzPlaceHolder="Select an installment type"
+                        class="w-full"
+                        [nzSize]="'large'"
+                      >
+                        @for (option of installmentPlans; track option.id) {
+                          <nz-option [nzValue]="option.id" [nzLabel]="option.title"></nz-option>
+                        }
+                      </nz-select>
+                    </nz-form-control>
+                  </div>
+                  <div class="flex flex-col gap-2 mb-2 mt-12">
+                    <label [for]="'initial_amount_' + i + '_' + j" class="text-gray-500 text-xs font-medium">
+                      Initial Deposit
+                    </label>
+                    <nz-form-control nzErrorTip="Please enter a valid initial amount">
+                      <input
+                        nz-input
+                        [id]="'initial_amount_' + i + '_' + j"
+                        formControlName="initial_amount"
+                        placeholder="Enter initial amount"
+                        type="number"
+                        class="w-full"
+                        [nzSize]="'large'"
+                      />
+                    </nz-form-control>
+                  </div>
+                  <div class="flex flex-col gap-2 mb-2 mt-12">
+                    <label [for]="'total_price_' + i + '_' + j" class="text-gray-500 text-xs font-medium">
+                      Total Amount
+                    </label>
+                    <nz-form-control nzErrorTip="Please enter a valid total price">
+                      <input
+                        nz-input
+                        [id]="'total_price_' + i + '_' + j"
+                        formControlName="total_price"
+                        placeholder="Enter total amount"
+                        type="number"
+                        class="w-full"
+                        [nzSize]="'large'"
+                      />
+                    </nz-form-control>
+                  </div>
+                  <div class="flex flex-col gap-2 mb-2 mt-12">
+                    <label [for]="'start_date_' + i + '_' + j" class="text-gray-500 text-xs font-medium">
+                      Start Date
+                    </label>
+                    <nz-form-control nzErrorTip="Please select a start date">
+                      <nz-date-picker
+                        [id]="'start_date_' + i + '_' + j"
+                        formControlName="start_date"
+                        nzPlaceHolder="Select start date"
+                        class="w-full"
+                        [nzSize]="'large'"
+                      ></nz-date-picker>
+                    </nz-form-control>
+                  </div>
+                  <div class="flex justify-end mt-4">
+                    <button
+                      type="button"
+                      class="!text-red-500 hover:!text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+                      (click)="removeInstallmentPlan(i, j)"
+                      [disabled]="isLoading"
+                    >
+                      Remove Plan
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-end mt-4">
+                <button
+                  type="button"
+                  class="rounded-lg bg-primary py-2 px-6 text-sm !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
+                  (click)="submitInstallmentPlans(i)"
+                  [disabled]="isLoading || !getInstallmentPlans(i).controls.length || !unitType.valid"
+                >
+                  Save Plans
+                </button>
+              </div>
+            </div>
           </div>
-            <!-- } -->
-        </div>
+          <ng-template #noUnitTypes>
+            <div *ngIf="!isLoading" class="text-gray-500">
+              No unit types available. Please try again later.
+            </div>
+          </ng-template>
         </div>
       </form>
 
@@ -344,8 +444,8 @@
         <button
           type="submit"
           class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
-          [disabled]="isLoading || unitTypeForm.invalid"
-          (click)="submitUnits()"
+          [disabled]="isLoading || editForm.invalid || unitTypeForm.invalid"
+          (click)="submit()"
         >
           Save Property
         </button>

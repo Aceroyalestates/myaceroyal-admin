@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
-import { FeatureRequest, Property, PropertyCreateRequest, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUnitRequest, UnitType } from '../models/properties';
+import { FeatureRequest, InstallmentPlan, InstallmentPlanCreate, InstallmentPlanRequest, Property, PropertyCreateRequest, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUnitRequest, UnitType } from '../models/properties';
 import { IResponse } from '../models/generic';
 
 @Injectable({
@@ -94,12 +94,24 @@ export class PropertyService {
     return this.httpService.patch<IResponse>(`admin/properties/${propertyId}/toggle-availability`, {});
   }
 
-  getInstallmentPlans(): Observable<IResponse<any[]>> {
-    return this.httpService.get<IResponse<any[]>>('admin/installment-plans');
+  getInstallmentPlans(): Observable<IResponse<InstallmentPlan[]>> {
+    return this.httpService.get<IResponse<InstallmentPlan[]>>('admin/installment-plans');
   }
 
   addPropertyUnit(propertyId: string, unit: PropertyUnitRequest): Observable<IResponse<Property>> {
     return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/units`, unit);
+  }
+
+  addPropertyInstallmentPlans(propertyId: string, plans: InstallmentPlanRequest): Observable<IResponse<Property>> {
+    return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/installment-plans`,  plans);
+  }
+
+  addInstallmentPlanToUnit(propertyId: string, unitId: string, plan: InstallmentPlanCreate): Observable<IResponse<Property>> {
+    return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/units/${unitId}/installment-plans`, plan);
+  }
+
+  deleteInstallmentPlanFromUnit(propertyId: string, unitId: number): Observable<IResponse<Property>> {
+    return this.httpService.delete<IResponse<Property>>(`admin/properties/${propertyId}/installment-plans/${unitId}`);
   }
 
 }
