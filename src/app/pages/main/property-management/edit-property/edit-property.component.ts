@@ -16,8 +16,9 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { PropertyService } from 'src/app/core/services/property.service';
-import { InstallmentPlan, InstallmentPlanCreate, InstallmentPlanRequest, Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions, PropertyUnitRequest } from 'src/app/core/models/properties';
+import { InstallmentPlan, InstallmentPlanRequest, Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions, PropertyUnitRequest } from 'src/app/core/models/properties';
 import { ImageService } from 'src/app/core/services/image.service';
 
 
@@ -38,7 +39,8 @@ import { ImageService } from 'src/app/core/services/image.service';
     NzUploadModule,
     NzDividerModule,
     NzCollapseModule,
-    NzDatePickerModule
+    NzDatePickerModule,
+    NzPopconfirmModule
   ],
   templateUrl: './edit-property.component.html',
   styleUrl: './edit-property.component.css'
@@ -106,7 +108,6 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Getter for the unit_types FormArray
   get unitTypes(): FormArray {
     return this.unitTypeForm.get('unit_types') as FormArray;
   }
@@ -115,50 +116,58 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
     return this.unitTypes.at(unitIndex).get('installment_plans') as FormArray;
   }
 
-  // Create a new unit type form group
   createUnitType(unit?: any): FormGroup {
-    return this.fb.group({
+    const formGroup = this.fb.group({
       unit_type_id: [unit?.unit_type_id || '', [Validators.required]],
       price: [unit?.price || '', [Validators.required, Validators.min(0)]],
       total_units: [unit?.total_units || '', [Validators.required, Validators.min(1)]],
-      installment_plans: this.fb.array(unit?.property_installment_plans?.map((plan: any) => this.createInstallmentPlan(plan)) || [])
+      installment_plans: this.fb.array(unit?.property_installment_plans?.map((plan: any) => this.createInstallmentPlan(plan)) || []),
+      isSaved: [!!unit]
     });
+    if (unit) {
+      formGroup.disable();
+    }
+    return formGroup;
   }
 
-  // Create a new installment plan form group
   createInstallmentPlan(plan?: any): FormGroup {
-    return this.fb.group({
+    const formGroup = this.fb.group({
       plan_id: [plan?.plan_id, [Validators.required]],
       initial_amount: [plan?.initial_amount || '', [Validators.required, Validators.min(0)]],
       total_price: [plan?.total_price || '', [Validators.required, Validators.min(0)]],
-      start_date: [plan?.start_date ? new Date(plan.start_date) : '', [Validators.required]]
+      start_date: [plan?.start_date ? new Date(plan.start_date) : '', [Validators.required]],
+      isSaved: [!!plan]
     });
+    if (plan) {
+      formGroup.disable();
+    }
+    return formGroup;
   }
 
-  // Add a new unit type to the FormArray
   addUnitType(): void {
     this.unitTypes.push(this.createUnitType());
   }
 
-  // Add a new installment plan to a specific unit
   addInstallmentPlan(unitIndex: number): void {
+    const unit = this.unitTypes.at(unitIndex);
+    if (!unit.get('isSaved')?.value) {
+      this.notification.warning('Warning', 'Please save the unit before adding installment plans.');
+      return;
+    }
     const plans = this.getInstallmentPlans(unitIndex);
     plans.push(this.createInstallmentPlan());
   }
 
-  // Remove an installment plan from a specific unit
   removeInstallmentPlan(unitIndex: number, planIndex: number): void {
-    console.log({ unitIndex, planIndex });
     const plans = this.getInstallmentPlans(unitIndex);
     const planId = plans.at(planIndex).get('plan_id')?.value;
-    if (planId && this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.plan_id) {
-      this.deleteInstallmentPlan(unitIndex);
+    if (planId && this.property?.property_units[unitIndex]?.property_installment_plans?.find(p => p.plan_id === planId)) {
+      this.deleteInstallmentPlan(unitIndex, planIndex, planId);
     } else {
-      // plans.removeAt(planIndex);
+      plans.removeAt(planIndex);
     }
   }
 
-  // TrackBy functions
   trackByUnitType(index: number, unit: AbstractControl): number {
     return index;
   }
@@ -173,23 +182,16 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       next: (property) => {
         this.property = property;
         this.isLoading = false;
-
-        // Update editForm
         this.editForm.patchValue({
           property_type: property?.property_type.name || '',
           name: property?.name || '',
           location: property?.location || '',
           address: property?.address || '',
           description: property?.description || '',
-          property_features: property?.property_features || [],
-          // images: property?.property_images.map(x => x.image_url) || []
+          property_features: property?.property_features || []
         });
-
-        // Update currentFeatures and uploadedImages
         this.currentFeatures = property.property_features.map(x => x.feature_id);
         this.uploadedImages = [...new Set(property.property_images.map(x => x.image_url))];
-
-        // Populate unit_types FormArray
         while (this.unitTypes.length) {
           this.unitTypes.removeAt(0);
         }
@@ -200,8 +202,6 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
         } else {
           this.addUnitType();
         }
-
-        console.log({ uploadedImages: this.uploadedImages, unitTypes: this.unitTypes.value });
       },
       error: (error) => {
         this.isLoading = false;
@@ -217,7 +217,6 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.isLoading = false;
         this.propertyTypeOptions = response.data || [];
-        console.log('Property Type Options:', this.propertyTypeOptions);
       },
       error: (error) => {
         this.isLoading = false;
@@ -233,7 +232,6 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.isLoading = false;
         this.unitTypesOptions = response.data || [];
-        console.log('Unit Types:', this.unitTypesOptions);
       },
       error: (error) => {
         this.isLoading = false;
@@ -245,14 +243,20 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
 
   submitUnits(): void {
     if (this.unitTypeForm.valid) {
+      const newUnits = this.unitTypeForm.value.unit_types
+        .map((unit: any, index: number) => ({ ...unit, index }))
+        .filter((unit: any) => !unit.isSaved);
+      if (!newUnits.length) {
+        this.notification.info('Info', 'No new units to save.');
+        return;
+      }
       const data: PropertyUnitRequest = {
-        unit_types: this.unitTypeForm.value.unit_types.map((unit: any) => ({
+        unit_types: newUnits.map((unit: any) => ({
           unit_type_id: unit.unit_type_id,
           price: unit.price,
           total_units: unit.total_units
         }))
       };
-      console.log('Submitting units:', data);
       this.createUnits(data);
     } else {
       this.unitTypes.controls.forEach((control) => {
@@ -270,21 +274,19 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
     this.propertyService.addPropertyUnit(this.property!.id, data).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.notification.success('Success', 'Units updated successfully');
+        this.notification.success('Success', 'Units added successfully');
         this.getPropertyById();
       },
       error: (error) => {
         this.isLoading = false;
-        this.notification.error('Error', 'Failed to update units');
-        console.error('Error updating units:', error);
+        this.notification.error('Error', 'Failed to add units');
+        console.error('Error adding units:', error);
       }
     });
   }
 
   submitInstallmentPlans(unitIndex: number): void {
-    console.log({ unitIndex });
     const unit = this.unitTypes.at(unitIndex);
-    console.log('Submitting installment plans for unit index:', unitIndex, unit.value);
     if (unit.valid) {
       const unitId = this.property?.property_units[unitIndex]?.id;
       if (!unitId) {
@@ -292,31 +294,21 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
         return;
       }
       const plansArray = this.getInstallmentPlans(unitIndex);
-      const allPlans = plansArray.value.map((plan: any) => ({
-        plan_id: plan.plan_id,
-        unit_id: unitId,
-        initial_amount: parseFloat(plan.initial_amount),
-        total_price: parseFloat(plan.total_price),
-        start_date: plan.start_date.toISOString()
-      }));
-      
       const newPlans = plansArray.controls
-        .filter(control => control.dirty || control.touched)
-        .map((control, index) => ({
+        .filter(control => !control.get('isSaved')?.value)
+        .map((control) => ({
           plan_id: control.value.plan_id,
           unit_id: unitId,
           initial_amount: parseFloat(control.value.initial_amount),
           total_price: parseFloat(control.value.total_price),
           start_date: control.value.start_date.toISOString()
         }));
-      
-      const data: InstallmentPlanRequest = {
-        installment_plans: allPlans
-      };
-      
-      console.log('All installment plans:', { installment_plans: allPlans });
-      console.log('Newly added installment plans:', { installment_plans: newPlans });
-      this.createInstallmentPlans(unitId, { installment_plans: newPlans });
+      if (!newPlans.length) {
+        this.notification.info('Info', 'No new installment plans to save.');
+        return;
+      }
+      const data: InstallmentPlanRequest = { installment_plans: newPlans };
+      this.createInstallmentPlans(unitId, data);
     } else {
       const plansArray = this.getInstallmentPlans(unitIndex);
       plansArray.controls.forEach((control: AbstractControl) => {
@@ -327,27 +319,25 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       });
       this.notification.warning('Warning', 'Please fill out all required plan fields');
     }
-}
+  }
 
   createInstallmentPlans(unitId: number, data: InstallmentPlanRequest): void {
     this.isLoading = true;
-    console.log('Creating installment plans for unitId:', unitId, data);
     this.propertyService.addPropertyInstallmentPlans(this.property!.id, data).subscribe({
       next: (response) => {
-        console.log('Installment plans created successfully:', response);
         this.isLoading = false;
-        this.notification.success('Success', 'Installment plans updated successfully');
+        this.notification.success('Success', 'Installment plans added successfully');
         this.getPropertyById();
       },
       error: (error) => {
         this.isLoading = false;
-        this.notification.error('Error', 'Failed to update installment plans');
-        console.error('Error updating installment plans:', error);
+        this.notification.error('Error', 'Failed to add installment plans');
+        console.error('Error adding installment plans:', error);
       }
     });
   }
 
-  deleteInstallmentPlan(unitIndex: number): void {
+  deleteInstallmentPlan(unitIndex: number, planIndex: number, planId: string): void {
     this.isLoading = true;
     const unitId = this.property?.property_units[unitIndex]?.id;
     if (!unitId) {
@@ -358,8 +348,8 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
     this.propertyService.deleteInstallmentPlanFromUnit(this.property!.id, unitId).subscribe({
       next: () => {
         this.isLoading = false;
-        // const plans = this.getInstallmentPlans(unitIndex);
-        // plans.removeAt(planIndex);
+        const plans = this.getInstallmentPlans(unitIndex);
+        plans.removeAt(planIndex);
         this.notification.success('Success', 'Installment plan removed successfully');
         this.getPropertyById();
       },
@@ -372,12 +362,10 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
   }
 
   removeUnitType(index: number): void {
-    console.log({ index });
     if (this.unitTypes.length > 1) {
       const unitId = this.property?.property_units[index]?.id;
-      console.log({ unitId });
       if (unitId) {
-        // this.deleteUnitType(index, unitId);
+        this.deleteUnitType(index, unitId);
       } else {
         this.unitTypes.removeAt(index);
       }
@@ -386,24 +374,23 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
 
   deleteUnitType(index: number, unitId: number): void {
     this.isLoading = true;
-    // this.propertyService.deletePropertyUnit(this.property!.id, unitId).subscribe({
-    //   next: () => {
-    //     this.isLoading = false;
-    //     this.unitTypes.removeAt(index);
-    //     this.notification.success('Success', 'Unit removed successfully');
-    //     this.getPropertyById();
-    //   },
-    //   error: (error) => {
-    //     this.isLoading = false;
-    //     this.notification.error('Error', 'Failed to remove unit');
-    //     console.error('Error deleting unit:', error);
-    //   }
-    // });
+    this.propertyService.deletePropertyUnit(this.property!.id, unitId).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.unitTypes.removeAt(index);
+        this.notification.success('Success', 'Unit removed successfully');
+        this.getPropertyById();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.notification.error('Error', 'Failed to remove unit');
+        console.error('Error deleting unit:', error);
+      }
+    });
   }
 
   submit(): void {
     if (this.editForm.valid) {
-      console.log('submit', this.editForm.value);
       this.updateField(this.editForm.value);
     } else {
       Object.values(this.editForm.controls).forEach((control) => {
@@ -453,9 +440,6 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       case 'property_features':
         this.editingAmenities = editing;
         break;
-      // case 'images':
-      //   this.editingImages = editing;
-      //   break;
     }
     if (!editing) {
       const updatedValue = this.editForm.get(field)?.value;
@@ -528,7 +512,6 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.isLoading = false;
         this.adminFeatures = response.data || [];
-        console.log('Property Features:', this.adminFeatures);
       },
       error: (error) => {
         this.isLoading = false;
@@ -575,7 +558,6 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.isLoading = false;
         this.propertyTypes = response.data || [];
-        console.log('Property Types:', this.propertyTypes);
       },
       error: (error) => {
         this.isLoading = false;
@@ -591,7 +573,6 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.isLoading = false;
         this.installmentPlans = response.data || [];
-        console.log('Installment Plans:', response.data);
       },
       error: (error) => {
         this.isLoading = false;

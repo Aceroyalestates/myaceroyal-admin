@@ -102,6 +102,10 @@ export class PropertyService {
     return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/units`, unit);
   }
 
+  deletePropertyUnit(propertyId: string, unitId: number): Observable<IResponse<Property>> {
+    return this.httpService.delete<IResponse<Property>>(`admin/properties/${propertyId}/units/${unitId}`);
+  }
+
   addPropertyInstallmentPlans(propertyId: string, plans: InstallmentPlanRequest): Observable<IResponse<Property>> {
     return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/installment-plans`,  plans);
   }

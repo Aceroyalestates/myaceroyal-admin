@@ -252,21 +252,25 @@
       <form nz-form [formGroup]="unitTypeForm" class="w-full">
         <div class="flex flex-col gap-6">
           <div class="flex justify-between items-center">
-            <h3 class="text-gray-400 text-base font-medium">Unit</h3>
-            <button
-              type="button"
-              class="!text-primary hover:text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
-              (click)="addUnitType()"
-              [disabled]="isLoading"
-            >
-              + Add Unit
-            </button>
+            <h3 class="text-gray-400 text-base font-medium">Units</h3>
+            <div class="flex gap-4">
+              <button
+                type="button"
+                class="!text-primary hover:text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+                (click)="addUnitType()"
+                [disabled]="isLoading"
+              >
+                + Add Unit
+              </button>
+              
+            </div>
           </div>
-          <div *ngIf="unitTypesOptions.length; else noUnitTypes" formArrayName="unit_types" class="flex flex-col gap-6 bg-gray-100 p-6 pb-18 rounded-lg border border-gray-200">
+          <div *ngIf="unitTypesOptions.length; else noUnitTypes" formArrayName="unit_types" class="flex flex-col gap-6 bg-gray-100 p-6 rounded-lg border border-gray-200">
             <div *ngFor="let unitType of unitTypes.controls; let i = index; trackBy: trackByUnitType" [formGroupName]="i">
               <div class="flex flex-col gap-2 mb-2">
                 <label [for]="'unit_type_id_' + i" class="text-gray-500 text-xs font-medium">
                   Unit Type
+                  <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
                 </label>
                 <nz-form-control nzErrorTip="Please select a unit type">
                   <nz-select
@@ -275,6 +279,7 @@
                     nzPlaceHolder="Select a unit type for this property"
                     class="w-full"
                     [nzSize]="'large'"
+                    [nzDisabled]="unitType.get('isSaved')?.value"
                   >
                     @for (type of unitTypesOptions; track type.id) {
                       <nz-option [nzValue]="type.id" [nzLabel]="type.name"></nz-option>
@@ -285,6 +290,7 @@
               <div class="flex flex-col gap-2 my-12 mb-2">
                 <label [for]="'price_' + i" class="text-gray-500 text-xs font-medium">
                   Amount
+                  <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
                 </label>
                 <nz-form-control nzErrorTip="Please enter a valid price">
                   <input
@@ -294,12 +300,14 @@
                     placeholder="Enter property price"
                     class="w-full"
                     [nzSize]="'large'"
+                    [readonly]="unitType.get('isSaved')?.value"
                   />
                 </nz-form-control>
               </div>
               <div class="flex flex-col gap-2 mt-12">
                 <label [for]="'total_units_' + i" class="text-gray-500 text-xs font-medium">
                   Total Units
+                  <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
                 </label>
                 <nz-form-control nzErrorTip="Please enter a valid total units">
                   <input
@@ -309,44 +317,41 @@
                     placeholder="Enter total units"
                     class="w-full"
                     [nzSize]="'large'"
+                    [readonly]="unitType.get('isSaved')?.value"
                   />
                 </nz-form-control>
               </div>
               <div class="flex justify-between items-center mt-12">
-                <button
-                  type="button"
-                  class="!text-red-500 hover:!text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
-                  (click)="removeUnitType(i)"
-                  [disabled]="isLoading || unitTypes.length <= 1"
-                >
-                  Remove Unit
-                </button>
+                <div></div>
                 <button
                   type="button"
                   class="!text-primary hover:text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                   (click)="addInstallmentPlan(i)"
-                  [disabled]="isLoading || !unitTypes.at(i).valid"
+                  [disabled]="isLoading || !unitType.get('isSaved')?.value"
                 >
                   + Add Installment Plan
                 </button>
               </div>
-
-              <!-- Installment Plans -->
               <div formArrayName="installment_plans" class="flex flex-col gap-4 mt-6 pl-4">
-
                 <div *ngFor="let plan of getInstallmentPlans(i).controls; let j = index; trackBy: trackByPlan" [formGroupName]="j">
-                  <div class="flex w-full justify-between items-center border-b border-gray-300 pb-2 mb-4 pr-">
+                  <div class="flex w-full justify-between items-center border-b border-gray-300 pb-2 mb-4">
                     <p class="text-gray-500 text-lg font-medium">Installment Details</p>
-                    <app-icon
-                      class="!text-gray-500 !text-sm cursor-pointer"
-                      name="trash"
-                      (click)="removeInstallmentPlan(i, j)"
-                      [class.disabled]="isLoading"
-                    ></app-icon>
+                    <button
+                      type="button"
+                      class="!text-gray-500 !text-sm cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+                      nz-popconfirm
+                      nzPopconfirmTitle="Are you sure you want to delete this plan?"
+                      (nzOnConfirm)="removeInstallmentPlan(i, j)"
+                      [nzPopconfirmPlacement]="'top'"
+                      [disabled]="isLoading"
+                    >
+                      <app-icon class="!text-gray-500 !text-sm" name="trash"></app-icon>
+                    </button>
                   </div>
                   <div class="flex flex-col gap-2 mb-2">
                     <label [for]="'plan_id_' + i + '_' + j" class="text-gray-500 text-xs font-medium">
                       Installment Type
+                      <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
                     </label>
                     <nz-form-control>
                       <nz-select
@@ -355,6 +360,7 @@
                         nzPlaceHolder="Select an installment type"
                         class="w-full"
                         [nzSize]="'large'"
+                        [nzDisabled]="plan.get('isSaved')?.value"
                       >
                         @for (option of installmentPlans; track option.id) {
                           <nz-option [nzValue]="option.id" [nzLabel]="option.title"></nz-option>
@@ -365,6 +371,7 @@
                   <div class="flex flex-col gap-2 mb-2 mt-12">
                     <label [for]="'initial_amount_' + i + '_' + j" class="text-gray-500 text-xs font-medium">
                       Initial Deposit
+                      <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
                     </label>
                     <nz-form-control nzErrorTip="Please enter a valid initial amount">
                       <input
@@ -375,12 +382,14 @@
                         type="number"
                         class="w-full"
                         [nzSize]="'large'"
+                        [readonly]="plan.get('isSaved')?.value"
                       />
                     </nz-form-control>
                   </div>
                   <div class="flex flex-col gap-2 mb-2 mt-12">
                     <label [for]="'total_price_' + i + '_' + j" class="text-gray-500 text-xs font-medium">
                       Total Amount
+                      <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
                     </label>
                     <nz-form-control nzErrorTip="Please enter a valid total price">
                       <input
@@ -391,12 +400,14 @@
                         type="number"
                         class="w-full"
                         [nzSize]="'large'"
+                        [readonly]="plan.get('isSaved')?.value"
                       />
                     </nz-form-control>
                   </div>
                   <div class="flex flex-col gap-2 mb-2 mt-12">
                     <label [for]="'start_date_' + i + '_' + j" class="text-gray-500 text-xs font-medium">
                       Start Date
+                      <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
                     </label>
                     <nz-form-control nzErrorTip="Please select a start date">
                       <nz-date-picker
@@ -405,6 +416,7 @@
                         nzPlaceHolder="Select start date"
                         class="w-full"
                         [nzSize]="'large'"
+                        [nzDisabled]="plan.get('isSaved')?.value"
                       ></nz-date-picker>
                     </nz-form-control>
                   </div>
@@ -412,7 +424,10 @@
                     <button
                       type="button"
                       class="!text-red-500 hover:!text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
-                      (click)="removeInstallmentPlan(i, j)"
+                      nz-popconfirm
+                      nzPopconfirmTitle="Are you sure you want to delete this plan?"
+                      (nzOnConfirm)="removeInstallmentPlan(i, j)"
+                      [nzPopconfirmPlacement]="'top'"
                       [disabled]="isLoading"
                     >
                       Remove Plan
@@ -430,7 +445,31 @@
                   Save Plans
                 </button>
               </div>
+              <div class="flex justify-end mt-6 border-t border-gray-200 pt-6">
+                <button
+                  type="button"
+                  class="flex items-center bg-transparent border-none p-0 cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+                  nz-popconfirm
+                  nzPopconfirmTitle="Are you sure you want to delete this unit?"
+                  (nzOnConfirm)="removeUnitType(i)"
+                  [nzPopconfirmPlacement]="'top'"
+                  [disabled]="isLoading || unitTypes.length <= 1"
+                >
+                  <app-icon class="!text-gray-500 !text-sm" name="trash"></app-icon>
+                  <span class="!text-gray-500 !text-sm ml-2">Delete Unit</span>
+                </button>
+              </div>
             </div>
+              <div class="flex justify-center">
+                <button
+                  type="button"
+                  class="rounded-lg bg-primary py-2 px-6 text-sm !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
+                  (click)="submitUnits()"
+                  [disabled]="isLoading || unitTypeForm.invalid"
+                >
+                  Save Units
+                </button>
+              </div>
           </div>
           <ng-template #noUnitTypes>
             <div *ngIf="!isLoading" class="text-gray-500">
