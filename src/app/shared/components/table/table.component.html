@@ -51,28 +51,6 @@
           <span class="text-sm text-gray-600">{{ selectedRows.length }} selected</span>
           <nz-divider nzType="vertical"></nz-divider>
         </div>
-
-        <!-- Export Button -->
-        <button
-          nz-button
-          nzType="default"
-          nzSize="small"
-          (click)="exportToCSV()"
-          nz-tooltip="Export to CSV"
-          class="border-gray-300 text-gray-700 hover:border-gray-400">
-          <span nz-icon nzType="download"></span>
-        </button>
-
-        <!-- Refresh Button -->
-        <button
-          nz-button
-          nzType="default"
-          nzSize="small"
-          (click)="updateData()"
-          nz-tooltip="Refresh"
-          class="border-gray-300 text-gray-700 hover:border-gray-400">
-          <span nz-icon nzType="reload"></span>
-        </button>
       </div>
     </div>
   </div>

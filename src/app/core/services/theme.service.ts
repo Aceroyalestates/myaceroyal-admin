@@ -1,14 +1,20 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private themeKey = 'app-theme';
+  private themeSubject = new BehaviorSubject<'light' | 'dark'>('light');
+  
+  // Observable for components to subscribe to theme changes
+  theme$ = this.themeSubject.asObservable();
 
   setTheme(theme: 'light' | 'dark') {
     const html = document.documentElement;
     html.classList.remove('light', 'dark');
     html.classList.add(theme);
     localStorage.setItem(this.themeKey, theme);
+    this.themeSubject.next(theme);
   }
 
   getTheme(): 'light' | 'dark' {

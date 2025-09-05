@@ -1,22 +1,22 @@
-<main class="finance-main-wrapper flex flex-col w-full min-h-screen p-6">
+<main class="subscriptions-main-wrapper flex flex-col w-full min-h-screen p-6">
   <!-- Breadcrumb -->
   <div class="mb-8">
     <app-breadcrumb
-      [items]="[{ label: 'Financial Management', url: '/finance-management' }]"
+      [items]="[{ label: 'Subscriptions Management', url: '/subscriptions' }]"
     ></app-breadcrumb>
   </div>
 
   <!-- Metrics Cards -->
   <div class="flex items-center gap-6 mb-8">
-    @for(metric of financeMetrics; track metric.id) {
-      <nz-card class="finance-container flex-1 rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+    @for(metric of subscriptionMetrics; track metric.id) {
+      <nz-card class="subscriptions-container flex-1 rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-8 h-8 rounded-full flex items-center justify-center"
                [ngStyle]="{ 'background-color': metric.color + '20' }">
-            @if(metric.title === 'Total Balance') {
-              <span nz-icon nzType="home" [ngStyle]="{ color: metric.color }"></span>
+            @if(metric.title === 'Total Subscriptions') {
+              <span nz-icon nzType="team" [ngStyle]="{ color: metric.color }"></span>
             } @else {
-              <span nz-icon nzType="rise" [ngStyle]="{ color: metric.color }"></span>
+              <span nz-icon nzType="calendar" [ngStyle]="{ color: metric.color }"></span>
             }
           </div>
           <p class="text-[#7A7A7A] dark:text-gray-400 text-[16px] font-medium mb-0">{{ metric.title }}</p>
@@ -33,14 +33,14 @@
     }
   </div>
 
-  <!-- Transaction Balance Chart Section -->
-  <nz-card class="finance-container mb-8 gap-6 rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+  <!-- Subscription Growth Chart Section -->
+  <nz-card class="subscriptions-container mb-8 gap-6 rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
           <span nz-icon nzType="line-chart" class="text-[#E41C24]"></span>
         </div>
-        <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Transaction Balance</h3>
+        <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Subscription Growth</h3>
       </div>
       
       <nz-select [(ngModel)]="selectedPeriod" class="w-40" nzSize="default">
@@ -51,11 +51,11 @@
     </div>
     
     <div class="mb-4">
-      <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[32px] font-bold mb-1">₦300,000,000</h2>
+      <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[32px] font-bold mb-1">1,250</h2>
       <div class="flex items-center gap-2">
         <nz-tag nzColor="success">
           <span nz-icon nzType="arrow-up"></span>
-          ₦113,450,000
+          +182 subscriptions
         </nz-tag>
       </div>
     </div>
@@ -69,16 +69,15 @@
   <!-- Spacer -->
   <div class="h-8"></div>
 
-  <!-- Recent Financial Activity Section -->
-  <nz-card class="finance-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+  <!-- Recent Subscription Activity Section -->
+  <nz-card class="subscriptions-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[24px] font-semibold mb-0">Recent Financial Activity</h3>
+      <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[24px] font-semibold mb-0">Recent Subscription Activity</h3>
       <button 
         nz-button 
         nzType="primary"
         nzSize="default"
-        (click)="onExport()"
-        class="flex items-center gap-2">
+        (click)="onExport()">
         <span nz-icon nzType="download" nzTheme="outline"></span>
         <span>Export</span>
       </button>
@@ -91,7 +90,7 @@
         <!-- Search Section -->
         <div class="flex-1 max-w-md">
           <app-search-bar
-            placeholder="Search transactions..."
+            placeholder="Search subscriptions..."
             (search)="onSearchTermChange($event)"
             class="w-full">
           </app-search-bar>
@@ -99,19 +98,18 @@
 
         <!-- Date Range Filters -->
         <div class="flex items-center gap-4 flex-wrap">
-          <!-- Property Filter -->
+          <!-- Plan Type Filter -->
           <div class="flex items-center gap-2">
             <nz-select 
-              [(ngModel)]="selectedPropertyName"
-              (ngModelChange)="onPropertyNameChange($event)"
-              nzPlaceHolder="All Properties"
+              [(ngModel)]="selectedPlanType"
+              (ngModelChange)="onPlanTypeChange($event)"
+              nzPlaceHolder="All Plans"
               nzAllowClear
               class="w-48">
-              <nz-option nzValue="" nzLabel="All Properties"></nz-option>
-              <nz-option nzValue="luxury-apartment" nzLabel="Luxury Apartment"></nz-option>
-              <nz-option nzValue="office-complex" nzLabel="Office Complex"></nz-option>
-              <nz-option nzValue="retail-space" nzLabel="Retail Space"></nz-option>
-              <nz-option nzValue="warehouse" nzLabel="Warehouse"></nz-option>
+              <nz-option nzValue="" nzLabel="All Plans"></nz-option>
+              <nz-option nzValue="Monthly" nzLabel="Monthly"></nz-option>
+              <nz-option nzValue="Quarterly" nzLabel="Quarterly"></nz-option>
+              <nz-option nzValue="Yearly" nzLabel="Yearly"></nz-option>
             </nz-select>
           </div>
 
@@ -140,9 +138,9 @@
       </div>
     </div>
 
-    <!-- Transactions Table using reusable component -->
+    <!-- Subscriptions Table using reusable app-table component -->
     <app-table
-      [data]="transactions"
+      [data]="subscriptions"
       [columns]="columns"
       [actions]="actions"
       [showSearch]="false"

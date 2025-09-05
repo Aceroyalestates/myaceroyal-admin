@@ -8,7 +8,7 @@ export interface Metric {
   id: number;
   title: string;
   percentage: string;
-  amount: number;
+  amount: number | string;
   color: string;
 }
 

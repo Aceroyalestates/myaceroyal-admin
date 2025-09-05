@@ -89,6 +89,7 @@ export class TableComponent implements OnInit, OnChanges {
   @Input() showFilters = true;
   @Input() showPagination = true;
   @Input() showSelection = false;
+  @Input() showExport = true;
   @Input() pageSize = 10;
   @Input() pageSizeOptions = [10, 20, 50, 100];
   @Input() sortable = true;

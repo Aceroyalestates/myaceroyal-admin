@@ -55,6 +55,20 @@ const routes: Routes = [
 						(m) => m.FinanceManagementModule,
 					),
 			},
+			{
+				path: 'subscriptions',
+				loadChildren: () =>
+					import('./subscriptions/subscriptions.module').then(
+						(m) => m.SubscriptionsModule,
+					),
+			},
+			{
+				path: 'legal',
+				loadChildren: () =>
+					import('./legal/legal.module').then(
+						(m) => m.LegalModule,
+					),
+			},
 		],
 	},
 ];
