@@ -30,5 +30,10 @@
   "env": {
     "NODE_VERSION": "18"
   },
-  "buildCommand": "npm run build:prod"
+  "buildCommand": "npm run build:prod",
+  "git": {
+    "deploymentEnabled": {
+      "development": true
+    }
+  }
 }
