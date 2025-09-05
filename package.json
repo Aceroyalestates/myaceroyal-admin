@@ -7,15 +7,23 @@
     "start:prod": "ng serve -c production",
     "start:uat": "ng serve -c uat",
     "start:dev": "ng serve -c development",
+    "start:netlify": "ng serve -c netlify",
     "build": "ng build",
     "build:prod": "ng build -c production",
     "build:uat": "ng build -c uat",
     "build:dev": "ng build -c development",
+    "build:netlify": "ng build -c netlify",
+    "build:github-pages": "ng build -c github-pages",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:watch": "ng test --watch",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "netlify:deploy": "npm run build:netlify && netlify deploy --prod --dir=dist/myaceroyal-admin",
+    "netlify:preview": "npm run build:netlify && netlify deploy --dir=dist/myaceroyal-admin",
+    "vercel:deploy": "npm run build:prod && vercel --prod",
+    "surge:deploy": "npm run build:prod && surge dist/myaceroyal-admin/ myaceroyal-admin.surge.sh",
+    "serve": "serve dist/myaceroyal-admin -s -p 3000"
   },
   "private": true,
   "dependencies": {
@@ -53,6 +61,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "serve": "^14.2.1",
     "typescript": "~5.7.2"
   }
 }

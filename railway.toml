@@ -1,0 +1,11 @@
+# Railway Deployment Configuration
+
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npx serve dist/myaceroyal-admin -s -p $PORT"
+
+[env]
+NODE_VERSION = "18"
+PORT = "3000"

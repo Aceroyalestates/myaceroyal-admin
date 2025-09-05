@@ -1,0 +1,7 @@
+# Surge.sh Deployment Configuration
+
+{
+  "domain": "myaceroyal-admin.surge.sh",
+  "project": "./dist/myaceroyal-admin/",
+  "CNAME": "myaceroyal-admin.surge.sh"
+}
