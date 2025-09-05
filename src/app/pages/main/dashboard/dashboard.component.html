@@ -1,11 +1,11 @@
 <main class="flex flex-col w-full">
   <div class="flex flex-col gap-12 mb-16">
     <app-breadcrumb
-        [items]="[
-          { label: 'Dashboard', url: '/dashboard' },
-        ]"
-      ></app-breadcrumb>
-    <div class="flex items-center gap-9">
+      [items]="[{ label: 'Dashboard', url: '/main/dashboard' }]"
+    ></app-breadcrumb>
+    
+    <!-- Metrics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       @for(metric of metrics; track metric.id){
       <div
         class="flex flex-col gap-6 p-6 border border-[#EEF2F6] rounded-lg w-full"
@@ -31,147 +31,259 @@
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M5.48712 10H3.19379C0.350743 10 -0.817395 8.04044 0.608421 5.64728L1.75938 3.72108L2.91034 1.79487C4.33616 -0.598291 6.66384 -0.598291 8.08966 1.79487L9.24062 3.72108L10.3916 5.64728C11.8174 8.04044 10.6493 10 7.80621 10H5.48712Z"
-                    fill=""
+                    d="M0.5 7.66675C0.5 8.60008 1.26667 9.33341 2.2 9.33341H8.8C9.73333 9.33341 10.5 8.60008 10.5 7.66675C10.5 7.16675 10.7 6.66675 11 6.16675C11 5.73341 10.7333 5.33341 10.3333 5.10008L6.03333 2.63341C5.8 2.50008 5.53333 2.40008 5.23333 2.33341C5.1 2.30008 4.96667 2.30008 4.83333 2.33341C4.53333 2.40008 4.26667 2.50008 4.03333 2.63341L-0.266667 5.10008C-0.666667 5.33341 -0.933333 5.73341 -0.933333 6.16675C-0.633333 6.66675 -0.433333 7.16675 -0.433333 7.66675H0.5Z"
+                    fill="currentColor"
                   />
                 </svg>
-
-                +{{ metric.percentage }}%
+                {{ metric.percentage }}%
               </p>
             </span>
           </div>
-          <svg
-            width="72"
-            height="26"
-            viewBox="0 0 72 26"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <linearGradient
-                [attr.id]="'gradient-' + metric.id"
-                x1="0"
-                y1="0"
-                x2="1"
-                y2="1"
-                gradientUnits="objectBoundingBox"
-              >
-                <stop offset="0%" [attr.stop-color]="metric.color" />
-                <stop
-                  offset="100%"
-                  [attr.stop-color]="metric.color"
-                  [attr.stop-opacity]="0"
-                />
-              </linearGradient>
-            </defs>
-            <path
-              [attr.fill]="'url(#gradient-' + metric.id + ')'"
-              d="M0.578125 22.2598L5.85047 16.0679H17.0695L28.1047 0.496094H39.2011L44.6574 8.15939H50.2976L55.6312 16.0679H64.0302L69.3638 9.01767L71.9387 5.76844V25.9995H0.578125V22.2598Z"
-            />
-          </svg>
         </div>
       </div>
       }
     </div>
-  </div>
 
-  <div
-    class="rounded-lg border-2 border-[#EEF2F6] bg-background p-10 flex flex-col gap-10 mb-16"
-  >
-    <p class="text-normal font-medium text-[#4F4F4F] text-[32px]">
-      Available Property
-    </p>
-    <div class="flex items-center gap-7">
-      @for(property of properties; track property.id){
-      <div
-        class="flex-1 flex-col shadow-[6px_6px_21.3px_3px_#EBEBEB5E]"
-      >
-        <img
-          [src]="property.image"
-          alt=""
-          class="w-full h-[308px] rounded-[5px] object-cover"
-        />
-        <div
-          class="p-6 border border-[#EEF2F6] border-t-0 rounded-es-[10px] rounded-ee-[10px]"
-        >
-          <div class="flex flex-col gap-2 mb-6">
-            <p class="text-[#4F4F4F] font-semibold text-[20px] text-normal">
-              {{ property.name }}
-            </p>
-            <p class="text-primary font-medium text-[20px] text-normal">
-              &#8358; {{ property.price }}
-            </p>
-          </div>
-          <div class="flex flex-col gap-2 mb-6">
-            <p class="flex items-center gap-1 text-[#7A7A7A] text-medium">
-              <app-icon name="map-pin"></app-icon>{{ property.location }}
-            </p>
-            <p class="flex items-center gap-1 text-[#7A7A7A] text-medium">
-              <app-icon name="double-arrow"></app-icon>{{ property.quantity }}
-            </p>
-          </div>
-          <div class="flex flex-col gap-2">
-            <p class="text-[#4F4F4F] font-semibold text-medium">Amenities</p>
-            @let amenities = property.amenities.split(',');
-            <div class="flex items-center gap-3">
-              @for(amenity of amenities; track amenity){
-              <p class="flex items-center gap-1">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M5.58594 8.00005L7.1926 9.61339L10.4126 6.38672"
-                    stroke="#E41C24"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M7.16594 1.63289C7.62594 1.23956 8.37927 1.23956 8.84594 1.63289L9.89927 2.53956C10.0993 2.71289 10.4726 2.85289 10.7393 2.85289H11.8726C12.5793 2.85289 13.1593 3.43289 13.1593 4.13956V5.27289C13.1593 5.53289 13.2993 5.91289 13.4726 6.11289L14.3793 7.16622C14.7726 7.62622 14.7726 8.37956 14.3793 8.84622L13.4726 9.89956C13.2993 10.0996 13.1593 10.4729 13.1593 10.7396V11.8729C13.1593 12.5796 12.5793 13.1596 11.8726 13.1596H10.7393C10.4793 13.1596 10.0993 13.2996 9.89927 13.4729L8.84594 14.3796C8.38594 14.7729 7.6326 14.7729 7.16594 14.3796L6.1126 13.4729C5.9126 13.2996 5.53927 13.1596 5.2726 13.1596H4.11927C3.4126 13.1596 2.8326 12.5796 2.8326 11.8729V10.7329C2.8326 10.4729 2.6926 10.0996 2.52594 9.89956L1.62594 8.83956C1.23927 8.37956 1.23927 7.63289 1.62594 7.17289L2.52594 6.11289C2.6926 5.91289 2.8326 5.53956 2.8326 5.27956V4.13289C2.8326 3.42622 3.4126 2.84622 4.11927 2.84622H5.2726C5.5326 2.84622 5.9126 2.70622 6.1126 2.53289L7.16594 1.63289Z"
-                    stroke="#E41C24"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-                {{ amenity }}
+    <!-- Property Section -->
+    <div class="rounded-lg border-2 border-[#EEF2F6] bg-background p-10 flex flex-col gap-10 mb-16">
+      <p class="text-normal font-medium text-[#4F4F4F] text-[32px]">
+        Available Property
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-7">
+        @for(property of properties; track property.id){
+        <div class="flex flex-col shadow-[6px_6px_21.3px_3px_#EBEBEB5E]">
+          <img
+            [src]="
+              property.property_images.length
+                ? property.property_images[0].image_url
+                : 'assets/images/property-image.jpg'
+            "
+            [alt]="
+              property.property_features.length
+                ? property.property_features[0].feature.name
+                : ''
+            "
+            class="w-full h-full max-h-[308px] rounded-[5px] object-cover"
+          />
+          <div class="p-6 flex-1 border border-[#EEF2F6] border-t-0 rounded-es-[10px] rounded-ee-[10px]">
+            <div class="flex flex-col gap-2 mb-6">
+              <p class="text-[#4F4F4F] font-semibold text-[20px] text-normal">
+                {{ property.name }}
               </p>
-              }
+              <p class="text-primary font-medium text-[20px] text-normal">
+                &#8358; {{ property.property_units.length > 0 ? property.property_units[0].price : 'N/A' }}
+              </p>
+            </div>
+            <div class="flex flex-col gap-2 mb-6">
+              <p class="flex items-center gap-1 text-[#7A7A7A] text-medium">
+                <app-icon name="map-pin"></app-icon>{{ property.location }}
+              </p>
+              <p class="flex items-center gap-1 text-[#7A7A7A] text-medium">
+                <app-icon name="double-arrow"></app-icon>{{ property.property_units.length }}
+              </p>
+            </div>
+            <div class="flex flex-col gap-2">
+              <p class="text-[#4F4F4F] font-semibold text-medium">Amenities</p>
+              <div class="flex items-center gap-3 max-w-full flex-wrap">
+                @for(amenity of property.property_features; track amenity){
+                <p class="flex items-center gap-1">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5.58594 8.00005L7.1926 9.61339L10.4126 6.38672"
+                      stroke="#E41C24"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M7.16594 1.63289C7.62594 1.23956 8.37927 1.23956 8.84594 1.63289L9.89927 2.53956C10.0993 2.71289 10.4726 2.85289 10.7393 2.85289H11.8726C12.5793 2.85289 13.1593 3.43289 13.1593 4.13956V5.27289C13.1593 5.53289 13.2993 5.91289 13.4726 6.11289L14.3793 7.16622C14.7726 7.62622 14.7726 8.37956 14.3793 8.84622L13.4726 9.89956C13.2993 10.0996 13.1593 10.4729 13.1593 10.7396V11.8729C13.1593 12.5796 12.5793 13.1596 11.8726 13.1596H10.7393C10.4793 13.1596 10.0993 13.2996 9.89927 13.4729L8.84594 14.3796C8.38594 14.7729 7.6326 14.7729 7.16594 14.3796L6.1126 13.4729C5.9126 13.2996 5.53927 13.1596 5.2726 13.1596H4.11927C3.4126 13.1596 2.8326 12.5796 2.8326 11.8729V10.7329C2.8326 10.4729 2.6926 10.0996 2.52594 9.89956L1.62594 8.83956C1.23927 8.37956 1.23927 7.63289 1.62594 7.17289L2.52594 6.11289C2.6926 5.91289 2.8326 5.53956 2.8326 5.27956V4.13289C2.8326 3.42622 3.4126 2.84622 4.11927 2.84622H5.2726C5.5326 2.84622 5.9126 2.70622 6.1126 2.53289L7.16594 1.63289Z"
+                      stroke="#E41C24"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  {{ amenity.feature.name }}
+                </p>
+                }
+              </div>
             </div>
           </div>
         </div>
+        }
       </div>
-      }
     </div>
-  </div>
 
-  <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
-    <div class="flex items-center justify-between mb-7 px-7">
-      <div class="flex flex-col gap-2">
-        <p class="text-normal font-medium text-[#4F4F4F] text-[32px]">
-          Recent Activity
-        </p>
-        <p class="text-medium text-[#4F4F4F]">
-          Explore all recent actions on the platform
-        </p>
+    <!-- System Activity Report (Admin/Realtor/User activities) -->
+    <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+      <div class="flex items-center justify-between mb-7 px-7">
+        <div class="flex flex-col gap-2">
+          <p class="text-normal font-medium text-[#4F4F4F] text-[32px]">
+            System Activity Report
+          </p>
+          <p class="text-medium text-[#4F4F4F]">
+            Track admin, realtor, and user activities with date range and role filters
+          </p>
+        </div>
+        
+        <!-- Filters in same line -->
+        <div class="flex items-center gap-4 flex-wrap">
+          <!-- Date Range Filters -->
+          <div class="flex items-center gap-2">
+            <span class="text-[#4F4F4F] text-sm whitespace-nowrap">Start Date</span>
+            <nz-date-picker 
+              [(ngModel)]="systemReportFilters.startDate"
+              nzFormat="yyyy-MM-dd"
+              nzPlaceHolder="Start Date"
+              class="w-40">
+            </nz-date-picker>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <span class="text-[#4F4F4F] text-sm whitespace-nowrap">End Date</span>
+            <nz-date-picker 
+              [(ngModel)]="systemReportFilters.endDate"
+              nzFormat="yyyy-MM-dd"
+              nzPlaceHolder="End Date"
+              class="w-40">
+            </nz-date-picker>
+          </div>
+          
+          <!-- User Role Filter -->
+          <div class="flex items-center gap-2">
+            <nz-select
+              [(ngModel)]="systemReportFilters.userRole"
+              nzAllowClear
+              nzPlaceHolder="All Roles"
+              class="w-32"
+            >
+              <nz-option nzValue="admin" nzLabel="Admin"></nz-option>
+              <nz-option nzValue="realtor" nzLabel="Realtor"></nz-option>
+              <nz-option nzValue="user" nzLabel="User"></nz-option>
+            </nz-select>
+          </div>
+        </div>
       </div>
-      <nz-select ngModel="All Activities" nzAllowClear nzPlaceHolder="All Activities">
-        <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-        <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
-        <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
-        <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
-        <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
-      </nz-select>
+      <app-table
+        [data]="systemActivities"
+        [columns]="systemReportColumns"
+        [actions]="systemReportActions"
+        [showSelection]="false"
+        [showPagination]="true"
+        [showSearch]="true"
+        [showFilters]="false"
+        [showExport]="false"
+        (actionClick)="onSystemReportAction($event)"
+        class="w-full"
+      />
     </div>
-    <app-table
-      [data]="people"
-      [columns]="columns"
-      [enableSorting]="false"
-      [enableSelection]="false"
-      (selectedData)="handleSelectedData($event)"
-      class="w-full"
-    />
+
+    <!-- Customer Activity Report -->
+    <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+      <div class="flex items-center justify-between mb-7 px-7">
+        <div class="flex flex-col gap-2">
+          <p class="text-normal font-medium text-[#4F4F4F] text-[32px]">
+            Customer Activity Report
+          </p>
+          <p class="text-medium text-[#4F4F4F]">
+            Track customer activities: account creation, subscriptions, payments, etc.
+          </p>
+        </div>
+        
+        <!-- Filters in same line -->
+        <div class="flex items-center gap-4 flex-wrap">
+          <!-- Date Range Filters -->
+          <div class="flex items-center gap-2">
+            <span class="text-[#4F4F4F] text-sm whitespace-nowrap">Start Date</span>
+            <nz-date-picker 
+              [(ngModel)]="customerReportFilters.startDate"
+              nzFormat="yyyy-MM-dd"
+              nzPlaceHolder="Start Date"
+              class="w-40">
+            </nz-date-picker>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <span class="text-[#4F4F4F] text-sm whitespace-nowrap">End Date</span>
+            <nz-date-picker 
+              [(ngModel)]="customerReportFilters.endDate"
+              nzFormat="yyyy-MM-dd"
+              nzPlaceHolder="End Date"
+              class="w-40">
+            </nz-date-picker>
+          </div>
+          
+          <!-- Activity Type Filter -->
+          <div class="flex items-center gap-2">
+            <nz-select
+              [(ngModel)]="customerReportFilters.activityType"
+              nzAllowClear
+              nzPlaceHolder="All Activities"
+              class="w-40"
+            >
+              <nz-option nzValue="account_created" nzLabel="Account Created"></nz-option>
+              <nz-option nzValue="subscription_form" nzLabel="Subscription Form"></nz-option>
+              <nz-option nzValue="payment_made" nzLabel="Payment Made"></nz-option>
+              <nz-option nzValue="property_viewed" nzLabel="Property Viewed"></nz-option>
+              <nz-option nzValue="inquiry_sent" nzLabel="Inquiry Sent"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+      </div>
+      <app-table
+        [data]="customerActivities"
+        [columns]="customerReportColumns"
+        [actions]="customerReportActions"
+        [showSelection]="false"
+        [showPagination]="true"
+        [showSearch]="true"
+        [showFilters]="false"
+        [showExport]="false"
+        (actionClick)="onCustomerReportAction($event)"
+        class="w-full"
+      />
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
+      <div class="flex items-center justify-between mb-7 px-7">
+        <div class="flex flex-col gap-2">
+          <p class="text-normal font-medium text-[#4F4F4F] text-[32px]">
+            Recent Activity
+          </p>
+          <p class="text-medium text-[#4F4F4F]">
+            Explore all recent actions on the platform
+          </p>
+        </div>
+        <nz-select
+          ngModel="All Activities"
+          nzAllowClear
+          nzPlaceHolder="All Activities"
+        >
+          <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
+          <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
+          <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
+          <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
+          <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
+        </nz-select>
+      </div>
+      <app-table
+        [data]="activities"
+        [columns]="columns"
+        [actions]="actions"
+        [showSelection]="false"
+        [showPagination]="true"
+        [showSearch]="true"
+        [showFilters]="true"
+        (actionClick)="onTableAction($event)"
+        class="w-full"
+      />
+    </div>
   </div>
+  
+  <app-payment-details [isVisible]="isVisible" [activity]="activity" (handleClose)="handleAccountDetailsClose()"></app-payment-details>
 </main>

@@ -1,0 +1,17 @@
+# Render Deployment Configuration
+
+services:
+  - type: web
+    name: myaceroyal-admin
+    env: static
+    buildCommand: npm install && npm run build:prod
+    staticPublishPath: ./dist/myaceroyal-admin
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: NG_CLI_ANALYTICS
+        value: false

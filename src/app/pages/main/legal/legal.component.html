@@ -1,0 +1,56 @@
+<div class="legal-main-wrapper flex flex-col w-full min-h-screen p-6">
+  <!-- Breadcrumb -->
+  <div class="mb-8">
+    <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
+  </div>
+
+  <!-- Legal Management Card -->
+  <nz-card class="legal-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
+          <span nz-icon nzType="file-text" class="text-[#E41C24]"></span>
+        </div>
+        <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[24px] font-semibold mb-0">Legal Management</h3>
+      </div>
+    </div>
+
+    <div class="legal-content">
+      <p class="text-[#7A7A7A] dark:text-gray-400 text-[16px] mb-4">
+        Manage all legal documents, contracts, and compliance matters.
+      </p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="legal-card p-4 border border-gray-200 dark:border-gray-600 rounded-lg">
+          <div class="flex items-center gap-3 mb-3">
+            <span nz-icon nzType="file-protect" class="text-[#E41C24] text-xl"></span>
+            <h4 class="text-[#4F4F4F] dark:text-gray-300 font-semibold">Contracts</h4>
+          </div>
+          <p class="text-[#7A7A7A] dark:text-gray-400 text-sm">
+            Manage property contracts and agreements
+          </p>
+        </div>
+
+        <div class="legal-card p-4 border border-gray-200 dark:border-gray-600 rounded-lg">
+          <div class="flex items-center gap-3 mb-3">
+            <span nz-icon nzType="safety-certificate" class="text-[#E41C24] text-xl"></span>
+            <h4 class="text-[#4F4F4F] dark:text-gray-300 font-semibold">Compliance</h4>
+          </div>
+          <p class="text-[#7A7A7A] dark:text-gray-400 text-sm">
+            Track regulatory compliance and certifications
+          </p>
+        </div>
+
+        <div class="legal-card p-4 border border-gray-200 dark:border-gray-600 rounded-lg">
+          <div class="flex items-center gap-3 mb-3">
+            <span nz-icon nzType="audit" class="text-[#E41C24] text-xl"></span>
+            <h4 class="text-[#4F4F4F] dark:text-gray-300 font-semibold">Documents</h4>
+          </div>
+          <p class="text-[#7A7A7A] dark:text-gray-400 text-sm">
+            Store and manage legal documentation
+          </p>
+        </div>
+      </div>
+    </div>
+  </nz-card>
+</div>

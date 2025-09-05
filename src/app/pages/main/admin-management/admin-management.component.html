@@ -1,11 +1,11 @@
 <main class="flex flex-col w-full">
   <div class="flex flex-col gap-12">
     <app-breadcrumb
-      [items]="[{ label: 'Admin Management', url: '/admin-management' }]"
+      [items]="[{ label: 'Admin Management', url: '/main/admin-management' }]"
     ></app-breadcrumb>
     <button
       class="place-self-end rounded-lg bg-primary py-4 px-10 text-[20px] !text-white font-medium cursor-pointer"
-     routerLink="new"
+      routerLink="new"
     >
       + Add Admin
     </button>
@@ -74,20 +74,24 @@
       }
     </div>
   </div>
-    <p class="text-[#4F4F4F] text-normal text-2xl !mb-10">Realtor List</p>
+  <p class="text-[#4F4F4F] text-normal text-2xl !mb-10">Admin List</p>
   <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
     <div class="flex items-center justify-between mb-7 px-7">
-      <div class="flex flex-col gap-2">
+      <!-- <div class="flex flex-col gap-2">
         <app-search-bar />
-      </div>
+      </div> -->
     </div>
     <app-table
-      [data]="people"
+      [data]="users"
       [columns]="columns"
-      [enableSorting]="true"
-      [rowLink]="getRowLink"
-      [enableSelection]="true"
-      (selectedData)="handleSelectedData($event)"
+      [actions]="actions"
+      [showSelection]="true"
+      [showPagination]="true"
+      [showSearch]="true"
+      [showFilters]="true"
+      (selectionChange)="onSelectionChange($event)"
+      (actionClick)="onTableAction($event)"
+      (rowClick)="onRowClick($event)"
       class="w-full"
     />
   </div>

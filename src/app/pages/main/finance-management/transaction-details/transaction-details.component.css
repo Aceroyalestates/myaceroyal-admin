@@ -1,0 +1,230 @@
+/* Transaction Details Component Styles */
+
+/* Enhanced Descriptions Styling */
+::ng-deep .custom-descriptions .ant-descriptions-item-label {
+  font-weight: 600;
+  color: #4F4F4F !important;
+  background-color: #f8f9fa !important;
+  padding: 16px 20px !important;
+  font-size: 14px;
+  border-right: 1px solid #EEF2F6 !important;
+}
+
+::ng-deep .custom-descriptions .ant-descriptions-item-content {
+  color: #7A7A7A;
+  padding: 16px 20px !important;
+  font-size: 14px;
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #EEF2F6 !important;
+}
+
+::ng-deep .custom-descriptions .ant-descriptions-bordered .ant-descriptions-item {
+  border-bottom: 1px solid #EEF2F6 !important;
+}
+
+/* Dark mode styles with highest specificity */
+.transaction-main-wrapper.dark ::ng-deep .custom-descriptions .ant-descriptions-item-label,
+.dark .transaction-main-wrapper ::ng-deep .custom-descriptions .ant-descriptions-item-label,
+body.dark .transaction-main-wrapper ::ng-deep .custom-descriptions .ant-descriptions-item-label {
+  color: #fafafa !important;
+  background-color: #2a2a2e !important;
+  border-right-color: #444 !important;
+}
+
+.transaction-main-wrapper.dark ::ng-deep .custom-descriptions .ant-descriptions-item-content,
+.dark .transaction-main-wrapper ::ng-deep .custom-descriptions .ant-descriptions-item-content,
+body.dark .transaction-main-wrapper ::ng-deep .custom-descriptions .ant-descriptions-item-content {
+  color: #d1d5db !important;
+  background-color: #1f1f23 !important;
+  border-bottom-color: #444 !important;
+}
+
+.transaction-main-wrapper.dark ::ng-deep .custom-descriptions .ant-descriptions-bordered .ant-descriptions-item,
+.dark .transaction-main-wrapper ::ng-deep .custom-descriptions .ant-descriptions-bordered .ant-descriptions-item,
+body.dark .transaction-main-wrapper ::ng-deep .custom-descriptions .ant-descriptions-bordered .ant-descriptions-item {
+  border-bottom-color: #444 !important;
+}
+
+/* Button Styling */
+::ng-deep .ant-btn {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  border: 1px solid #E5E7EB !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  line-height: 1 !important;
+}
+
+::ng-deep .ant-btn .anticon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+::ng-deep .ant-btn span:not(.anticon) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.2 !important;
+}
+
+/* Specific alignment for block buttons */
+::ng-deep .ant-btn-block {
+  justify-content: center !important;
+}
+
+/* Ensure proper spacing between icon and text */
+::ng-deep .ant-btn .anticon + span {
+  margin-left: 0 !important;
+}
+
+::ng-deep .ant-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .ant-btn-primary {
+  background-color: #E41C24 !important;
+  border-color: #E41C24 !important;
+}
+
+::ng-deep .ant-btn-primary:hover {
+  background-color: #d1181f !important;
+  border-color: #d1181f !important;
+}
+
+/* Tag Styling */
+::ng-deep .ant-tag {
+  border: none !important;
+  font-weight: 500 !important;
+  border-radius: 20px !important;
+  padding: 4px 12px !important;
+}
+
+/* Loading and Empty States */
+::ng-deep .ant-spin-dot {
+  color: #E41C24 !important;
+}
+
+::ng-deep .ant-empty-description {
+  color: #7A7A7A !important;
+}
+
+.dark ::ng-deep .ant-empty-description {
+  color: #d1d5db !important;
+}
+
+/* Divider Styling */
+::ng-deep .ant-divider {
+  border-color: #EEF2F6 !important;
+  margin: 16px 0 !important;
+}
+
+.dark ::ng-deep .ant-divider {
+  border-color: #444 !important;
+}
+
+/* Dark mode overrides - Most specific selectors */
+.dark .transaction-main-wrapper ::ng-deep .ant-descriptions-item-content {
+  color: #d1d5db !important;
+  background-color: #1f1f23 !important;
+  border-color: #444 !important;
+}
+
+.dark .transaction-main-wrapper ::ng-deep .ant-descriptions-item-label {
+  color: #fafafa !important;
+  background-color: #2a2a2e !important;
+  border-color: #444 !important;
+}
+
+.dark .transaction-main-wrapper ::ng-deep .ant-descriptions-bordered {
+  border-color: #444 !important;
+}
+
+.dark .transaction-main-wrapper ::ng-deep .ant-descriptions-bordered .ant-descriptions-item {
+  border-color: #444 !important;
+}
+
+.dark .transaction-main-wrapper ::ng-deep .ant-descriptions-view {
+  border-color: #444 !important;
+}
+
+.dark .transaction-main-wrapper ::ng-deep .ant-descriptions {
+  color: #d1d5db !important;
+}
+
+/* Card Spacing */
+.transaction-info-card,
+.client-info-card {
+  margin-bottom: 24px !important;
+}
+
+.quick-actions-card,
+.status-info-card {
+  margin-bottom: 24px !important;
+}
+
+/* Button Spacing in Quick Actions */
+.quick-actions-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quick-actions-buttons .ant-btn {
+  margin-bottom: 0 !important;
+}
+
+/* Header Action Buttons Spacing */
+.header-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header-actions .ant-btn {
+  margin-right: 0 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  ::ng-deep .custom-descriptions .ant-descriptions-item-label,
+  ::ng-deep .custom-descriptions .ant-descriptions-item-content {
+    padding: 12px 16px !important;
+  }
+  
+  .transaction-info-card,
+  .client-info-card,
+  .quick-actions-card,
+  .status-info-card {
+    margin-bottom: 20px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .custom-descriptions .ant-descriptions-item-label,
+  ::ng-deep .custom-descriptions .ant-descriptions-item-content {
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+  }
+  
+  .transaction-info-card,
+  .client-info-card,
+  .quick-actions-card,
+  .status-info-card {
+    margin-bottom: 16px !important;
+  }
+  
+  .quick-actions-buttons {
+    gap: 10px;
+  }
+  
+  .header-actions {
+    gap: 8px;
+  }
+}

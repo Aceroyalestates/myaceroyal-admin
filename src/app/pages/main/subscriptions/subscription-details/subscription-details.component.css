@@ -1,0 +1,182 @@
+/* Custom descriptions styling for subscription details */
+.custom-descriptions .ant-descriptions-item-label {
+  font-weight: 600;
+  background-color: #f8f9fa;
+  color: #4F4F4F;
+}
+
+.custom-descriptions .ant-descriptions-item-content {
+  background-color: #ffffff;
+  color: #4F4F4F;
+}
+
+/* Button Styling - Enhanced alignment */
+::ng-deep .ant-btn {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  border: 1px solid #E5E7EB !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  line-height: 1 !important;
+}
+
+::ng-deep .ant-btn .anticon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+::ng-deep .ant-btn span:not(.anticon) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.2 !important;
+}
+
+/* Specific alignment for block buttons */
+::ng-deep .ant-btn-block {
+  justify-content: center !important;
+}
+
+/* Ensure proper spacing between icon and text */
+::ng-deep .ant-btn .anticon + span {
+  margin-left: 0 !important;
+}
+
+::ng-deep .ant-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .ant-btn-primary {
+  background-color: #E41C24 !important;
+  border-color: #E41C24 !important;
+}
+
+::ng-deep .ant-btn-primary:hover {
+  background-color: #d1181f !important;
+  border-color: #d1181f !important;
+}
+
+/* Card spacing for subscription details */
+.subscriptions-container {
+  margin-bottom: 2rem !important;
+}
+
+/* Dark mode specific styling */
+:root.dark .custom-descriptions .ant-descriptions-item-label,
+.dark .custom-descriptions .ant-descriptions-item-label {
+  background-color: #2a2a2e !important;
+  color: #fafafa !important;
+  border-color: #444 !important;
+}
+
+:root.dark .custom-descriptions .ant-descriptions-item-content,
+.dark .custom-descriptions .ant-descriptions-item-content {
+  background-color: #1f1f23 !important;
+  color: #d1d5db !important;
+  border-color: #444 !important;
+}
+
+:root.dark .custom-descriptions,
+.dark .custom-descriptions {
+  border-color: #444 !important;
+}
+
+:root.dark .custom-descriptions .ant-descriptions-bordered,
+.dark .custom-descriptions .ant-descriptions-bordered {
+  border-color: #444 !important;
+}
+
+:root.dark .custom-descriptions .ant-descriptions-bordered .ant-descriptions-item,
+.dark .custom-descriptions .ant-descriptions-bordered .ant-descriptions-item {
+  border-color: #444 !important;
+}
+
+/* Progress bar styling */
+.subscription-progress {
+  transition: all 0.3s ease;
+}
+
+/* Card hover effects */
+.subscriptions-container {
+  transition: all 0.3s ease;
+}
+
+.subscriptions-container:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Status badge custom styling */
+.ant-tag {
+  border-radius: 20px;
+  font-weight: 500;
+  border: none;
+}
+
+/* Button spacing in sidebar */
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+/* Quick summary card styling */
+.quick-summary-item {
+  transition: all 0.3s ease;
+}
+
+.quick-summary-item:hover {
+  background-color: #f1f5f9;
+}
+
+.dark .quick-summary-item:hover {
+  background-color: #374151;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .lg\:col-span-2 {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Custom scrollbar for long content */
+.subscription-details-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.subscription-details-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.subscription-details-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.subscription-details-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.subscription-details-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Dark mode scrollbar */
+.dark .subscription-details-content::-webkit-scrollbar-track {
+  background: #2a2a2e;
+}
+
+.dark .subscription-details-content::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+.dark .subscription-details-content::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}

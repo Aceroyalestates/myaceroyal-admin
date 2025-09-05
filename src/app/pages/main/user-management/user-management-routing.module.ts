@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { VeiwUserComponent } from './veiw-user/veiw-user.component';
+import { ViewUserComponent } from './veiw-user/veiw-user.component';
 import { ViewUserPropertyComponent } from './view-user-property/view-user-property.component';
 import { UserManagementComponent } from './user-management.component';
 
@@ -12,7 +12,7 @@ const routes: Routes = [
   },
   {
     path: 'view/:id',
-    component: VeiwUserComponent,
+    component: ViewUserComponent,
   },
   {
     path: 'view/:id/:slug',

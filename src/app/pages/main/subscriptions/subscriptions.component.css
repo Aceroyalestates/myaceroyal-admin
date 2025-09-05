@@ -1,0 +1,284 @@
+/* Subscriptions Component Styles */
+.subscriptions-main-wrapper {
+  background-color: var(--background-color);
+  min-height: 100vh;
+}
+
+.subscriptions-container {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease;
+}
+
+.subscriptions-container:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styling - Enhanced alignment */
+::ng-deep .ant-btn {
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  border: 1px solid #E5E7EB !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  line-height: 1 !important;
+}
+
+::ng-deep .ant-btn .anticon {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+::ng-deep .ant-btn span:not(.anticon) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.2 !important;
+}
+
+/* Specific alignment for block buttons */
+::ng-deep .ant-btn-block {
+  justify-content: center !important;
+}
+
+/* Ensure proper spacing between icon and text */
+::ng-deep .ant-btn .anticon + span {
+  margin-left: 0 !important;
+}
+
+::ng-deep .ant-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .ant-btn-primary {
+  background-color: #E41C24 !important;
+  border-color: #E41C24 !important;
+}
+
+::ng-deep .ant-btn-primary:hover {
+  background-color: #d1181f !important;
+  border-color: #d1181f !important;
+}
+
+/* Dark mode specific styles */
+:root[data-theme="dark"] .subscriptions-main-wrapper {
+  background-color: #1f1f1f;
+}
+
+:root[data-theme="dark"] .subscriptions-container {
+  background-color: #2a2a2a;
+  border-color: #404040 !important;
+}
+
+/* Chart container styling */
+canvas {
+  border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .subscriptions-main-wrapper {
+    padding: 1rem;
+  }
+  
+  .flex.items-center.gap-6 {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+
+/* Filters Section */
+.filters-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 6px;
+  border: 1px solid #d9d9d9;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+  align-items: end;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-item label {
+  font-size: 14px;
+  color: #262626;
+  font-weight: 500;
+}
+
+.filter-item nz-select,
+.filter-item nz-input-group {
+  width: 100%;
+}
+
+/* Table Styles */
+.client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.client-name {
+  font-weight: 500;
+  color: #262626;
+}
+
+.client-email {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.plan-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #595959;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-buttons button {
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Styles */
+.subscription-details {
+  padding: 16px 0;
+}
+
+.detail-section {
+  margin-bottom: 24px;
+}
+
+.detail-section h4 {
+  margin-bottom: 12px;
+  color: #262626;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 8px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-item label {
+  font-size: 14px;
+  color: #8c8c8c;
+  font-weight: 500;
+}
+
+.detail-item span {
+  font-size: 14px;
+  color: #262626;
+}
+
+.features-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.features-list li {
+  margin-bottom: 8px;
+  color: #262626;
+}
+
+/* Status Colors */
+::ng-deep .ant-tag {
+  border: none;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .subscriptions-container {
+    padding: 16px;
+  }
+
+  .filter-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+/* Dark Mode Support */
+[data-theme="dark"] .main-card {
+  background: #1f1f1f;
+  border-color: #434343;
+}
+
+[data-theme="dark"] .filters-section {
+  background: #262626;
+  border-color: #434343;
+}
+
+[data-theme="dark"] .client-name {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .client-email {
+  color: #bfbfbf;
+}
+
+[data-theme="dark"] .plan-badge {
+  background: #434343;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .detail-section h4 {
+  color: #ffffff;
+  border-bottom-color: #434343;
+}
+
+[data-theme="dark"] .detail-item span {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .features-list li {
+  color: #ffffff;
+}

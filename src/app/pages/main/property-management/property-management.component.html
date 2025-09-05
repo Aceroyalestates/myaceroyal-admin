@@ -1,105 +1,112 @@
-<main class="flex flex-col w-full">
-  <div class="flex flex-col gap-12">
+<main class="property-main-wrapper flex flex-col w-full min-h-screen bg-[#F5F5F5] dark:bg-[#18181b] p-6">
     <app-breadcrumb
-      [items]="[{ label: 'Property Management', url: '/property-management' }]"
+        [items]="[{ label: 'Property Management', url: '/main/property-management' }]"
     ></app-breadcrumb>
-    <div class="flex justify-end">
-        <button
-            class="flex justify-self-end items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer text-[#E41C24]"
-            [ngStyle]="{ color: '#FFF' }"
-            routerLink="add"
-            >
-                <app-icon name="plus"></app-icon>
-                Add Property
+    <div class="flex justify-end mb-6">
+        <button type="submit" class="flex gap-2 bg-primary !text-white rounded-lg px-5 py-3 cursor-pointer"
+            (click)="addNewProperty()">
+            <app-icon name="plus"></app-icon>
+            Add New Property
         </button>
     </div>
-    <div class="flex">
-        <nz-tabset class="w-full">
+    <div class="flex flex-col gap-12">
+        <nz-tabset class="w-full" nzType="card">
             <nz-tab nzTitle="All Properties">
-                  <div class="flex w-full items-center justify-between mb-10">
-                        <p class="text-[#4F4F4F] text-normal text-2xl">All Properties</p>
-                        <button
+                <div class="flex items-center justify-between mb-10">
+                    <p class="text-[#4F4F4F] dark:text-gray-300 text-normal text-2xl">All Properties</p>
+                    <button
                         class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
                         [ngStyle]="{ color: '#FFF' }"
                         >
                         <app-icon name="arrow-up"></app-icon>
                         Export
-                        </button>
-                    </div>
-                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
-                    <div class="flex items-center justify-between mb-7 px-7">
-                    <div class="flex flex-col gap-2">
-                        <app-search-bar placeholder="Search Property" />
-                    </div>
-                    </div>
+                    </button>
+                </div>
+                <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-10">
+                    <!-- <div class="flex items-center justify-between mb-7 px-7">
+                        <div class="flex flex-col gap-2">
+                            <app-search-bar placeholder="Search Property" />
+                        </div>
+                    </div> -->
                     <app-table
-                    [data]="properties"
-                    [columns]="columns"
-                    [enableSorting]="true"
-                    [rowLink]="getRowLink"
-                    [enableSelection]="false"
-                    (selectedData)="handleSelectedData($event)"
-                    class="w-full"
+                        [data]="properties"
+                        [columns]="columns"
+                        [showSelection]="true"
+                        [showPagination]="true"
+                        [showSearch]="true"
+                        [showFilters]="true"
+                        [loading]="loading"
+                        [enableRowClick]="true"
+                        (selectionChange)="onSelectionChange($event)"
+                        (rowClick)="onRowClick($event)"
+                        class="w-full"
                     />
                 </div>
             </nz-tab>
             <nz-tab nzTitle="Sold Properties">
                 <div class="flex items-center justify-between mb-10">
-                        <p class="text-[#4F4F4F] text-normal text-2xl">Sold Properties</p>
-                        <button
+                    <p class="text-[#4F4F4F] dark:text-gray-300 text-normal text-2xl">Sold Properties</p>
+                    <button
                         class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
                         [ngStyle]="{ color: '#FFF' }"
                         >
                         <app-icon name="arrow-up"></app-icon>
                         Export
-                        </button>
-                    </div>
-                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
-                    <div class="flex items-center justify-between mb-7 px-7">
-                    <div class="flex flex-col gap-2">
-                        <app-search-bar placeholder="Search Property" />
-                    </div>
-                    </div>
+                    </button>
+                </div>
+                <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-10">
+                    <!-- <div class="flex items-center justify-between mb-7 px-7">
+                        <div class="flex flex-col gap-2">
+                            <app-search-bar placeholder="Search Property" />
+                        </div>
+                    </div> -->
                     <app-table
-                    [data]="properties"
-                    [columns]="columns"
-                    [enableSorting]="true"
-                    [rowLink]="getRowLink"
-                    [enableSelection]="false"
-                    (selectedData)="handleSelectedData($event)"
-                    class="w-full"
+                        [data]="properties"
+                        [columns]="columns"
+                        [actions]="actions"
+                        [showSelection]="false"
+                        [showPagination]="true"
+                        [showSearch]="true"
+                        [showFilters]="true"
+                        (selectionChange)="onSelectionChange($event)"
+                        (actionClick)="onTableAction($event)"
+                        (rowClick)="onRowClick($event)"
+                        class="w-full"
                     />
                 </div>
             </nz-tab>
             <nz-tab nzTitle="Available Properties">
                 <div class="flex items-center justify-between mb-10">
-                    <p class="text-[#4F4F4F] text-normal text-2xl">Available Properties</p>
+                    <p class="text-[#4F4F4F] dark:text-gray-300 text-normal text-2xl">Available Properties</p>
                     <button
-                    class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
-                    [ngStyle]="{ color: '#FFF' }"
-                    >
-                    <app-icon name="arrow-up"></app-icon>
-                    Export
+                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
+                        [ngStyle]="{ color: '#FFF' }"
+                        >
+                        <app-icon name="arrow-up"></app-icon>
+                        Export
                     </button>
                 </div>
-                <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
-                    <div class="flex items-center justify-between mb-7 px-7">
-                    <div class="flex flex-col gap-2">
-                        <app-search-bar placeholder="Search Property" />
-                    </div>
-                    </div>
+                <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-10">
+                    <!-- <div class="flex items-center justify-between mb-7 px-7">
+                        <div class="flex flex-col gap-2">
+                            <app-search-bar placeholder="Search Property" />
+                        </div>
+                    </div> -->
                     <app-table
-                    [data]="properties"
-                    [columns]="columns"
-                    [enableSorting]="true"
-                    [rowLink]="getRowLink"
-                    [enableSelection]="false"
-                    (selectedData)="handleSelectedData($event)"
-                    class="w-full"
+                        [data]="properties"
+                        [columns]="columns"
+                        [actions]="actions"
+                        [showSelection]="false"
+                        [showPagination]="true"
+                        [showSearch]="true"
+                        [showFilters]="true"
+                        (selectionChange)="onSelectionChange($event)"
+                        (actionClick)="onTableAction($event)"
+                        (rowClick)="onRowClick($event)"
+                        class="w-full"
                     />
                 </div>
             </nz-tab>
         </nz-tabset>
     </div>
-  </div>
 </main>
