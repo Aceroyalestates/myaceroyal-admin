@@ -1,0 +1,79 @@
+.subscription-report-container {
+  padding: 24px;
+}
+
+.filters-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 16px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+.filter-item label {
+  margin-bottom: 4px;
+  font-weight: 500;
+  color: #333;
+}
+
+.filter-item nz-select,
+.filter-item nz-input-group {
+  width: 100%;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-weight: 500;
+  color: #333;
+}
+
+.user-email {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* Dark mode support */
+:host-context(.dark) .filters-section {
+  background: #1f1f1f;
+}
+
+:host-context(.dark) .filter-item label {
+  color: #fff;
+}
+
+:host-context(.dark) .user-name {
+  color: #fff;
+}
+
+:host-context(.dark) .user-email {
+  color: #ccc;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-item {
+    min-width: 100%;
+  }
+}

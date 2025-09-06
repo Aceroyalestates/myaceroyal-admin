@@ -1,6 +1,6 @@
-<div class="w-full bg-white rounded-lg shadow-sm">
+<div class="w-full bg-white rounded-lg shadow-sm" [ngClass]="{ 'dark:bg-[#222] dark:text-[#fafafa]': isDarkMode }">
   <!-- Search and Filter Bar -->
-  <div *ngIf="showSearch || showFilters" class="p-4 border-b border-gray-200">
+  <div *ngIf="showSearch || showFilters" class="p-4 border-b border-gray-200" [ngClass]="{ 'dark:bg-[#222] dark:border-[#444] dark:text-[#fafafa]': isDarkMode }">
     <div class="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4 lg:items-center lg:justify-between">
 
       <!-- Search Section -->
@@ -51,28 +51,6 @@
           <span class="text-sm text-gray-600">{{ selectedRows.length }} selected</span>
           <nz-divider nzType="vertical"></nz-divider>
         </div>
-
-        <!-- Export Button -->
-        <button
-          nz-button
-          nzType="default"
-          nzSize="small"
-          (click)="exportToCSV()"
-          nz-tooltip="Export to CSV"
-          class="border-gray-300 text-gray-700 hover:border-gray-400">
-          <span nz-icon nzType="download"></span>
-        </button>
-
-        <!-- Refresh Button -->
-        <button
-          nz-button
-          nzType="default"
-          nzSize="small"
-          (click)="updateData()"
-          nz-tooltip="Refresh"
-          class="border-gray-300 text-gray-700 hover:border-gray-400">
-          <span nz-icon nzType="reload"></span>
-        </button>
       </div>
     </div>
   </div>
@@ -237,7 +215,7 @@
   </div>
 
   <!-- Pagination -->
-  <div *ngIf="showPagination && total > 0" class="p-4 border-t border-gray-200">
+  <div *ngIf="showPagination && total > 0" class="p-4 border-t border-gray-200" [ngClass]="{ 'dark:bg-[#222] dark:border-[#444] dark:text-[#fafafa]': isDarkMode }">
     <div class="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:items-center sm:justify-between">
       <!-- Page Size Selector -->
       <div class="flex items-center space-x-2">

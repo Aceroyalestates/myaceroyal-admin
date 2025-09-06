@@ -1,0 +1,49 @@
+/* Legal Component Styles */
+.legal-main-wrapper {
+  background-color: var(--background-color);
+  min-height: 100vh;
+}
+
+.legal-container {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s ease;
+}
+
+.legal-container:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.legal-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.legal-card:hover {
+  border-color: #E41C24;
+  box-shadow: 0 2px 8px rgba(228, 28, 36, 0.1);
+}
+
+/* Dark mode specific styles */
+:root[data-theme="dark"] .legal-main-wrapper {
+  background-color: #1f1f1f;
+}
+
+:root[data-theme="dark"] .legal-container {
+  background-color: #2a2a2a;
+  border-color: #404040 !important;
+}
+
+:root[data-theme="dark"] .legal-card {
+  background-color: #2a2a2a;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .legal-main-wrapper {
+    padding: 1rem;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -8,6 +8,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
 import { LoaderComponent } from 'src/app/shared/components/loader/loader.component';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
+import { ThemeService } from 'src/app/core/services/theme.service';
 
 @Component({
   imports: [
@@ -25,10 +26,18 @@ import { AuthService } from 'src/app/core/services/auth/auth.service';
 })
 export class MainComponent {
   isCollapsed = false;
+  theme: 'light' | 'dark' = 'light';
 
-  constructor(private authService: AuthService){}
+  constructor(private authService: AuthService, private themeService: ThemeService) {
+    this.theme = this.themeService.getTheme();
+    this.themeService.initTheme();
+  }
 
-    onSearch(query: string) {
+  toggleTheme() {
+    this.theme = this.themeService.toggleTheme();
+  }
+
+  onSearch(query: string) {
     console.log('Search query:', query);
     // filter table, trigger API search, etc.
   }

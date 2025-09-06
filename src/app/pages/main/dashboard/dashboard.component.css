@@ -10,3 +10,76 @@
     padding-left: 20px;
     background-color: red !important;
 }
+
+/* Dashboard Dark Mode Support - Following exact pattern from working components */
+
+/* Revenue Filter - Light mode default with high specificity */
+.revenue-filter select {
+  min-width: 160px !important;
+  background-color: #ffffff !important;
+  color: #4F4F4F !important;
+  border: 1px solid #EEF2F6 !important;
+}
+
+/* Revenue Filter - Dark mode with high specificity */
+.dark .revenue-filter select {
+  background-color: #374151 !important;
+  color: #d1d5db !important;
+  border-color: #4b5563 !important;
+}
+
+/* Property Summary Cards - Light mode default with high specificity */
+.property-summary-card {
+  background-color: #ffffff !important;
+  border: 1px solid #EEF2F6 !important;
+  transition: all 0.3s ease;
+}
+
+.property-summary-card p {
+  color: #7A7A7A !important;
+}
+
+.property-summary-card p.text-xl {
+  color: #4F4F4F !important;
+}
+
+/* Property Summary Cards - Dark mode with high specificity */
+.dark .property-summary-card {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .property-summary-card p {
+  color: #9ca3af !important;
+}
+
+.dark .property-summary-card p.text-xl {
+  color: #d1d5db !important;
+}
+
+.property-summary-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Dashboard specific chart theme variables */
+:host {
+  --chart-text-color: #6B7280;
+  --chart-grid-color: rgba(0, 0, 0, 0.1);
+  --chart-point-border: #fff;
+  --chart-tooltip-bg: rgba(0, 0, 0, 0.8);
+}
+
+:host-context(.dark) {
+  --chart-text-color: #d1d5db;
+  --chart-grid-color: rgba(255, 255, 255, 0.1);
+  --chart-point-border: #1f2937;
+  --chart-tooltip-bg: rgba(31, 31, 35, 0.95);
+}
+
+.chart-container {
+  background: transparent;
+}
+
+.chart-container canvas {
+  background: transparent !important;
+}

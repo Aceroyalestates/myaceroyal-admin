@@ -1,4 +1,4 @@
-<main class="flex flex-col w-full">
+<main class="finance-main-wrapper flex flex-col w-full min-h-screen p-6">
   <!-- Breadcrumb -->
   <div class="mb-8">
     <app-breadcrumb
@@ -9,7 +9,7 @@
   <!-- Metrics Cards -->
   <div class="flex items-center gap-6 mb-8">
     @for(metric of financeMetrics; track metric.id) {
-      <nz-card class="flex-1" [nzBodyStyle]="{ padding: '24px' }">
+      <nz-card class="finance-container flex-1 rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-8 h-8 rounded-full flex items-center justify-center"
                [ngStyle]="{ 'background-color': metric.color + '20' }">
@@ -19,11 +19,11 @@
               <span nz-icon nzType="rise" [ngStyle]="{ color: metric.color }"></span>
             }
           </div>
-          <p class="text-[#7A7A7A] text-[16px] font-medium mb-0">{{ metric.title }}</p>
+          <p class="text-[#7A7A7A] dark:text-gray-400 text-[16px] font-medium mb-0">{{ metric.title }}</p>
         </div>
         
         <div class="flex items-center justify-between">
-          <h2 class="text-[#4F4F4F] text-[32px] font-semibold mb-0">{{ metric.amount }}</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[32px] font-semibold mb-0">{{ metric.amount }}</h2>
           <nz-tag [nzColor]="metric.color">
             <span nz-icon nzType="arrow-up"></span>
             {{ metric.percentage }} This Month
@@ -34,13 +34,13 @@
   </div>
 
   <!-- Transaction Balance Chart Section -->
-  <nz-card class="mb-8" [nzBodyStyle]="{ padding: '24px' }">
+  <nz-card class="finance-container mb-8 gap-6 rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
         <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
           <span nz-icon nzType="line-chart" class="text-[#E41C24]"></span>
         </div>
-        <h3 class="text-[#4F4F4F] text-[20px] font-semibold mb-0">Transaction Balance</h3>
+        <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Transaction Balance</h3>
       </div>
       
       <nz-select [(ngModel)]="selectedPeriod" class="w-40" nzSize="default">
@@ -51,7 +51,7 @@
     </div>
     
     <div class="mb-4">
-      <h2 class="text-[#4F4F4F] text-[32px] font-bold mb-1">₦300,000,000</h2>
+      <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[32px] font-bold mb-1">₦300,000,000</h2>
       <div class="flex items-center gap-2">
         <nz-tag nzColor="success">
           <span nz-icon nzType="arrow-up"></span>
@@ -66,10 +66,13 @@
     </div>
   </nz-card>
 
+  <!-- Spacer -->
+  <div class="h-8"></div>
+
   <!-- Recent Financial Activity Section -->
-  <nz-card [nzBodyStyle]="{ padding: '24px' }">
+  <nz-card class="finance-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-[#4F4F4F] text-[24px] font-semibold mb-0">Recent Financial Activity</h3>
+      <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[24px] font-semibold mb-0">Recent Financial Activity</h3>
       <button 
         nz-button 
         nzType="primary"
@@ -77,94 +80,62 @@
         (click)="onExport()"
         class="flex items-center gap-2">
         <span nz-icon nzType="download" nzTheme="outline"></span>
-        Export
+        <span>Export</span>
       </button>
     </div>
 
-    <!-- Search and Filter Section -->
-    <div class="mb-6">
-      <!-- Filter Controls -->
-      <div class="flex items-center gap-4 flex-wrap">
-        <!-- Search Input -->
+    <!-- Custom Filter Bar -->
+    <div class="p-4 border-b border-gray-200 dark:border-gray-600 mb-4">
+      <div class="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4 lg:items-center lg:justify-between">
+        
+        <!-- Search Section -->
         <div class="flex-1 max-w-md">
-          <nz-input-group nzSearch [nzAddOnAfter]="searchButton">
-            <input 
-              type="text" 
-              nz-input 
-              [(ngModel)]="searchTerm"
-              (ngModelChange)="onSearchChange($event)"
-              placeholder="Search..."
-              class="text-[#4F4F4F]"
-            />
-          </nz-input-group>
-          <ng-template #searchButton>
-            <button nz-button nzType="primary" nzSearch (click)="onSearch()">
-              <span nz-icon nzType="search"></span>
-            </button>
-          </ng-template>
+          <app-search-bar
+            placeholder="Search transactions..."
+            (search)="onSearchTermChange($event)"
+            class="w-full">
+          </app-search-bar>
         </div>
-        
-        <!-- Property Name Dropdown -->
-        <nz-select 
-          [(ngModel)]="selectedPropertyName"
-          (ngModelChange)="onPropertyNameChange($event)"
-          nzPlaceHolder="Property Name"
-          nzAllowClear
-          class="w-48">
-          <nz-option nzValue="" nzLabel="All Properties"></nz-option>
-          <nz-option nzValue="luxury-apartment" nzLabel="Luxury Apartment"></nz-option>
-          <nz-option nzValue="office-complex" nzLabel="Office Complex"></nz-option>
-          <nz-option nzValue="retail-space" nzLabel="Retail Space"></nz-option>
-          <nz-option nzValue="warehouse" nzLabel="Warehouse"></nz-option>
-        </nz-select>
-        
-        <!-- Mode of Payment Dropdown -->
-        <nz-select 
-          [(ngModel)]="selectedModeOfPayment"
-          (ngModelChange)="onModeOfPaymentChange($event)"
-          nzPlaceHolder="Mode of Payment"
-          nzAllowClear
-          class="w-48">
-          <nz-option nzValue="" nzLabel="All Payment Modes"></nz-option>
-          <nz-option nzValue="bank-transfer" nzLabel="Bank Transfer"></nz-option>
-          <nz-option nzValue="paystack" nzLabel="Paystack"></nz-option>
-          <nz-option nzValue="bank-cheque" nzLabel="Bank Cheque"></nz-option>
-          <nz-option nzValue="cash" nzLabel="Cash"></nz-option>
-        </nz-select>
-        
-        <!-- Payment Status Dropdown -->
-        <nz-select 
-          [(ngModel)]="selectedPaymentStatus"
-          (ngModelChange)="onPaymentStatusChange($event)"
-          nzPlaceHolder="Payment Status"
-          nzAllowClear
-          class="w-36">
-          <nz-option nzValue="" nzLabel="All Status"></nz-option>
-          <nz-option nzValue="pending" nzLabel="Pending"></nz-option>
-          <nz-option nzValue="approved" nzLabel="Approved"></nz-option>
-          <nz-option nzValue="failed" nzLabel="Failed"></nz-option>
-          <nz-option nzValue="under-review" nzLabel="Under Review"></nz-option>
-        </nz-select>
-        
-        <!-- Date Range -->
-        <div class="flex items-center gap-2">
-          <span class="text-[#4F4F4F] text-sm whitespace-nowrap">Start Date</span>
-          <nz-date-picker 
-            [(ngModel)]="startDate"
-            (ngModelChange)="onDateRangeChange()"
-            nzFormat="yyyy-MM-dd"
-            nzPlaceHolder="Start Date">
-          </nz-date-picker>
-        </div>
-        
-        <div class="flex items-center gap-2">
-          <span class="text-[#4F4F4F] text-sm whitespace-nowrap">End Date</span>
-          <nz-date-picker 
-            [(ngModel)]="endDate"
-            (ngModelChange)="onDateRangeChange()"
-            nzFormat="yyyy-MM-dd"
-            nzPlaceHolder="End Date">
-          </nz-date-picker>
+
+        <!-- Date Range Filters -->
+        <div class="flex items-center gap-4 flex-wrap">
+          <!-- Property Filter -->
+          <div class="flex items-center gap-2">
+            <nz-select 
+              [(ngModel)]="selectedPropertyName"
+              (ngModelChange)="onPropertyNameChange($event)"
+              nzPlaceHolder="All Properties"
+              nzAllowClear
+              class="w-48">
+              <nz-option nzValue="" nzLabel="All Properties"></nz-option>
+              <nz-option nzValue="luxury-apartment" nzLabel="Luxury Apartment"></nz-option>
+              <nz-option nzValue="office-complex" nzLabel="Office Complex"></nz-option>
+              <nz-option nzValue="retail-space" nzLabel="Retail Space"></nz-option>
+              <nz-option nzValue="warehouse" nzLabel="Warehouse"></nz-option>
+            </nz-select>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-[#4F4F4F] dark:text-gray-300 text-sm whitespace-nowrap">Start Date</span>
+            <nz-date-picker 
+              [(ngModel)]="startDate"
+              (ngModelChange)="onDateRangeChange()"
+              nzFormat="yyyy-MM-dd"
+              nzPlaceHolder="Start Date"
+              class="w-40">
+            </nz-date-picker>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <span class="text-[#4F4F4F] dark:text-gray-300 text-sm whitespace-nowrap">End Date</span>
+            <nz-date-picker 
+              [(ngModel)]="endDate"
+              (ngModelChange)="onDateRangeChange()"
+              nzFormat="yyyy-MM-dd"
+              nzPlaceHolder="End Date"
+              class="w-40">
+            </nz-date-picker>
+          </div>
         </div>
       </div>
     </div>
@@ -175,9 +146,10 @@
       [columns]="columns"
       [actions]="actions"
       [showSearch]="false"
-      [showFilters]="false"
+      [showFilters]="true"
       [showSelection]="true"
       [showPagination]="true"
+      [showExport]="false"
       [pageSize]="10"
       [responsive]="true"
       (actionClick)="onTableAction($event)"

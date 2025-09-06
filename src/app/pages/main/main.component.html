@@ -68,9 +68,9 @@
           <app-icon name="bag"></app-icon>
 
           <a
-            [routerLink]="['/main/subscription-form']"
+            [routerLink]="['/main/subscriptions']"
             routerLinkActive="!bg-primary !text-[#fff]"
-            >Subsciption Form</a
+            >Subscriptions</a
           >
         </li>
         <li nz-menu-item class="menu-item" nzMatchRouter>
@@ -80,6 +80,15 @@
             [routerLink]="['/main/realtor-management']"
             routerLinkActive="!bg-primary !text-[#fff]"
             >Realtor Management</a
+          >
+        </li>
+        <li nz-menu-item class="menu-item" nzMatchRouter>
+          <app-icon name="file-text"></app-icon>
+
+          <a
+            [routerLink]="['/main/legal']"
+            routerLinkActive="!bg-primary !text-[#fff]"
+            >Legal Documentation</a
           >
         </li>
       </ul>
@@ -115,6 +124,15 @@
             ></app-search-bar>
           </div>
           <div class="flex gap-16 items-center">
+            <button 
+              class="theme-toggle-header-btn" 
+              (click)="toggleTheme()"
+              [title]="theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+              <app-icon
+                [name]="theme === 'dark' ? 'sun' : 'moon'"
+                class="text-primary p-2 bg-primary/10 rounded-full"
+              ></app-icon>
+            </button>
             <app-icon
               [name]="'bell'"
               class="text-primary p-2 bg-primary/10 rounded-full"

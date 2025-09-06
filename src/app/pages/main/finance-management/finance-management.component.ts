@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
+import { SearchBarComponent } from 'src/app/shared/components/search-bar/search-bar.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -36,8 +38,9 @@ interface Transaction {
 @Component({
   selector: 'app-finance-management',
   imports: [
-    CommonModule, 
+    CommonModule,
     SharedModule, 
+    SearchBarComponent,
     NzSelectModule,
     NzCardModule,
     NzButtonModule,
@@ -56,6 +59,8 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
   @ViewChild('chartCanvas', { static: false }) chartCanvas!: ElementRef<HTMLCanvasElement>;
   
   chart: Chart | null = null;
+
+  constructor(private router: Router) {}
   
   // Finance metrics data - can be replaced with API data
   financeMetrics: FinanceMetric[] = [
@@ -332,6 +337,10 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
     }
   }
 
+  onSearchTermChange(searchTerm: string): void {
+    this.onSearchChange(searchTerm);
+  }
+
   onPropertyNameChange(propertyName: string): void {
     this.selectedPropertyName = propertyName;
     console.log('Property name filter changed:', propertyName);
@@ -395,7 +404,8 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
 
   viewTransactionDetails(transaction: Transaction): void {
     console.log('Viewing transaction details:', transaction);
-    // Implement view details functionality - can navigate to details page or open modal
+    // Navigate to transaction details page
+    this.router.navigate(['/main/finance-management/transaction', transaction.id]);
   }
 
   getStatusClass(status: string): string {

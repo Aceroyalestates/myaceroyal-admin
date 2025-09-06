@@ -50,6 +50,8 @@ export interface TableAction {
   tooltip?: string;
 }
 
+// ...existing code...
+
 export interface TableFilter {
   [key: string]: any;
 }
@@ -76,6 +78,9 @@ export interface TableFilter {
   styleUrls: ['./table.component.css'],
 })
 export class TableComponent implements OnInit, OnChanges {
+  get isDarkMode(): boolean {
+    return document.documentElement.classList.contains('dark');
+  }
   @Input() data: any[] = [];
   @Input() columns: TableColumn[] = [];
   @Input() actions: TableAction[] = [];
@@ -84,6 +89,7 @@ export class TableComponent implements OnInit, OnChanges {
   @Input() showFilters = true;
   @Input() showPagination = true;
   @Input() showSelection = false;
+  @Input() showExport = true;
   @Input() pageSize = 10;
   @Input() pageSizeOptions = [10, 20, 50, 100];
   @Input() sortable = true;
