@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
-import { FeatureRequest, Property, PropertyCreateRequest, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUnitRequest, UnitType } from '../models/properties';
+import { FeatureRequest, InstallmentPlan, InstallmentPlanCreate, InstallmentPlanRequest, Property, PropertyCreateRequest, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUnitRequest, TogglePropertyAvailabilityResponse, UnitType } from '../models/properties';
 import { IResponse } from '../models/generic';
 
 @Injectable({
@@ -21,11 +21,11 @@ export class PropertyService {
       limit: limit.toString(),
       ...filters
     };
-    return this.httpService.get<PropertyResponse>('properties', params);
+    return this.httpService.get<PropertyResponse>('admin/properties', params);
   }
 
   getPropertyById(id: string): Observable<Property> {
-    return this.httpService.get<{ data: Property }>(`properties/${id}`)
+    return this.httpService.get<{ data: Property }>(`admin/properties/${id}`)
       .pipe(
         map(response => response.data)
       );
@@ -40,14 +40,14 @@ export class PropertyService {
   }
 
   patchProperty(id: string, property: Partial<Property>): Observable<Property> {
-    return this.httpService.patch<{ data: Property }>(`properties/${id}`, property)
+    return this.httpService.patch<{ data: Property }>(`admin/properties/${id}`, property)
       .pipe(
         map(response => response.data)
       );
   }
 
   deleteProperty(id: string): Observable<void> {
-    return this.httpService.delete<void>(`properties/${id}`);
+    return this.httpService.delete<void>(`admin/properties/${id}`);
   }
 
   addImagesToProperty(propertyId: string, data: any): Observable<IResponse<Property>> {
@@ -90,16 +90,32 @@ export class PropertyService {
     return this.httpService.post<IResponse>(`admin/properties/${propertyId}/features`, features);
   }
 
-  toggleAvailability(propertyId: string): Observable<IResponse> {
-    return this.httpService.patch<IResponse>(`admin/properties/${propertyId}/toggle-availability`, {});
+  toggleAvailability(propertyId: string): Observable<TogglePropertyAvailabilityResponse> {
+    return this.httpService.patch<TogglePropertyAvailabilityResponse>(`admin/properties/${propertyId}/toggle-availability`, {});
   }
 
-  getInstallmentPlans(): Observable<IResponse<any[]>> {
-    return this.httpService.get<IResponse<any[]>>('admin/installment-plans');
+  getInstallmentPlans(): Observable<IResponse<InstallmentPlan[]>> {
+    return this.httpService.get<IResponse<InstallmentPlan[]>>('admin/installment-plans');
   }
 
   addPropertyUnit(propertyId: string, unit: PropertyUnitRequest): Observable<IResponse<Property>> {
     return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/units`, unit);
+  }
+
+  deletePropertyUnit(propertyId: string, unitId: number): Observable<IResponse<Property>> {
+    return this.httpService.delete<IResponse<Property>>(`admin/properties/${propertyId}/units/${unitId}`);
+  }
+
+  addPropertyInstallmentPlans(propertyId: string, plans: InstallmentPlanRequest): Observable<IResponse<Property>> {
+    return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/installment-plans`,  plans);
+  }
+
+  addInstallmentPlanToUnit(propertyId: string, unitId: string, plan: InstallmentPlanCreate): Observable<IResponse<Property>> {
+    return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/units/${unitId}/installment-plans`, plan);
+  }
+
+  deleteInstallmentPlanFromUnit(propertyId: string, planId: number): Observable<IResponse<Property>> {
+    return this.httpService.delete<IResponse<Property>>(`admin/properties/${propertyId}/installment-plans/${planId}`);
   }
 
 }

@@ -33,7 +33,7 @@ export interface PropertyImage {
 
 export interface PropertyUnit {
   id: number;
-  name: string | null;
+  name: number | null;
   price: string;
   is_available: boolean;
   unit_type: UnitType;
@@ -118,7 +118,7 @@ interface PropertyUnitCreate {
     total_units: number;
 }
 
-interface InstallmentPlanCreate {
+export interface InstallmentPlanCreate {
     unit_id: string;
     plan_id: string;
     initial_amount: string;
@@ -128,4 +128,26 @@ interface InstallmentPlanCreate {
 
 export interface FeatureRequest {
     features: number[];
+}
+export interface InstallmentPlan {
+    id: string;
+    title: string;
+    installments_count: number;
+    duration_months: number;
+    is_active: boolean;
+}
+
+export interface InstallmentPlanRequest {
+  installment_plans: Array<{
+    plan_id: string;
+    unit_id: number;
+    initial_amount: number;
+    total_price: number;
+    start_date: string;
+  }>;
+}
+
+export interface TogglePropertyAvailabilityResponse {
+  message: string;
+  is_available: boolean;
 }

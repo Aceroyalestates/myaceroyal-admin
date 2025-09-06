@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { FormArray, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -12,9 +12,12 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzUploadChangeParam, NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { FeatureRequest, Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions } from 'src/app/core/models/properties';
+import { Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions, PropertyUnitRequest } from 'src/app/core/models/properties';
 import { PropertyService } from 'src/app/core/services/property.service';
 import { ImageService } from 'src/app/core/services/image.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-add-property',
@@ -30,34 +33,37 @@ import { ImageService } from 'src/app/core/services/image.service';
     NzStepsModule,
     NzIconModule,
     NzUploadModule,
-    NzDividerModule
+    NzDividerModule,
+    NzPopconfirmModule
   ],
   templateUrl: './add-property.component.html',
   styleUrl: './add-property.component.css'
 })
+
 export class AddPropertyComponent implements OnInit, OnDestroy {
   private fb = inject(NonNullableFormBuilder);
   private destroy$ = new Subject<void>();
-  currentStep = 3;
+  currentStep = 0;
   isLoading = false;
   propertyTypeOptions: PropertyTypeOptions[] = [];
   adminFeatures: PropertyFeatureAdmin[] = [];
   propertyTypes: PropertyType[] = [];
   createdProperty: Property | null = null;
   uploadedImages: string[] = [];
-  unitTypesOptions: any[] = []; 
-
-  // alphabet(): string[] {
-  // const children: string[] = [];
-  // for (let i = 10; i < 36; i++) {
-  //   children.push(i.toString(36) + i);
-  // }
-  // return children;
-  // }
+  unitTypesOptions: any[] = [];
+  unitTypeForm: FormGroup;
 
   readonly listOfOption: string[] = ['Tarred Road', '24/7 Electricity', 'Fenced Perimeter'];
 
-  constructor(private propertyService: PropertyService, private imageService: ImageService) {
+  constructor(
+    private propertyService: PropertyService,
+    private imageService: ImageService,
+    private notification: NzNotificationService,
+    private router: Router, 
+    ) {
+      this.unitTypeForm = this.fb.group({
+        unit_types: this.fb.array([])
+      });
   }
 
   formBasic = this.fb.group({
@@ -75,10 +81,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   formImages = this.fb.group({
     images: this.fb.control<any[]>([], [Validators.required])
   });
-
-  unitTypeForm = this.fb.group({
-      unit_types: this.fb.array([])
-    });
 
   formPaymentPlan = this.fb.group({});
 
@@ -99,7 +101,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     return this.unitTypeForm.get('unit_types') as FormArray;
   }
 
-  // Create a new unit type form group
   createUnitType(): FormGroup {
     return this.fb.group({
       unit_type_id: ['', [Validators.required]],
@@ -108,9 +109,16 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Add a new unit type to the FormArray
   addUnitType(): void {
     this.unitTypes.push(this.createUnitType());
+  }
+
+  trackByUnitType(index: number, unit: AbstractControl): number {
+    return index;
+  }
+
+  trackByPlan(index: number, plan: AbstractControl): number {
+    return index;
   }
 
   handleChange({ file, fileList }: NzUploadChangeParam): void {
@@ -124,7 +132,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         next: (response) => {
           console.log('Image uploaded successfully:', response);
           this.uploadedImages.push(response.data.file.secure_url)
-          // this.formImages.patchValue({ images });
         },
         error: (error) => {
           console.error('Error uploading image:', error);
@@ -174,7 +181,8 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     this.propertyService.addImagesToProperty(this.createdProperty!.id, data).subscribe({
       next: (response) => {
         console.log('Images added successfully:', response);
-        this.currentStep = 3; // Move to the next step
+        this.notification.success('Success', 'Property images added successfully');
+        this.currentStep = 3;
         this.isLoading = false;
       },
       error: (error) => {
@@ -209,6 +217,52 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     console.log('submit unit types', this.unitTypeForm);
   }
 
+  submitUnits(): void {
+      if (this.unitTypeForm.valid) {
+        const newUnits = this.unitTypeForm.value.unit_types
+          .map((unit: any, index: number) => ({ ...unit, index }))
+          .filter((unit: any) => !unit.isSaved);
+        if (!newUnits.length) {
+          this.notification.info('Info', 'No new units to save.');
+          return;
+        }
+        const data: PropertyUnitRequest = {
+          unit_types: newUnits.map((unit: any) => ({
+            unit_type_id: unit.unit_type_id,
+            price: unit.price,
+            total_units: unit.total_units
+          }))
+        };
+
+        console.log({ data });
+        this.createUnits(data);
+      } else {
+        this.unitTypes.controls.forEach((control) => {
+          if (control.invalid) {
+            control.markAsDirty();
+            control.updateValueAndValidity({ onlySelf: true });
+          }
+        });
+        this.notification.warning('Warning', 'Please fill out all required unit fields');
+      }
+    }
+
+    createUnits(data: PropertyUnitRequest): void {
+    this.isLoading = true;
+    this.propertyService.addPropertyUnit(this.createdProperty!.id, data).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.notification.success('Success', 'Units added successfully');
+        this.router.navigate([`/main/property-management/view/${this.createdProperty!.id}`]);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.notification.error('Error', 'Failed to add units');
+        console.error('Error adding units:', error);
+      }
+    });
+  }
+
   getUnitTypes() {
     this.isLoading = true;
     this.propertyService.getUnitTypes().subscribe({
@@ -241,12 +295,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     });
   }
 
-
-  // handleSelectedFeatures(selected: PropertyFeatureAdmin[]) {
-  //   this.formAmenities.patchValue({ features: selected });
-  //   console.log('Selected Features:', selected);
-  // }
-
   getPropertyTypes() {
     this.isLoading = true;
     this.propertyService.getPropertyTypes().subscribe({
@@ -271,9 +319,9 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isLoading = false;
           console.log('Property created successfully:', response);
-          // Navigate to the next step or show success message
+          this.notification.success('Success', 'Property initial details created successfully');
           this.createdProperty = response.data!;
-          this.currentStep = 1; // Move to the next step
+          this.currentStep = 1; 
         },
         error: (error) => {
           this.isLoading = false;
@@ -298,6 +346,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isLoading = false;
           console.log('Features updated successfully:', response);
+          this.notification.success('Success', 'Property features added successfully');
           this.currentStep = 2;
         },
         error: (error) => {
@@ -316,7 +365,6 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.isLoading = false;
           console.log('Property updated successfully:', response);
-          // Optionally, you can refresh the property data or show a success message
           this.createdProperty = { ...this.createdProperty, ...response?.data } as Property;
           this.currentStep = 2;
         },
@@ -351,9 +399,16 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     }
   }
 
+  removeUnitType(index: number): void {
+    if (this.unitTypes.length > 1) {
+      this.unitTypes.removeAt(index);
+    }
+  }
+
+  
+
   removeImage(imageUrl: string): void {
     console.log('Images before removal:', this.uploadedImages);
-    // Remove the image URL from the uploadedImages array
     this.uploadedImages = this.uploadedImages.filter(x => x !== imageUrl);
     console.log('Images after removal:', this.uploadedImages);
   }
