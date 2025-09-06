@@ -78,7 +78,7 @@
           </h2>
         </div>
 
-        <div class="flex flex-col gap-1">
+        <div *ngIf="property.property_features && property.property_features.length > 0" class="flex flex-col gap-1">
           <p class="!text-[#7A7A7A] !text-medium !mb-2">Amenities</p>
 
           <div class="flex gap-4 flex-wrap">

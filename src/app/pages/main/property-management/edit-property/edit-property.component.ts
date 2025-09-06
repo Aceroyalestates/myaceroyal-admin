@@ -162,7 +162,7 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
     const plans = this.getInstallmentPlans(unitIndex);
     const planId = plans.at(planIndex).get('plan_id')?.value;
     if (planId && this.property?.property_units[unitIndex]?.property_installment_plans?.find(p => p.plan_id === planId)) {
-      this.deleteInstallmentPlan(unitIndex, planIndex, planId);
+      this.deleteInstallmentPlan(unitIndex, planIndex);
     } else {
       plans.removeAt(planIndex);
     }
@@ -308,6 +308,7 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
         return;
       }
       const data: InstallmentPlanRequest = { installment_plans: newPlans };
+      return console.log('Creating installment plans with data:', {unitIndex, unitId, data}),
       this.createInstallmentPlans(unitId, data);
     } else {
       const plansArray = this.getInstallmentPlans(unitIndex);
@@ -337,7 +338,7 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteInstallmentPlan(unitIndex: number, planIndex: number, planId: string): void {
+  deleteInstallmentPlan(unitIndex: number, planIndex: number): void {
     this.isLoading = true;
     const unitId = this.property?.property_units[unitIndex]?.id;
     if (!unitId) {
@@ -345,7 +346,14 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       this.isLoading = false;
       return;
     }
-    this.propertyService.deleteInstallmentPlanFromUnit(this.property!.id, unitId).subscribe({
+    const planId = this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.id;
+    if (!planId) {
+      this.notification.error('Error', 'Installment Plan ID is missing');
+      this.isLoading = false;
+      return;
+    }
+    console.log('Deleting installment plan with IDs:', {unitIndex, unitId, planId});
+    this.propertyService.deleteInstallmentPlanFromUnit(this.property!.id, planId!).subscribe({
       next: () => {
         this.isLoading = false;
         const plans = this.getInstallmentPlans(unitIndex);

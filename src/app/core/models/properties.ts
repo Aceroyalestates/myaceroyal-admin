@@ -129,13 +129,6 @@ export interface InstallmentPlanCreate {
 export interface FeatureRequest {
     features: number[];
 }
-    // {
-    //       "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-    //       "title": "12 Month Plan",
-    //       "installments_count": 12,
-    //       "duration_months": 12,
-    //       "is_active": true
-    //     }
 export interface InstallmentPlan {
     id: string;
     title: string;
@@ -152,4 +145,9 @@ export interface InstallmentPlanRequest {
     total_price: number;
     start_date: string;
   }>;
+}
+
+export interface TogglePropertyAvailabilityResponse {
+  message: string;
+  is_available: boolean;
 }

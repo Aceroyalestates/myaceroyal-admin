@@ -61,16 +61,20 @@ panels = [
 
   gotoEdit(): void {
     console.log('going to edit ', this.id)
-    this.router.navigate([`property-management/edit/${this.id}`]);
+    this.router.navigate([`main/property-management/edit/${this.id}`]);
   }
 
   toggleAvailability() {
     console.log({id: this.id});
-    this.isLoading = true
+    this.isLoading = true;
+    console.log('IsLoading: ', this.isLoading);
     this.propertyService.toggleAvailability(this.property!.id).subscribe({
       next: (response) => {
-        this.isAvailable = response.data.is_available;
+        console.log('Availability toggled: ', response);
         this.isLoading = false;
+        console.log('IsLoading: ', this.isLoading);
+        this.isAvailable = response.is_available;
+        console.log('isAvailable: ', this.isAvailable);
       },
       error: (error) => {
         console.error('Error toggling availability: ', error);
