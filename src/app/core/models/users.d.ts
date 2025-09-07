@@ -16,6 +16,24 @@ export interface User {
   role_id: number;
   referral_code: string;
   is_active: boolean | string;
+  google_id: string,
+  failed_login_attempts: number,
+  account_locked_at: string,
+  is_account_locked: false,
+  provider: string,
+  provider_id: string,
+  email_verified_at: string,
+  referral_code:string,
+  nationality_id: string,
+  states_id: string,
+  address: string,
+  bank_verification_number: string,
+  national_identity_number: string,
+  means_of_identification: string,
+  suspension_metadata: string,
+  suspended_by: string,
+  suspended_at: string,
+  suspension_reason: string,
   createdAt: string;
   updatedAt: string;
 

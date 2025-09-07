@@ -7,11 +7,16 @@
       ]"
     ></app-breadcrumb>
     <div class="flex items-center justify-end gap-6 my-12">
-      <button
+      <!-- <button
+        type="button"
+        [disabled]="true"
         class="place-self-end rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
       >
-        Delete Realtor</button
-      ><button
+        Delete Realtor
+      </button> -->
+      <button
+        type="button"
+        (click)="suspendRealtor()"
         class="place-self-end rounded-lg border border-primary py-3 px-10 text-[20px] !text-primary font-medium cursor-pointer"
       >
         Suspend Realtor
@@ -21,8 +26,8 @@
       class="flex gap-6 py-5 px-7 border border-[#EBEBEB] rounded-lg w-11/12 bg-background border-b-0 rounded-es-none rounded-ee-none"
     >
       <img
-        src="images/user.png"
-        alt="user"
+        [src]="user.avatar"
+        [alt]="'An image of ' + user.full_name"
         class="w-full max-w-[230px] h-full rounded-lg object-cover"
       />
 
@@ -30,19 +35,19 @@
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Full Name</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            {{user.full_name}}
+            {{ user.full_name }}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Email Address</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            {{user.email}}
+            {{ user.email }}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Realtor Tag</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            {{user.referral_code}}
+            {{ user.referral_code }}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
@@ -60,7 +65,7 @@
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Status</p>
           <h2 class="!text-[#008028] text-normal font-medium text-[20px] !mb-0">
-            {{user.is_active?'Active':'Inactive' | titlecase}}
+            {{ user.is_active ? "Active" : ("Inactive" | titlecase) }}
           </h2>
         </div>
       </div>
@@ -72,52 +77,54 @@
         <h2 class="!text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
           Additional Details
         </h2>
-          <div class="flex flex-wrap items-center max-w-11/12 gap-x-[93px] gap-y-8">
-            <div class="flex flex-col gap-1">
-              <p class="!text-[#7A7A7A] !text-medium !mb-2">Nationality</p>
-              <h2
-                class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
-              >
-                Nigerian
-              </h2>
-            </div>
-            <div class="flex flex-col gap-1">
-              <p class="!text-[#7A7A7A] !text-medium !mb-2">State of Origin</p>
-              <h2
-                class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
-              >
-                Enugu
-              </h2>
-            </div>
-            <div class="flex flex-col gap-1">
-              <p class="!text-[#7A7A7A] !text-medium !mb-2">Realtor</p>
-              <h2
-                class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
-              >
-                No 2, Aceroyal estate, ibeju-Lekki.
-              </h2>
-            </div>
-            <div class="flex flex-col gap-1">
-              <p class="!text-[#7A7A7A] !text-medium !mb-2">
-                Bank Verificatin Number (BVN)
-              </p>
-              <h2
-                class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
-              >
-                BVN012345678
-              </h2>
-            </div>
-            <div class="flex flex-col gap-1">
-              <p class="!text-[#7A7A7A] !text-medium !mb-2">
-                National Identity Number (NIN)
-              </p>
-              <h2
-                class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
-              >
-                NIN01234567890
-              </h2>
-            </div>
+        <div
+          class="flex flex-wrap items-center max-w-11/12 gap-x-[93px] gap-y-8"
+        >
+          <div class="flex flex-col gap-1">
+            <p class="!text-[#7A7A7A] !text-medium !mb-2">Nationality</p>
+            <h2
+              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+            >
+              Nigerian
+            </h2>
           </div>
+          <div class="flex flex-col gap-1">
+            <p class="!text-[#7A7A7A] !text-medium !mb-2">State of Origin</p>
+            <h2
+              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+            >
+              Enugu
+            </h2>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="!text-[#7A7A7A] !text-medium !mb-2">Realtor</p>
+            <h2
+              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+            >
+              {{ user.address || "N/A" }}
+            </h2>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="!text-[#7A7A7A] !text-medium !mb-2">
+              Bank Verificatin Number (BVN)
+            </p>
+            <h2
+              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+            >
+              {{ user.bank_verification_number || "N/A" }}
+            </h2>
+          </div>
+          <div class="flex flex-col gap-1">
+            <p class="!text-[#7A7A7A] !text-medium !mb-2">
+              National Identity Number (NIN)
+            </p>
+            <h2
+              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+            >
+              {{ user.national_identity_number || "N/A" }}
+            </h2>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -138,7 +145,7 @@
   </div>
   <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
     <app-table
-      [data]="people"
+      [data]="properties"
       [columns]="columns"
       [actions]="actions"
       [showSelection]="true"

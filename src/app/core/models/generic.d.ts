@@ -46,3 +46,29 @@ export interface Role {
   label: string;
   name: string;
 }
+
+export interface CountryInterface {
+  id: number
+  name: string
+  code: string
+  is_active: boolean
+  sort_order: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface StateInterface {
+  id: number,
+  name: string
+  code: string
+  nationality_id: number,
+  is_active: true,
+  sort_order: 0,
+  createdAt: string
+  updatedAt: string
+  nationality: {
+    id: number,
+    name: string
+    code: string
+  }
+}

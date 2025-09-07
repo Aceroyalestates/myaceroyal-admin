@@ -17,6 +17,7 @@ export interface HttpOptions {
   skipErrorHandling?: boolean;
   retryCount?: number;
   timeoutMs?: number;
+  body?: any;
 }
 
 @Injectable({
@@ -27,7 +28,7 @@ export class HttpService {
   private readonly defaultTimeout = 30000; // 30 seconds
   private readonly defaultRetryCount = 1;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Get default headers (without hardcoded token - let interceptor handle it)
@@ -43,15 +44,15 @@ export class HttpService {
    */
   private createContext(options?: HttpOptions): HttpContext {
     const context = new HttpContext();
-    
+
     if (options?.skipLoading) {
       context.set(SKIP_LOADING, true);
     }
-    
+
     if (options?.skipErrorHandling) {
       context.set(SKIP_ERROR_HANDLING, true);
     }
-    
+
     return context;
   }
 
@@ -62,11 +63,11 @@ export class HttpService {
    * @returns Observable of response type T
    */
   get<T>(endpoint: string, options?: HttpOptions): Observable<T> {
-    const httpParams = options?.params instanceof HttpParams ? 
-      options.params : 
+    const httpParams = options?.params instanceof HttpParams ?
+      options.params :
       new HttpParams({ fromObject: options?.params || {} });
-    
-    const headers = options?.headers ? 
+
+    const headers = options?.headers ?
       (options.headers instanceof HttpHeaders ? options.headers : new HttpHeaders(options.headers)) :
       this.getDefaultHeaders();
 
@@ -74,8 +75,8 @@ export class HttpService {
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
     const retryCount = options?.retryCount || this.defaultRetryCount;
 
-    return this.http.get<T>(`${this.apiUrl}/${endpoint}`, { 
-      params: httpParams, 
+    return this.http.get<T>(`${this.apiUrl}/${endpoint}`, {
+      params: httpParams,
       headers,
       context,
       reportProgress: options?.reportProgress,
@@ -95,7 +96,7 @@ export class HttpService {
    * @returns Observable of response type T
    */
   post<T>(endpoint: string, data: any, options?: HttpOptions): Observable<T> {
-    let headers = options?.headers ? 
+    let headers = options?.headers ?
       (options.headers instanceof HttpHeaders ? options.headers : new HttpHeaders(options.headers)) :
       this.getDefaultHeaders();
 
@@ -108,7 +109,7 @@ export class HttpService {
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
     const retryCount = options?.retryCount || 0; // No retry for POST by default
 
-    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, data, { 
+    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, data, {
       headers,
       context,
       reportProgress: options?.reportProgress,
@@ -128,7 +129,7 @@ export class HttpService {
    * @returns Observable of response type T
    */
   put<T>(endpoint: string, data: any, options?: HttpOptions): Observable<T> {
-    let headers = options?.headers ? 
+    let headers = options?.headers ?
       (options.headers instanceof HttpHeaders ? options.headers : new HttpHeaders(options.headers)) :
       this.getDefaultHeaders();
 
@@ -141,7 +142,7 @@ export class HttpService {
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
     const retryCount = options?.retryCount || 0; // No retry for PUT by default
 
-    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, data, { 
+    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, data, {
       headers,
       context,
       reportProgress: options?.reportProgress,
@@ -161,7 +162,7 @@ export class HttpService {
    * @returns Observable of response type T
    */
   patch<T>(endpoint: string, data: any, options?: HttpOptions): Observable<T> {
-    let headers = options?.headers ? 
+    let headers = options?.headers ?
       (options.headers instanceof HttpHeaders ? options.headers : new HttpHeaders(options.headers)) :
       this.getDefaultHeaders();
 
@@ -174,7 +175,7 @@ export class HttpService {
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
     const retryCount = options?.retryCount || 0; // No retry for PATCH by default
 
-    return this.http.patch<T>(`${this.apiUrl}/${endpoint}`, data, { 
+    return this.http.patch<T>(`${this.apiUrl}/${endpoint}`, data, {
       headers,
       context,
       reportProgress: options?.reportProgress,
@@ -193,25 +194,29 @@ export class HttpService {
    * @returns Observable of response type T
    */
   delete<T>(endpoint: string, options?: HttpOptions): Observable<T> {
-    const headers = options?.headers ? 
-      (options.headers instanceof HttpHeaders ? options.headers : new HttpHeaders(options.headers)) :
-      this.getDefaultHeaders();
+    const headers = options?.headers
+      ? (options.headers instanceof HttpHeaders
+        ? options.headers
+        : new HttpHeaders(options.headers))
+      : this.getDefaultHeaders();
 
     const context = this.createContext(options);
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
-    const retryCount = options?.retryCount || 0; // No retry for DELETE by default
+    const retryCount = options?.retryCount || 0;
 
-    return this.http.delete<T>(`${this.apiUrl}/${endpoint}`, { 
+    return this.http.request<T>('DELETE', `${this.apiUrl}/${endpoint}`, {
       headers,
       context,
+      body: options?.body,
       reportProgress: options?.reportProgress,
-      withCredentials: options?.withCredentials
+      withCredentials: options?.withCredentials,
     }).pipe(
       timeout(timeoutMs),
       retry(retryCount),
       catchError(this.handleError)
     );
   }
+
 
   /**
    * Enhanced error handling with more detailed error information
@@ -292,14 +297,14 @@ export class HttpService {
    * @returns Observable with upload progress
    */
   uploadFile<T>(
-    endpoint: string, 
-    file: File, 
+    endpoint: string,
+    file: File,
     additionalData?: { [key: string]: any },
     options?: HttpOptions
   ): Observable<T> {
     const formData = new FormData();
     formData.append('file', file);
-    
+
     // Add additional data to form
     if (additionalData) {
       Object.keys(additionalData).forEach(key => {

@@ -2,13 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, OnInit, signal } from '@angular/core';
 import {
   TableColumn,
-  TableAction,
 } from 'src/app/shared/components/table/table.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Metrics, People } from 'src/app/core/constants';
 import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { DashboardService } from 'src/app/core/services/dashboard.service';
 import { ActivatedRoute } from '@angular/router';
 import { User } from 'src/app/core/models/users';
 import { forkJoin } from 'rxjs';

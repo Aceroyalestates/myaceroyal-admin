@@ -6,92 +6,101 @@
         { label: 'Add New Realtor' }
       ]"
     ></app-breadcrumb>
-    <p class="!text-medium font-medium !text-[#7A7A7A]">Fill  details below to create a new admin profile</p>
+    <p class="!text-medium font-medium !text-[#7A7A7A]">
+      Fill details below to create a new realtor profile
+    </p>
   </div>
   <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+    <div class="mb-4">
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="avatar">
+          <span>Avatar</span>
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <div
+            class="w-32 h-32 rounded-full border border-dashed border-gray-400 flex items-center justify-center cursor-pointer overflow-hidden"
+            (click)="avatarInput.click()"
+          >
+            <img
+              *ngIf="avatarUrl"
+              [src]="avatarUrl"
+              class="w-full h-full object-cover"
+              alt="Avatar"
+            />
+            <span *ngIf="!avatarUrl" class="text-gray-400"
+              >Click to upload</span
+            >
+            <input
+              #avatarInput
+              type="file"
+              accept="image/*"
+              style="display: none"
+              (change)="onAvatarChange($event)"
+            />
+          </div>
+        </nz-form-control>
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8">
       <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstName">
-          <span>First Name</span>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="full_name">
+          <span>Full Name</span>
         </nz-form-label>
         <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
-          nzErrorTip="Please input your first name!"
+          nzErrorTip="Please input full name!"
         >
           <input
             nz-input
-            id="firstName"
-            placeholder="Enter first name"
-            formControlName="firstName"
+            id="full_name"
+            placeholder="Enter full name"
+            formControlName="full_name"
           />
         </nz-form-control>
       </div>
       <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lastName">
-          <span>Last Name</span>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="email">
+          <span>Email Address</span>
         </nz-form-label>
-        <nz-form-control
-          [nzSm]="14"
-          [nzXs]="24"
-          nzErrorTip="Please input your last name!"
-        >
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Invalid email!">
           <input
             nz-input
-            id="lastName"
-            placeholder="Enter last name"
-            formControlName="lastName"
-          />
-        </nz-form-control>
-      </div>
-      <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="email"
-          >Email Address</nz-form-label
-        >
-        <nz-form-control
-          [nzSm]="14"
-          [nzXs]="24"
-          nzErrorTip="The input is not valid E-mail!"
-        >
-          <input
-            nz-input
-            formControlName="email"
-            placeholder="Enter email"
             id="email"
+            placeholder="Enter email"
+            formControlName="email"
           />
         </nz-form-control>
       </div>
       <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="realtorTag">
-          <span>Realtor Tag</span>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phone_number">
+          <span>Phone Number</span>
         </nz-form-label>
         <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
-          nzErrorTip="Please create a Realtor Tag"
+          nzErrorTip="Please input phone number!"
         >
           <input
             nz-input
-            id="realtorTag"
-            placeholder="Create Realtor Tag"
-            formControlName="realtorTag"
+            id="phone_number"
+            placeholder="Enter phone number"
+            formControlName="phone_number"
           />
         </nz-form-control>
       </div>
       <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password"
-          >Password</nz-form-label
-        >
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password">
+          <span>Password</span>
+        </nz-form-label>
         <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
-          nzErrorTip="Please input your password!"
+          nzErrorTip="Please input password!"
         >
           <input
             nz-input
             type="password"
             id="password"
-            placeholder="Create Admin Password"
+            placeholder="Enter password"
             formControlName="password"
           />
         </nz-form-control>
@@ -115,132 +124,140 @@
           </ng-template>
         </nz-form-control>
       </div>
-    </div>
-    <h2 class="!text-[20px] font-medium !mt-20 !mb-10">
-      Additional information
-    </h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8">
       <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="nationality">
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="gender">
+          <span>Gender</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please select gender!"
+        >
+          <nz-select
+            id="gender"
+            formControlName="gender"
+            nzPlaceHolder="Select gender"
+          >
+            <nz-option nzValue="male" nzLabel="Male"></nz-option>
+            <nz-option nzValue="female" nzLabel="Female"></nz-option>
+            <nz-option nzValue="other" nzLabel="Other"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="date_of_birth">
+          <span>Date of Birth</span>
+        </nz-form-label>
+        <nz-form-control
+          [nzSm]="14"
+          [nzXs]="24"
+          nzErrorTip="Please select date of birth!"
+        >
+          <input
+            nz-input
+            type="date"
+            id="date_of_birth"
+            formControlName="date_of_birth"
+          />
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="nationality_id">
           <span>Nationality</span>
         </nz-form-label>
         <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
-          nzErrorTip="Please select a nation!"
+          nzErrorTip="Please select nationality!"
         >
           <nz-select
-            id="nationality"
-            formControlName="nationality"
+            id="nationality_id"
+            formControlName="nationality_id"
             nzAllowClear
             nzPlaceHolder="Select Nationality"
           >
-            <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-            <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
-            <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
-            <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
-            <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
+            <nz-option
+              *ngFor="let nation of nationalities"
+              [nzValue]="nation.id"
+              [nzLabel]="nation.name"
+            ></nz-option>
           </nz-select>
         </nz-form-control>
       </div>
       <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="state">
-          <span>state</span>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="states_id">
+          <span>State</span>
         </nz-form-label>
         <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
-          nzErrorTip="Please select a state!"
+          nzErrorTip="Please select state!"
         >
           <nz-select
-            id="state"
-            formControlName="state"
+            id="states_id"
+            formControlName="states_id"
             nzAllowClear
-            nzPlaceHolder="Select state"
+            nzPlaceHolder="Select State"
           >
-            <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-            <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
-            <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
-            <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
-            <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
+            <nz-option
+              *ngFor="let state of states"
+              [nzValue]="state.id"
+              [nzLabel]="state.name"
+            ></nz-option>
           </nz-select>
         </nz-form-control>
       </div>
       <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="residentialAddress"
-          >Residential Address</nz-form-label
-        >
-        <nz-form-control
-          [nzSm]="14"
-          [nzXs]="24"
-          nzErrorTip="Residential address is required"
-        >
-          <input
-            nz-input
-            formControlName="residentialAddress"
-            placeholder="Enter residential Address"
-            id="residentialAddress"
-          />
-        </nz-form-control>
-      </div>
-      <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="identity">
-          <span>Valid Means of Identification</span>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="address">
+          <span>Residential Address</span>
         </nz-form-label>
         <nz-form-control
           [nzSm]="14"
           [nzXs]="24"
-          nzErrorTip="Please create a Realtor Tag"
+          nzErrorTip="Address is required!"
         >
           <input
             nz-input
-            id="identity"
-            placeholder="Upload a Valid Means of identification"
-            formControlName="identity"
+            id="address"
+            placeholder="Enter address"
+            formControlName="address"
           />
         </nz-form-control>
       </div>
       <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="bvn"
-          >Bank Verification Number (BVN)</nz-form-label
-        >
-        <nz-form-control
-          [nzSm]="14"
-          [nzXs]="24"
-          nzErrorTip="Please input your bvn"
-        >
-          <input
-            nz-input
-            type="bvn"
-            id="bvn"
-            placeholder="Enter Bank Verification Number"
-            formControlName="bvn"
-          />
-        </nz-form-control>
-      </div>
-      <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="nin"
-          >National Identity Number (NIN)
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="bank_verification_number">
+          <span>Bank Verification Number (BVN)</span>
         </nz-form-label>
-        <nz-form-control
-          [nzSm]="14"
-          [nzXs]="24"
-          nzErrorTip="Please input your nin"
-        >
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input BVN!">
           <input
             nz-input
-            type="password"
-            formControlName="nin"
-            placeholder="Enter your NIN"
-            id="nin"
+            id="bank_verification_number"
+            placeholder="Enter BVN"
+            minlength="11"
+            maxlength="11"
+            formControlName="bank_verification_number"
+          />
+        </nz-form-control>
+      </div>
+      <div>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="national_identity_number">
+          <span>National Identity Number (NIN)</span>
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Please input NIN!">
+          <input
+            nz-input
+            id="national_identity_number"
+            placeholder="Enter NIN"
+            minlength="11"
+            maxlength="11"
+            formControlName="national_identity_number"
           />
         </nz-form-control>
       </div>
     </div>
-
     <div class="flex items-center justify-end gap-6 my-12">
       <button
-      type="submit"
+        type="submit"
         class="place-self-end rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
       >
         Create Realtor
@@ -248,3 +265,8 @@
     </div>
   </form>
 </main>
+<!-- <app-alert-modal
+  [type]="'success'"
+  [title]="'Form Submitted'"
+  [message]="'The realtor user has been created successfully.'"
+></app-alert-modal> -->
