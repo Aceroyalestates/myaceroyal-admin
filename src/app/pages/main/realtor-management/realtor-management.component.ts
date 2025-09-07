@@ -6,10 +6,11 @@ import { Metrics, PAGE_SIZE } from 'src/app/core/constants';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RealtorService } from 'src/app/core/services/realtor.service';
 import { User } from 'src/app/core/models/users';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-realtor-management',
-  imports: [CommonModule, SharedModule, NzSelectModule],
+  imports: [CommonModule, SharedModule, NzSelectModule, RouterLink],
   templateUrl: './realtor-management.component.html',
   styleUrls: ['./realtor-management.component.css'],
 })
