@@ -23,7 +23,8 @@
     "netlify:preview": "npm run build:netlify && netlify deploy --dir=dist/myaceroyal-admin",
     "vercel:deploy": "npm run build:prod && vercel --prod",
     "surge:deploy": "npm run build:prod && surge dist/myaceroyal-admin/ myaceroyal-admin.surge.sh",
-    "serve": "serve dist/myaceroyal-admin -s -p 3000"
+    "serve": "serve dist/myaceroyal-admin -s -p 3000",
+    "deploy": "git pull origin development && vercel --prod"
   },
   "private": true,
   "dependencies": {
