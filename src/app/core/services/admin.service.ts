@@ -12,6 +12,11 @@ import { PropertyResponse } from '../models/properties';
 export class AdminService {
   constructor(private httpService: HttpService) { }
 
+  getACountry(
+    country_code: string,
+  ): Observable<{message: string; data: CountryInterface}> {
+    return this.httpService.get<{message: string; data: CountryInterface}>(`nationalities/${country_code}`);
+  }
   getCountries(
     page: number = 1,
     limit: number = PAGE_SIZE,
@@ -27,6 +32,12 @@ export class AdminService {
     return this.httpService.get<{
       message: string; data: CountryInterface[]
     }>('nationalities', params);
+  }
+
+  getAState(
+    state_code: string,
+  ): Observable<{message: string; data: StateInterface}> {
+    return this.httpService.get<{message: string; data: StateInterface}>(`states/${state_code}`);
   }
   getStates(
     country_code: string,
