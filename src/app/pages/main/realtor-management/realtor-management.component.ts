@@ -93,18 +93,15 @@ export class RealtorManagementComponent {
   loadUsers() {
     this.realtorService.getRealtorUsers(1, PAGE_SIZE, {}).subscribe({
       next: (response) => {
-        // Preprocess users to add unit_type_name
+        this.loading = true;
         this.users = response.data.map((user) => ({
           ...user,
           createdAt: new Date(user.createdAt).toLocaleDateString(),
           is_active: user.is_active === true ? 'Active' : 'Inactive',
         }));
         this.loading = false;
-        console.log(this.users); // Property array
-        console.log(response.pagination); // Pagination info
       },
       error: (error) => {
-        console.error('Error fetching users:', error);
         this.loading = false;
         this.error = 'Failed to load users';
       },

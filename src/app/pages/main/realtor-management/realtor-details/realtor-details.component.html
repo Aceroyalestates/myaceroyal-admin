@@ -53,13 +53,14 @@
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Total Property Managed</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            2
+           <!-- {{ user.total_property_managed }} -->
+             N/A
           </h2>
         </div>
         <div class="flex flex-col gap-4">
           <p class="!text-[#7A7A7A] !text-medium">Total Purchases</p>
           <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
-            &#8358; 300,000,000
+            &#8358; N/A
           </h2>
         </div>
         <div class="flex flex-col gap-4">
@@ -85,7 +86,7 @@
             <h2
               class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
-              Nigerian
+              {{ nationality.name || "N/A" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
@@ -93,7 +94,7 @@
             <h2
               class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
-              Enugu
+              {{ state.name || "N/A" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
@@ -148,6 +149,7 @@
       [data]="properties"
       [columns]="columns"
       [actions]="actions"
+      [loading]="loading"
       [showSelection]="true"
       [showPagination]="true"
       [showSearch]="true"

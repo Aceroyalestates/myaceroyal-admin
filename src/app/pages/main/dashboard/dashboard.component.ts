@@ -378,12 +378,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   loadUsers() {
+    this.loading = true;
     forkJoin([
       this.dashboardService.getAdminProperties(1, 3, {}),
       this.dashboardService.getActivityLogs(1, PAGE_SIZE, {}),
     ]).subscribe({
       next: ([response1, response2]) => {
-        console.log('This is the perperty response', response1.data);
         this.properties = response1.data.slice(0, 3); // Ensure only 3 properties
         this.activities = response2.data.map((activity) => ({
           ...activity,
@@ -394,7 +394,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error fetching users:', error);
         this.loading = false;
         this.error = 'Failed to load users';
       },

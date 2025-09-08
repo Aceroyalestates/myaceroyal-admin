@@ -11,6 +11,7 @@ import { RealtorService } from 'src/app/core/services/realtor.service';
 import { Property } from 'src/app/core/models/properties';
 import { AdminService } from 'src/app/core/services/admin.service';
 import { forkJoin } from 'rxjs';
+import { CountryInterface, StateInterface } from 'src/app/core/models/generic';
 
 @Component({
   selector: 'app-realtor-details',
@@ -28,6 +29,8 @@ export class RealtorDetailsComponent {
   id: string = '';
   user!: User;
   properties!: Property[];
+  nationality!: CountryInterface;
+  state!: StateInterface;
   columns: TableColumn[] = [
     {
       key: 'unit.property.name',
@@ -108,16 +111,50 @@ export class RealtorDetailsComponent {
       properties: this.adminService.getUserProperties(1, id, 10, {}, true),
     }).subscribe({
       next: ({ user, properties }) => {
-        this.loading = false;
         this.user = user;
         this.properties = properties.data;
+        this.fetchNationalityAndState();
       },
-      error: (error) => {
+      error: () => {
         this.loading = false;
-        console.error('An error occured: ', error.message);
       },
     });
+  }
 
+  fetchNationalityAndState() {
+    const requests: any[] = [];
+    let nationalityIndex = -1;
+    let stateIndex = -1;
+    
+    if (this.user.nationality_id) {
+      nationalityIndex = requests.length;
+      requests.push(this.adminService.getACountry(this.user.nationality_id));
+    }
+    
+    if (this.user.states_id) {
+      stateIndex = requests.length;
+      requests.push(this.adminService.getAState(this.user.states_id));
+    }
+
+    if (requests.length > 0) {
+      forkJoin(requests).subscribe({
+        next: (responses) => {
+          this.loading = false;
+          if (nationalityIndex >= 0 && responses[nationalityIndex]) {
+            this.nationality = responses[nationalityIndex].data;
+          }
+          if (stateIndex >= 0 && responses[stateIndex]) {
+            this.state = responses[stateIndex].data;
+          }
+        },
+        error: (error) => {
+          this.loading = false;
+          console.error('Error fetching nationality/state: ', error.message);
+        },
+      });
+    } else {
+      this.loading = false;
+    }
   }
 
   onSelectionChange(selected: Person[]) {
@@ -135,6 +172,7 @@ export class RealtorDetailsComponent {
         this.editUser(event.row);
         break;
     }
+
   }
 
   onRowClick(row: Person) {
@@ -171,3 +209,4 @@ export class RealtorDetailsComponent {
     console.log(this.selectedPeople);
   }
 }
+
