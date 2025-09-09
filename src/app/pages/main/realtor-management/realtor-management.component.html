@@ -5,6 +5,7 @@
     ></app-breadcrumb>
     <button
       class="place-self-end rounded-lg bg-primary py-4 px-10 text-[20px] !text-white font-medium cursor-pointer"
+      routerLink ="new"
     >
       + Add Realtor
     </button>
@@ -95,6 +96,7 @@
       [data]="users"
       [columns]="columns"
       [actions]="actions"
+      [loading]="loading"
       [showSelection]="true"
       [showPagination]="true"
       [showSearch]="true"

@@ -3,14 +3,47 @@ import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
 import { User, UsersResponse } from '../models/users';
 import { PAGE_SIZE } from '../constants';
-import { Role } from '../models/generic';
+import { CountryInterface, Role, StateInterface } from '../models/generic';
 import { PropertyResponse } from '../models/properties';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AdminService {
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) { }
+
+  getACountry(
+    country_code: string,
+  ): Observable<{message: string; data: CountryInterface}> {
+    return this.httpService.get<{message: string; data: CountryInterface}>(`nationalities/${country_code}`);
+  }
+  getCountries(
+    page: number = 1,
+    limit: number = PAGE_SIZE,
+    filters?: any
+  ): Observable<{
+    message: string; data: CountryInterface[]
+  }> {
+    const params = {
+      page: page.toString(),
+      limit: limit.toString(),
+      ...filters,
+    };
+    return this.httpService.get<{
+      message: string; data: CountryInterface[]
+    }>('nationalities', params);
+  }
+
+  getAState(
+    state_code: string,
+  ): Observable<{message: string; data: StateInterface}> {
+    return this.httpService.get<{message: string; data: StateInterface}>(`states/${state_code}`);
+  }
+  getStates(
+    country_code: string,
+  ): Observable<{message: string; data: {states:StateInterface[]}}> {
+    return this.httpService.get<{message: string; data: {states:StateInterface[]}}>(`states/nationality/${country_code}`);
+  }
 
   getAdminUsers(
     page: number = 1,
