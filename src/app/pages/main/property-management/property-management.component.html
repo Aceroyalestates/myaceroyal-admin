@@ -23,12 +23,8 @@
                     </button>
                 </div>
                 <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-10">
-                    <!-- <div class="flex items-center justify-between mb-7 px-7">
-                        <div class="flex flex-col gap-2">
-                            <app-search-bar placeholder="Search Property" />
-                        </div>
-                    </div> -->
-                    <app-table
+                    
+                    <!-- <app-table
                         [data]="properties"
                         [columns]="columns"
                         [showSelection]="true"
@@ -40,7 +36,24 @@
                         (selectionChange)="onSelectionChange($event)"
                         (rowClick)="onRowClick($event)"
                         class="w-full"
+                    /> -->
+
+                    <app-table
+                        [data]="properties"
+                        [columns]="columns"
+                        [showSelection]="true"
+                        [showPagination]="true"
+                        [showSearch]="true"
+                        [showFilters]="true"
+                        [loading]="loading"
+                        [enableRowClick]="true"
+                        [pageSize]="pageSize"
+                        (selectionChange)="onSelectionChange($event)"
+                        (rowClick)="onRowClick($event)"
+                        (pageChange)="onPageChange($event.page, $event.size)"
+                        class="w-full"
                     />
+
                 </div>
             </nz-tab>
             <nz-tab nzTitle="Sold Properties">

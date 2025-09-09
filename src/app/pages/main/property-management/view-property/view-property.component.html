@@ -81,8 +81,6 @@
         <div *ngIf="property.property_features && property.property_features.length > 0" class="flex flex-col gap-1">
           <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Amenities</p>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Amenities</p>
-
           <div class="flex gap-4 flex-wrap">
                 @for(am of property.property_features; track am) {
                   <div class="amenity-badge flex bg-tertiary items-center gap-2 bg-gray-100 dark:bg-gray-700 p-2 rounded">
@@ -95,7 +93,8 @@
               </div>
         </div>
 
-        <div class="flex">
+        <div *ngIf="property.property_units && property.property_units.length > 0" class="flex mt-6 flex-col gap-1">
+          <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Units</p>
           <nz-collapse class="w-full flex flex-col gap-4" [nzExpandIconPosition]="'end'">
             @for (unit of property.property_units; track unit.id; let i = $index) {
               <nz-collapse-panel [nzHeader]="unit.unit_type.name" [nzActive]="i === 0" [nzShowArrow]="true">

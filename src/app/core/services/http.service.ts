@@ -74,6 +74,18 @@ export class HttpService {
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
     const retryCount = options?.retryCount || this.defaultRetryCount;
 
+    console.log('GET Request:', {
+      url: `${this.apiUrl}/${endpoint}`,
+      params: httpParams.toString(),
+      headers: headers.keys().reduce((acc, key) => ({ ...acc, [key]: headers.getAll(key) }), {}),
+      context: {
+        skipLoading: context.get(SKIP_LOADING),
+        skipErrorHandling: context.get(SKIP_ERROR_HANDLING)
+      },
+      timeoutMs,
+      retryCount
+    });
+
     return this.http.get<T>(`${this.apiUrl}/${endpoint}`, { 
       params: httpParams, 
       headers,

@@ -80,8 +80,8 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       location: ['', [Validators.required]],
       address: ['', [Validators.required]],
       description: ['', [Validators.required]],
-      property_features: [[], [Validators.required]],
-      images: [[], [Validators.required]]
+      // property_features: [[], [Validators.required]],
+      // images: [[], [Validators.required]]
     });
 
     this.unitTypeForm = this.fb.group({
@@ -183,7 +183,7 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
         this.property = property;
         this.isLoading = false;
         this.editForm.patchValue({
-          property_type: property?.property_type.name || '',
+          property_type: property?.type_id || '',
           name: property?.name || '',
           location: property?.location || '',
           address: property?.address || '',
@@ -217,6 +217,7 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       next: (response) => {
         this.isLoading = false;
         this.propertyTypeOptions = response.data || [];
+        console.log('Property Type Options:', this.propertyTypeOptions);
       },
       error: (error) => {
         this.isLoading = false;
@@ -588,6 +589,11 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
         console.error('Error fetching installment plans:', error);
       }
     });
+  }
+
+  submitFormBasic(): void {
+    console.log('submitFormBasic', this.editForm.value);
+    this.updateField(this.editForm.value);
   }
 
   ngOnDestroy(): void {

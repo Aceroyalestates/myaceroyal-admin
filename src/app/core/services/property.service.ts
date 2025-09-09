@@ -11,17 +11,35 @@ export class PropertyService {
 
   constructor(private httpService: HttpService) {}
 
-  //  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjcwODlkMzA2LTc2ZWMtNGU1ZC1iMmI4LTE0NWQyYjlkOTJjZSIsInJvbGVfaWQiOjEsImlhdCI6MTc1NDUxMTUzMSwiZXhwIjoxNzU0NTk3OTMxfQ.jZ4ry1d6OCKYbFj7U04R2g9tfGTstadgqYuls2AUur4' \
-//set the headers in the HttpService
-  
+  // getProperties(page: number = 2, limit: number = 10, filters?: any): Observable<PropertyResponse> {
+  //   const params = {
+  //     page: page.toString(),
+  //     limit: limit.toString(),
+  //     ...filters
+  //   };
+  //   return this.httpService.get<PropertyResponse>('admin/properties', params);
+  // }
 
   getProperties(page: number = 1, limit: number = 10, filters?: any): Observable<PropertyResponse> {
-    const params = {
-      page: page.toString(),
-      limit: limit.toString(),
-      ...filters
-    };
-    return this.httpService.get<PropertyResponse>('admin/properties', params);
+    // Map filter keys to match backend expectations (if needed)
+    // const params = {
+    //   page: page,
+    //   limit: limit.toString(),
+    //   // Map 'search' to 'q' if backend expects 'q' for search
+    //   q: filters?.search || '',
+    //   status: filters?.status || '',
+    //   property_type: filters?.['property_type.name'] || '',
+    //   sort_by: filters?.sort_by || '',
+    //   sort_order: filters?.sort_order || '',
+    //   is_available: filters?.is_available !== undefined ? filters.is_available.toString() : ''
+    // };
+
+    // Remove empty params to avoid unnecessary query parameters
+    // const cleanedParams = Object.fromEntries(
+    //   Object.entries(params).filter(([_, value]) => value !== '' && value !== undefined)
+    // );
+
+    return this.httpService.get<PropertyResponse>(`admin/properties?page=${page}&limit=${limit}`, filters);
   }
 
   getPropertyById(id: string): Observable<Property> {
