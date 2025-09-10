@@ -326,6 +326,12 @@
   --secondary: oklch(0.97 0 0);
   --font-euclid-circular-a: 'Euclid Circular A', sans-serif;
   --font-poppins: "Poppins", "Bricolage Grotesque", serif;
+  /* Theme semantic colors */
+  --surface: #ffffff;
+  --surface-2: #f7f7f9;
+  --border: #e5e7eb;
+  --text: #111827;
+  --muted: #6b7280;
 }
 
 .dark {
@@ -333,6 +339,11 @@
   --foreground: oklch(0.985 0 0);
   --primary: #E41C24;
   --secondary: oklch(0.269 0 0);
+  --surface: #1f1f23;
+  --surface-2: #18181b;
+  --border: #3a3a3a;
+  --text: #e5e7eb;
+  --muted: #a3a3a3;
 }
 
 
@@ -452,6 +463,41 @@ a {
   * {
     @apply font-euclid-circular-a;
   }
+}
+
+/* Smooth theme transitions (respect reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  html, body {
+    transition: background-color .18s ease, color .18s ease;
+  }
+  * {
+    transition: background-color .18s ease, border-color .18s ease, color .18s ease;
+  }
+}
+
+/* Cards and common surfaces */
+.dark .ant-card,
+.dark .ant-card-bordered {
+  background: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+/* Overlays: dropdowns, popovers, tooltips, notifications */
+.dark .ant-dropdown-menu,
+.dark .ant-popover-inner,
+.dark .ant-tooltip-inner,
+.dark .ant-select-dropdown,
+.dark .ant-message-notice-content,
+.dark .ant-notification-notice {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.dark .ant-popover-title {
+  color: var(--text) !important;
+  border-bottom-color: var(--border) !important;
 }
 
 

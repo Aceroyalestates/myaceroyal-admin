@@ -15,6 +15,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 import Chart from 'chart.js/auto';
+import { ThemeService } from 'src/app/core/services/theme.service';
 import { FinanceService } from 'src/app/core/services/finance.service';
 import { FinanceTransaction, TransactionListParams, FinanceMetric, Transaction } from 'src/app/core/models/finance';
 
@@ -43,7 +44,7 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
   
   chart: Chart | null = null;
 
-  constructor(private router: Router, private financeService: FinanceService) {}
+  constructor(private router: Router, private financeService: FinanceService, private themeService: ThemeService) {}
   
   // Finance metrics data - can be replaced with API data
   financeMetrics: FinanceMetric[] = [
@@ -155,6 +156,14 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
     // Load initial data
     console.log('[FinanceManagementComponent] ngOnInit');
     this.fetchTransactions();
+    // Rebuild chart on theme changes for consistent colors
+    this.themeService.theme$.subscribe(() => {
+      if (this.chart) {
+        this.chart.destroy();
+        this.chart = null;
+      }
+      this.initChart();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -165,6 +174,10 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
     if (this.chartCanvas) {
       const ctx = this.chartCanvas.nativeElement.getContext('2d');
       if (ctx) {
+        const cs = getComputedStyle(document.documentElement);
+        const primary = cs.getPropertyValue('--primary').trim() || '#E41C24';
+        const text = cs.getPropertyValue('--text').trim() || '#6B7280';
+        const grid = cs.getPropertyValue('--border').trim() || '#F3F4F6';
         this.chart = new Chart(ctx, {
           type: 'line',
           data: {
@@ -172,12 +185,12 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
             datasets: [{
               label: 'Transaction Balance',
               data: this.chartData.data,
-              borderColor: '#E41C24',
+              borderColor: primary,
               backgroundColor: 'rgba(228, 28, 36, 0.1)',
               borderWidth: 3,
               fill: true,
               tension: 0.4,
-              pointBackgroundColor: '#E41C24',
+              pointBackgroundColor: primary,
               pointBorderColor: '#fff',
               pointBorderWidth: 2,
               pointRadius: 6,
@@ -196,18 +209,18 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
                   callback: function(value) {
                     return '₦' + (Number(value) / 1000000).toFixed(0) + 'M';
                   },
-                  color: '#6B7280',
+                  color: text,
                   font: {
                     size: 12
                   }
                 },
                 grid: {
-                  color: '#F3F4F6'
+                  color: grid
                 }
               },
               x: {
                 ticks: {
-                  color: '#6B7280',
+                  color: text,
                   font: {
                     size: 12
                   }
@@ -225,7 +238,7 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
                 backgroundColor: '#1F2937',
                 titleColor: '#fff',
                 bodyColor: '#fff',
-                borderColor: '#E41C24',
+                borderColor: primary,
                 borderWidth: 1,
                 callbacks: {
                   label: function(context) {
@@ -236,7 +249,7 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
             },
             elements: {
               point: {
-                hoverBackgroundColor: '#E41C24'
+                hoverBackgroundColor: primary
               }
             }
           }
