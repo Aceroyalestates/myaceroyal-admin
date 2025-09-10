@@ -46,6 +46,35 @@
 
     <!-- Analytics Charts -->
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <!-- KPI Band -->
+      <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 xl:col-span-2" [nzBodyStyle]="{ padding: '16px' }">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+          <div class="p-4 rounded-md border border-[#EEF2F6] dark:border-gray-700">
+            <p class="text-xs text-gray-500">Total Revenue (YTD)</p>
+            <p class="text-2xl font-semibold">₦{{ kpis?.totalRevenue | number }}</p>
+          </div>
+          <div class="p-4 rounded-md border border-[#EEF2F6] dark:border-gray-700">
+            <p class="text-xs text-gray-500">MTD Revenue</p>
+            <p class="text-2xl font-semibold">₦{{ kpis?.mtdRevenue | number }}</p>
+          </div>
+          <div class="p-4 rounded-md border border-[#EEF2F6] dark:border-gray-700">
+            <p class="text-xs text-gray-500">Active Realtors</p>
+            <p class="text-2xl font-semibold">{{ kpis?.activeRealtors | number }}</p>
+          </div>
+          <div class="p-4 rounded-md border border-[#EEF2F6] dark:border-gray-700">
+            <p class="text-xs text-gray-500">Total Customers</p>
+            <p class="text-2xl font-semibold">{{ kpis?.totalCustomers | number }}</p>
+          </div>
+          <div class="p-4 rounded-md border border-[#EEF2F6] dark:border-gray-700">
+            <p class="text-xs text-gray-500">Conversion Rate</p>
+            <p class="text-2xl font-semibold">{{ (kpis?.conversionRate || 0) * 100 | number : '1.0-2' }}%</p>
+          </div>
+          <div class="p-4 rounded-md border border-[#EEF2F6] dark:border-gray-700">
+            <p class="text-xs text-gray-500">ARPU</p>
+            <p class="text-2xl font-semibold">₦{{ kpis?.arpu | number }}</p>
+          </div>
+        </div>
+      </nz-card>
       <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '16px' }">
         <div class="flex items-center justify-between mb-3">
           <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Revenue Trend (Last 12 Months)</h3>
@@ -79,6 +108,15 @@
         </div>
         <div class="h-72">
           <canvas #realtorsChart></canvas>
+        </div>
+      </nz-card>
+
+      <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 xl:col-span-2" [nzBodyStyle]="{ padding: '16px' }">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Sales Funnel</h3>
+        </div>
+        <div class="h-80">
+          <canvas #funnelChart></canvas>
         </div>
       </nz-card>
     </div>

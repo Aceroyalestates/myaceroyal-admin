@@ -14,6 +14,8 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { DashboardService } from '../../../core/services/dashboard.service';
+import { DashboardAnalyticsService, DashboardKpis, TimeRangeFilters } from 'src/app/core/services/dashboard-analytics.service';
+import { DashboardFiltersService } from 'src/app/core/services/dashboard-filters.service';
 import { MockDataService } from 'src/app/core/services/mock-data.service';
 import { environment } from 'src/environments/environment';
 import { forkJoin, Subscription } from 'rxjs';
@@ -97,6 +99,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private paymentsChart?: Chart;
   private propertiesChart?: Chart;
   private realtorsChart?: Chart;
+  // Analytics state
+  kpis: DashboardKpis | null = null;
+  funnelLabels: string[] = [];
+  funnelData: number[] = [];
+  @ViewChild('funnelChart', { static: false }) funnelChartRef!: ElementRef<HTMLCanvasElement>;
+  private funnelChart?: Chart;
 
   // Report Filters
   systemReportFilters = {
@@ -223,7 +231,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private dashboardService: DashboardService,
     private themeService: ThemeService,
-    private mockData: MockDataService
+    private mockData: MockDataService,
+    private analytics: DashboardAnalyticsService,
+    private dashFilters: DashboardFiltersService
   ) {}
 
   ngOnInit(): void {
@@ -231,6 +241,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initializeReportDates();
     this.loadSystemReport();
     this.loadCustomerReport();
+    this.loadAnalytics(this.dashFilters.getSnapshot());
     this.themeService.theme$.subscribe(() => {
       this.rebuildCharts();
     });
@@ -445,6 +456,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initPaymentsChart();
     this.initPropertiesChart();
     this.initRealtorsChart();
+    this.initFunnelChart();
   }
 
   private rebuildCharts(): void {
@@ -456,6 +468,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paymentsChart?.destroy();
     this.propertiesChart?.destroy();
     this.realtorsChart?.destroy();
+    this.funnelChart?.destroy();
   }
 
   private initRevenueChart(): void {
@@ -465,10 +478,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.revenueChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        labels: [],
         datasets: [{
           label: 'Revenue (₦)',
-          data: [12, 18, 14, 22, 30, 28, 35, 40, 38, 45, 48, 52].map(n => n * 1_000_000),
+          data: [],
           borderColor: v.primary,
           backgroundColor: 'rgba(228, 28, 36, 0.12)',
           pointBackgroundColor: v.primary,
@@ -493,6 +506,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         plugins: { legend: { labels: { color: v.text } } }
       }
     });
+    this.analytics.getRevenueSeries(this.dashFilters.getSnapshot()).subscribe(s => {
+      if (!this.revenueChart) return;
+      this.revenueChart.data.labels = s.labels;
+      (this.revenueChart.data.datasets[0].data as number[]) = s.data;
+      this.revenueChart.update();
+    });
   }
 
   private initPaymentsChart(): void {
@@ -502,9 +521,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.paymentsChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: ['Paystack', 'Bank Transfer', 'Cheque', 'Cash'],
+        labels: [],
         datasets: [{
-          data: [54, 32, 8, 6],
+          data: [],
           backgroundColor: [v.primary, '#10B981', '#3B82F6', '#F59E0B'],
           borderColor: v.surface,
           borderWidth: 2
@@ -518,20 +537,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     });
+    this.analytics.getPaymentsByMethod(this.dashFilters.getSnapshot()).subscribe(s => {
+      if (!this.paymentsChart) return;
+      this.paymentsChart.data.labels = s.labels;
+      (this.paymentsChart.data.datasets[0].data as number[]) = s.data;
+      this.paymentsChart.update();
+    });
   }
 
   private initPropertiesChart(): void {
     const ctx = this.propertiesChartRef?.nativeElement.getContext('2d');
     if (!ctx) return;
     const v = this.cssVars();
-    const d = this.propertyAnalytics;
     this.propertiesChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Available', 'Pending', 'Sold'],
+        labels: [],
         datasets: [{
           label: 'Units',
-          data: [d.available, d.pending, d.sold],
+          data: [],
           backgroundColor: [ '#10B981', '#F59E0B', v.primary ],
           borderRadius: 6,
         }]
@@ -546,6 +570,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         plugins: { legend: { display: false } }
       }
     });
+    this.analytics.getPropertyStatus(this.dashFilters.getSnapshot()).subscribe(s => {
+      if (!this.propertiesChart) return;
+      this.propertiesChart.data.labels = s.labels;
+      (this.propertiesChart.data.datasets[0].data as number[]) = s.data;
+      this.propertiesChart.update();
+    });
   }
 
   private initRealtorsChart(): void {
@@ -555,10 +585,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.realtorsChart = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Realtor A', 'Realtor B', 'Realtor C', 'Realtor D', 'Realtor E'],
+        labels: [],
         datasets: [{
           label: 'Closed Deals',
-          data: [24, 19, 15, 12, 9],
+          data: [],
           backgroundColor: v.primary,
           borderRadius: 6,
         }]
@@ -574,6 +604,41 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         plugins: { legend: { display: false } }
       }
     });
+    this.analytics.getTopRealtors(this.dashFilters.getSnapshot()).subscribe(s => {
+      if (!this.realtorsChart) return;
+      this.realtorsChart.data.labels = s.labels;
+      (this.realtorsChart.data.datasets[0].data as number[]) = s.data;
+      this.realtorsChart.update();
+    });
+  }
+
+  private initFunnelChart(): void {
+    const ctx = this.funnelChartRef?.nativeElement.getContext('2d');
+    if (!ctx) return;
+    const v = this.cssVars();
+    this.funnelChart = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: [], datasets: [{ label: 'Count', data: [], backgroundColor: v.primary, borderRadius: 6 }] },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { ticks: { color: v.muted } }, x: { ticks: { color: v.muted }, grid: { color: v.border } } },
+        plugins: { legend: { display: false } }
+      }
+    });
+    this.analytics.getFunnel(this.dashFilters.getSnapshot()).subscribe(s => {
+      if (!this.funnelChart) return;
+      this.funnelLabels = s.labels;
+      this.funnelData = s.data;
+      this.funnelChart.data.labels = s.labels;
+      (this.funnelChart.data.datasets[0].data as number[]) = s.data;
+      this.funnelChart.update();
+    });
+  }
+
+  private loadAnalytics(filters: TimeRangeFilters): void {
+    this.analytics.getOverviewKpis(filters).subscribe(k => this.kpis = k);
   }
   onTableAction(event: { action: string; row: Activity }) {
     console.log('Table action:', event.action, 'Row:', event.row);
