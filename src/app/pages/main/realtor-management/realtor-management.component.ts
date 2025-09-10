@@ -6,7 +6,7 @@ import { Metrics, PAGE_SIZE } from 'src/app/core/constants';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RealtorService } from 'src/app/core/services/realtor.service';
 import { User } from 'src/app/core/models/users';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-realtor-management',
@@ -85,7 +85,7 @@ export class RealtorManagementComponent {
 
   selectedPeople = signal<User[]>([]);
 
-  constructor(private realtorService: RealtorService) {}
+  constructor(private realtorService: RealtorService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -128,15 +128,9 @@ export class RealtorManagementComponent {
     }
   }
 
-  onRowClick(row: User) {
-    // Navigate to realtor details
-    window.location.href = `/main/realtor-management/details/${row.id}`;
-  }
+  onRowClick(row: User) { this.router.navigate(['/main/realtor-management/details', row.id]); }
 
-  viewRealtor(realtor: User) {
-    console.log('Viewing realtor:', realtor);
-    window.location.href = `/main/realtor-management/details/${realtor.id}`;
-  }
+  viewRealtor(realtor: User) { this.router.navigate(['/main/realtor-management/details', realtor.id]); }
 
   editRealtor(realtor: User) {
     console.log('Editing realtor:', realtor);

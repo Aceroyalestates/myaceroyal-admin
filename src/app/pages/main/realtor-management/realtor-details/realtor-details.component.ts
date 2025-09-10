@@ -176,14 +176,10 @@ export class RealtorDetailsComponent {
   }
 
   onRowClick(row: Person) {
-    // Navigate to user details
-    window.location.href = `/main/user-management/view/${row.id}/${row.name}`;
+    this.router.navigate(['/main/user-management/view', row.id, row.name]);
   }
 
-  viewUser(user: Person) {
-    console.log('Viewing user:', user);
-    window.location.href = `/main/user-management/view/${user.id}/${user.name}`;
-  }
+  viewUser(user: Person) { this.router.navigate(['/main/user-management/view', user.id, user.name]); }
 
   editUser(user: Person) {
     console.log('Editing user:', user);
@@ -209,4 +205,3 @@ export class RealtorDetailsComponent {
     console.log(this.selectedPeople);
   }
 }
-

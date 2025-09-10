@@ -10,6 +10,9 @@
       Fill details below to create a new admin profile
     </p>
   </div>
+  @if (error) {
+    <nz-alert nzType="error" [nzMessage]="error" nzShowIcon class="mb-4"></nz-alert>
+  }
   <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div>
@@ -27,6 +30,7 @@
             id="firstName"
             placeholder="Enter first name"
             formControlName="firstName"
+            autocomplete="given-name"
           />
         </nz-form-control>
       </div>
@@ -45,6 +49,7 @@
             id="lastName"
             placeholder="Enter last name"
             formControlName="lastName"
+            autocomplete="family-name"
           />
         </nz-form-control>
       </div>
@@ -63,6 +68,7 @@
             formControlName="email"
             placeholder="Enter email"
             id="email"
+            autocomplete="email"
           />
         </nz-form-control>
       </div>
@@ -87,6 +93,7 @@
             inputmode="numeric"
             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
             minlength="11"
+            autocomplete="tel"
           />
         </nz-form-control>
       </div>
@@ -100,13 +107,30 @@
           class="!min-w-full"
           nzErrorTip="Please input your password!"
         >
-          <input
-            nz-input
-            type="password"
-            id="password"
-            placeholder="Create Admin Password"
-            formControlName="password"
-          />
+          <nz-input-group [nzSuffix]="passwordToggleTpl">
+            <input
+              nz-input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              placeholder="Create Admin Password"
+              formControlName="password"
+              autocomplete="new-password"
+            />
+          </nz-input-group>
+          <ng-template #passwordToggleTpl>
+            <button type="button" nz-button nzSize="small" nzType="link" (click)="showPassword = !showPassword">
+              <span nz-icon [nzType]="showPassword ? 'eye-invisible' : 'eye'"></span>
+            </button>
+          </ng-template>
+          <div class="mt-2 flex items-center gap-2 text-xs">
+            <div class="h-1 w-16 rounded-full" [ngClass]="{
+              'bg-red-500': passwordStrength==='weak',
+              'bg-yellow-500': passwordStrength==='medium',
+              'bg-green-600': passwordStrength==='strong',
+              'bg-gray-300': passwordStrength==='empty'
+            }"></div>
+            <span class="text-gray-500">Password strength: {{ passwordStrength }}</span>
+          </div>
         </nz-form-control>
       </div>
       <div>
@@ -116,13 +140,21 @@
         <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl"
             class="!min-w-full"
         >
-          <input
-            nz-input
-            type="password"
-            formControlName="checkPassword"
-            placeholder="Confirm Admin Password"
-            id="checkPassword"
-          />
+          <nz-input-group [nzSuffix]="confirmToggleTpl">
+            <input
+              nz-input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="checkPassword"
+              placeholder="Confirm Admin Password"
+              id="checkPassword"
+              autocomplete="new-password"
+            />
+          </nz-input-group>
+          <ng-template #confirmToggleTpl>
+            <button type="button" nz-button nzSize="small" nzType="link" (click)="showConfirmPassword = !showConfirmPassword">
+              <span nz-icon [nzType]="showConfirmPassword ? 'eye-invisible' : 'eye'"></span>
+            </button>
+          </ng-template>
           <ng-template #errorTpl let-control>
             @if (control.errors?.['required']) { Please confirm your password! }
             @if (control.errors?.['confirm']) { Two passwords that you enter is
@@ -155,11 +187,11 @@
     </div>
 
     <div class="flex items-center justify-end gap-6 my-12">
-      <button
+      <button nz-button nzType="primary" nzSize="large"
         type="submit"
-        class="place-self-end rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-        [disabled]="form.invalid"
-      >
+        class="place-self-end !text-white font-medium"
+        [nzLoading]="isLoading"
+        [disabled]="form.invalid || isLoading">
         Save & Create Admin
       </button>
     </div>

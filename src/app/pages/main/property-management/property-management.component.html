@@ -10,24 +10,17 @@
         </button>
     </div>
     <div class="flex flex-col gap-12">
-        <nz-tabset class="w-full" nzType="card">
+        <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 w-full" [nzBodyStyle]="{ padding: '0' }">
+        <nz-tabset class="w-full">
             <nz-tab nzTitle="All Properties">
-                <div class="flex items-center justify-between mb-10">
+                <div class="flex items-center justify-between mb-10 px-4 pt-4">
                     <p class="text-[#4F4F4F] dark:text-gray-400 text-normal text-2xl">All Properties</p>
-                    <button
-                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
-                        [ngStyle]="{ color: '#FFF' }"
-                        >
-                        <app-icon name="arrow-up"></app-icon>
-                        Export
+                    <button class="flex items-center gap-3 rounded-lg bg-primary py-2 px-4 text-[16px] font-medium cursor-pointer" [ngStyle]="{ color: '#FFF' }">
+                      <app-icon name="arrow-up"></app-icon>
+                      Export
                     </button>
                 </div>
-                <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-10">
-                    <!-- <div class="flex items-center justify-between mb-7 px-7">
-                        <div class="flex flex-col gap-2">
-                            <app-search-bar placeholder="Search Property" />
-                        </div>
-                    </div> -->
+                <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-6">
                     <app-table
                         [data]="properties"
                         [columns]="columns"
@@ -44,22 +37,14 @@
                 </div>
             </nz-tab>
             <nz-tab nzTitle="Sold Properties">
-                <div class="flex items-center justify-between mb-10">
+                <div class="flex items-center justify-between mb-10 px-4 pt-4">
                     <p class="text-[#4F4F4F] dark:text-gray-400 text-normal text-2xl">Sold Properties</p>
-                    <button
-                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
-                        [ngStyle]="{ color: '#FFF' }"
-                        >
-                        <app-icon name="arrow-up"></app-icon>
-                        Export
+                    <button class="flex items-center gap-3 rounded-lg bg-primary py-2 px-4 text-[16px] font-medium cursor-pointer" [ngStyle]="{ color: '#FFF' }">
+                      <app-icon name="arrow-up"></app-icon>
+                      Export
                     </button>
                 </div>
-                <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-10">
-                    <!-- <div class="flex items-center justify-between mb-7 px-7">
-                        <div class="flex flex-col gap-2">
-                            <app-search-bar placeholder="Search Property" />
-                        </div>
-                    </div> -->
+                <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-6">
                     <app-table
                         [data]="properties"
                         [columns]="columns"
@@ -76,22 +61,14 @@
                 </div>
             </nz-tab>
             <nz-tab nzTitle="Available Properties">
-                <div class="flex items-center justify-between mb-10">
+                <div class="flex items-center justify-between mb-10 px-4 pt-4">
                     <p class="text-[#4F4F4F] dark:text-gray-400 text-normal text-2xl">Available Properties</p>
-                    <button
-                        class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
-                        [ngStyle]="{ color: '#FFF' }"
-                        >
-                        <app-icon name="arrow-up"></app-icon>
-                        Export
+                    <button class="flex items-center gap-3 rounded-lg bg-primary py-2 px-4 text-[16px] font-medium cursor-pointer" [ngStyle]="{ color: '#FFF' }">
+                      <app-icon name="arrow-up"></app-icon>
+                      Export
                     </button>
                 </div>
-                <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-10">
-                    <!-- <div class="flex items-center justify-between mb-7 px-7">
-                        <div class="flex flex-col gap-2">
-                            <app-search-bar placeholder="Search Property" />
-                        </div>
-                    </div> -->
+                <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-6">
                     <app-table
                         [data]="properties"
                         [columns]="columns"
@@ -108,5 +85,6 @@
                 </div>
             </nz-tab>
         </nz-tabset>
+        </nz-card>
     </div>
 </main>

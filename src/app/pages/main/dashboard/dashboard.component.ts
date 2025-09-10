@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
 import {
   TableAction,
@@ -6,8 +7,8 @@ import {
 } from 'src/app/shared/components/table/table.component';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from 'src/app/shared/components/icon/icon.component';
-import { Metric } from 'src/app/core/types/general';
 import { Metrics, PAGE_SIZE } from 'src/app/core/constants';
+import { Metric } from 'src/app/core/types/general';
 import { FormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -229,6 +230,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
   constructor(
+    private router: Router,
     private dashboardService: DashboardService,
     private themeService: ThemeService,
     private mockData: MockDataService,
@@ -638,7 +640,35 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadAnalytics(filters: TimeRangeFilters): void {
-    this.analytics.getOverviewKpis(filters).subscribe(k => this.kpis = k);
+    this.analytics.getOverviewKpis(filters).subscribe(k => {
+      this.kpis = k;
+      this.updateMetricCardsFromKpis();
+    });
+  }
+
+  private updateMetricCardsFromKpis(): void {
+    if (!this.kpis) return;
+    const formatNairaCompact = (val: number) => {
+      const n = val || 0;
+      if (n >= 1_000_000_000) return `₦${(n / 1_000_000_000).toFixed(1)}B`;
+      if (n >= 1_000_000) return `₦${(n / 1_000_000).toFixed(1)}M`;
+      if (n >= 1_000) return `₦${(n / 1_000).toFixed(1)}K`;
+      return `₦${n.toLocaleString()}`;
+    };
+    this.metrics = this.metrics.map(m => {
+      switch (m.title) {
+        case 'Total Revenue':
+          return { ...m, amount: formatNairaCompact(this.kpis!.totalRevenue) };
+        case 'Monthly Revenue':
+          return { ...m, amount: formatNairaCompact(this.kpis!.mtdRevenue) };
+        case 'Active Realtors':
+          return { ...m, amount: this.kpis!.activeRealtors };
+        case 'Total Clients':
+          return { ...m, amount: this.kpis!.totalCustomers };
+        default:
+          return m;
+      }
+    });
   }
   onTableAction(event: { action: string; row: Activity }) {
     console.log('Table action:', event.action, 'Row:', event.row);
@@ -649,8 +679,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
     onRowClick(row: Activity) {
-      // Navigate to user details
-      window.location.href = `/main/user-management/view/${row.id}/${row.user.full_name}`;
+      this.router.navigate(['/main/user-management/view', row.id, row.user.full_name]);
     }
 
     viewUser(activity: Activity) {

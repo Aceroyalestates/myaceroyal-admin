@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, signal } from '@angular/core';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzCardModule } from 'ng-zorro-antd/card';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { Properties } from 'src/app/core/constants';
 import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
@@ -11,7 +12,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-property-management',
-  imports: [CommonModule, SharedModule, NzTabsModule],
+  imports: [CommonModule, SharedModule, NzTabsModule, NzCardModule],
   templateUrl: './property-management.component.html',
   styleUrl: './property-management.component.css',
 })
@@ -131,12 +132,12 @@ export class PropertyManagementComponent {
       }
     }
 
-    onRowClick(row: Property) {
+  onRowClick(row: Property) {
       console.log('Row clicked:', row);
       // Navigate to property details
       this.router.navigate([`/main/property-management/view/${row.id}`]);
       // window.location.href = `/property-management/view/${row.id}`;
-    }
+  }
 
     addNewProperty() {
       console.log('Adding new property');
@@ -190,9 +191,12 @@ export class PropertyManagementComponent {
           }
         });
     }
+
 }
 
 
 const formatNaira = (value: number): string => {
   return '₦' + value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
+
+export interface WithDates { createdAt?: string }

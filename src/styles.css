@@ -226,6 +226,38 @@
 .dark .ant-form-item-label > label {
   color: #f5f5f5 !important;
 }
+
+/* DARK MODE INPUT + SUFFIX/ADDON (password eye toggle) */
+.dark .ant-input,
+.dark .ant-input-affix-wrapper,
+.dark .ant-input-group .ant-input {
+  background: var(--surface-2) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.dark .ant-input-affix-wrapper:hover,
+.dark .ant-input:hover {
+  border-color: color-mix(in hsl, var(--primary), white 25%) !important;
+}
+
+.dark .ant-input-group-addon {
+  background: var(--surface-2) !important;
+  border-color: var(--border) !important;
+}
+
+.dark .ant-input-group-addon .ant-btn,
+.dark .ant-input-group-addon .ant-btn-link,
+.dark .ant-input-group-addon .anticon,
+.dark .ant-input-suffix .ant-btn,
+.dark .ant-input-suffix .anticon {
+  color: var(--text) !important;
+}
+
+.dark .ant-input-group-addon .ant-btn:hover,
+.dark .ant-input-suffix .ant-btn:hover {
+  color: #ffffff !important;
+}
 /* You can add global styles to this file, and also import other style files */
 /* @import "~ng-zorro-antd/ng-zorro-antd.min.css"; */
 @import "tailwindcss";
@@ -498,6 +530,54 @@ a {
 .dark .ant-popover-title {
   color: var(--text) !important;
   border-bottom-color: var(--border) !important;
+}
+
+/* DARK MODE: Select text + dropdown options */
+.dark .ant-select-selector,
+.dark .ant-select-selection-item,
+.dark .ant-select-selection-placeholder {
+  color: var(--text) !important;
+}
+
+.dark .ant-select-dropdown .ant-select-item,
+.dark .ant-select-dropdown .ant-select-item-option,
+.dark .ant-select-dropdown .ant-select-item-option-content {
+  color: var(--text) !important;
+}
+
+.dark .ant-select-dropdown .ant-select-item-option-active {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark .ant-select-dropdown .ant-select-item-option-selected {
+  background: color-mix(in hsl, var(--primary), black 80%) !important;
+  color: #fff !important;
+}
+
+.dark .ant-select-dropdown .ant-select-item-option-disabled {
+  color: var(--muted) !important;
+  opacity: 0.7;
+}
+
+/* DARK MODE: Selected tags in multiple select (visibility + contrast) */
+.dark .ant-select-multiple .ant-select-selector {
+  background: var(--surface-2) !important;
+  border-color: var(--border) !important;
+}
+
+.dark .ant-select-multiple .ant-select-selection-item {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+.dark .ant-select-multiple .ant-select-selection-item-remove .anticon,
+.dark .ant-select-multiple .ant-select-selection-item-content {
+  color: var(--text) !important;
+}
+
+.dark .ant-select .ant-select-selection-placeholder {
+  color: var(--muted) !important;
 }
 
 
