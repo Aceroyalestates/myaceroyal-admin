@@ -24,6 +24,7 @@ interface SubscriptionDetails {
     firstName: string;
     middleName: string;
     lastName: string;
+    maidenName: string;
     email: string;
     phone: string;
     dateOfBirth: string;
@@ -31,6 +32,8 @@ interface SubscriptionDetails {
     idNumber: string;
     maritalStatus: string;
     address: string;
+    passportPhotoUrl?: string;
+    identityUploadUrl?: string;
   };
   
   // Next of Kin Details
@@ -40,6 +43,7 @@ interface SubscriptionDetails {
     phone: string;
     email: string;
     address: string;
+    occupation: string;
   };
   
   // Employment Details
@@ -50,6 +54,7 @@ interface SubscriptionDetails {
     workAddress: string;
     monthlyIncome: string;
     yearsOfEmployment: string;
+    employerPhone: string;
   };
   
   // Payment Details
@@ -65,6 +70,8 @@ interface SubscriptionDetails {
     paymentMethod: string;
     balanceDue: string;
     receiptUrl?: string;
+    paymentDate?: string;
+    purchaseStatus?: string;
   };
   
   // Realtor Details
@@ -82,6 +89,49 @@ interface SubscriptionDetails {
     hearAboutUs: string;
     additionalRequests: string;
     investmentGoals: string;
+  };
+
+  // Purchase Details (expanded)
+  purchaseDetails: {
+    id: string;
+    userId: string;
+    unitId: number | null;
+    planId: number | null;
+    quantity: number | null;
+    totalPrice: string;
+    status: string;
+    startDate: string;
+    paidAt: string;
+    referralCode: string;
+  };
+
+  // Form Metadata & Ownership
+  metadata: {
+    formStatus: string;
+    acceptedTerms: boolean;
+    documentationStatus: string;
+    documentationSentAt: string;
+    documentationNotes: string;
+    submittedAt: string;
+    verifiedAt: string;
+    verifiedBy: string;
+    rejectionReason: string;
+    adminNotes: string;
+    referralCode: string;
+    userId: string;
+    purchaseId: string;
+    realtorId: string;
+    realtorConsent: boolean;
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  owner: {
+    fullName: string;
+    email: string;
+    phone: string;
+    isVerified: boolean;
+    avatar?: string;
   };
 }
 
@@ -208,6 +258,18 @@ export class SubscriptionDetailsComponent implements OnInit {
     }
   }
 
+  viewPassport(): void {
+    const url = this.subscription?.personalDetails.passportPhotoUrl;
+    if (!url) { this.message.info('No passport photo available'); return; }
+    window.open(url, '_blank');
+  }
+
+  viewIdentity(): void {
+    const url = this.subscription?.personalDetails.identityUploadUrl;
+    if (!url) { this.message.info('No identity document available'); return; }
+    window.open(url, '_blank');
+  }
+
   private mapToDetails(it: any): SubscriptionDetails {
     const fullName = it['owner']?.['full_name']
       || [it['first_name'], it['last_name']].filter(Boolean).join(' ').trim()
@@ -226,13 +288,16 @@ export class SubscriptionDetailsComponent implements OnInit {
         firstName: it['first_name'] || '',
         middleName: it['middle_name'] || '',
         lastName: it['last_name'] || '',
+        maidenName: it['maiden_name'] || '',
         email: it['email'] || '',
         phone: it['phone'] || '',
         dateOfBirth: it['date_of_birth'] || '',
         nationality: it['nationality'] || '',
         idNumber: it['means_of_identity'] || '',
         maritalStatus: it['marital_status'] || '',
-        address: it['residential_address'] || ''
+        address: it['residential_address'] || '',
+        passportPhotoUrl: it['passport_photo_url'] || '',
+        identityUploadUrl: it['identity_upload_url'] || ''
       },
 
       nextOfKinDetails: {
@@ -240,7 +305,8 @@ export class SubscriptionDetailsComponent implements OnInit {
         relationship: it['nok_relationship'] || '',
         phone: it['nok_phone'] || '',
         email: it['nok_email'] || '',
-        address: it['nok_address'] || ''
+        address: it['nok_address'] || '',
+        occupation: it['nok_occupation'] || ''
       },
 
       employmentDetails: {
@@ -249,7 +315,8 @@ export class SubscriptionDetailsComponent implements OnInit {
         jobTitle: it['employer_designation'] || '',
         workAddress: it['employer_address'] || '',
         monthlyIncome: '',
-        yearsOfEmployment: ''
+        yearsOfEmployment: '',
+        employerPhone: it['employer_phone'] || ''
       },
 
       paymentDetails: {
@@ -263,7 +330,9 @@ export class SubscriptionDetailsComponent implements OnInit {
         initialDeposit: purchase['initial_payment_due'] ? `₦${Number(purchase['initial_payment_due']).toLocaleString()}` : '',
         paymentMethod: this.toTitleCase(String(purchase['payment_method'] || '')),
         balanceDue: purchase['balance_due'] ? `₦${Number(purchase['balance_due']).toLocaleString()}` : '',
-        receiptUrl: it['payment_receipt_url'] || ''
+        receiptUrl: it['payment_receipt_url'] || '',
+        paymentDate: it['payment_date'] || '',
+        purchaseStatus: this.toTitleCase(String(purchase['status'] || '')),
       },
 
       realtorDetails: {
@@ -279,6 +348,47 @@ export class SubscriptionDetailsComponent implements OnInit {
         hearAboutUs: '',
         additionalRequests: it['admin_notes'] || '',
         investmentGoals: ''
+      },
+
+      purchaseDetails: {
+        id: String(purchase['id'] || ''),
+        userId: String(purchase['user_id'] || ''),
+        unitId: purchase['unit_id'] ?? null,
+        planId: purchase['plan_id'] ?? null,
+        quantity: purchase['quantity'] ?? null,
+        totalPrice: purchase['total_price'] ? `₦${Number(purchase['total_price']).toLocaleString()}` : '',
+        status: this.toTitleCase(String(purchase['status'] || '')),
+        startDate: purchase['start_date'] || '',
+        paidAt: purchase['paid_at'] || '',
+        referralCode: purchase['referral_code'] || ''
+      },
+
+      metadata: {
+        formStatus: this.toTitleCase(String(it['form_status'] || '')),
+        acceptedTerms: Boolean(it['accepted_terms']),
+        documentationStatus: this.toTitleCase(String(it['documentation_status'] || '')),
+        documentationSentAt: it['documentation_sent_at'] || '',
+        documentationNotes: it['documentation_notes'] || '',
+        submittedAt: it['submitted_at'] || '',
+        verifiedAt: it['verified_at'] || '',
+        verifiedBy: it['verified_by'] || '',
+        rejectionReason: it['rejection_reason'] || '',
+        adminNotes: it['admin_notes'] || '',
+        referralCode: it['referral_code'] || '',
+        userId: it['user_id'] || '',
+        purchaseId: it['purchase_id'] || '',
+        realtorId: it['realtor_id'] || '',
+        realtorConsent: Boolean(it['realtor_consent']),
+        createdAt: it['createdAt'] || '',
+        updatedAt: it['updatedAt'] || ''
+      },
+
+      owner: {
+        fullName: it['owner']?.['full_name'] || '',
+        email: it['owner']?.['email'] || '',
+        phone: it['owner']?.['phone_number'] || '',
+        isVerified: Boolean(it['owner']?.['is_verified']),
+        avatar: it['owner']?.['avatar'] || ''
       }
     };
   }

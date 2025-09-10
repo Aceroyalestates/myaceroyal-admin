@@ -16,59 +16,67 @@ const routes: Routes = [
 				pathMatch: 'full',
 				redirectTo: 'dashboard',
 			},
-			{
-				path: 'dashboard',
-				component: DashboardComponent,
-			},
-			{
-				path: 'user-management',
-				loadChildren: () =>
-					import('./user-management/user-management.module').then(
-						(m) => m.UserManagementModule,
-					),
-			},
-			{
-				path: 'realtor-management',
-				loadChildren: () =>
-					import('./realtor-management/realtor-management.module').then(
-						(m) => m.RealtorManagementModule,
-					),
-			},
-			{
-				path: 'admin-management',
-				loadChildren: () =>
-					import('./admin-management/admin-management.module').then(
-						(m) => m.AdminManagementModule,
-					),
-			},
-			{
-				path: 'property-management',
-				loadChildren: () =>
-					import('./property-management/property-management.module').then(
-						(m) => m.PropertyManagementModule,
-					),
-			},
-			{
-				path: 'finance-management',
-				loadChildren: () =>
-					import('./finance-management/finance-management.module').then(
-						(m) => m.FinanceManagementModule,
-					),
-			},
-			{
-				path: 'subscriptions',
-				loadChildren: () =>
-					import('./subscriptions/subscriptions.module').then(
-						(m) => m.SubscriptionsModule,
-					),
-			},
-			{
-				path: 'legal',
-				loadChildren: () =>
-					import('./legal/legal.module').then(
-						(m) => m.LegalModule,
-					),
-			},
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+        data: { animation: 'Dashboard' },
+      },
+      {
+        path: 'user-management',
+        loadChildren: () =>
+          import('./user-management/user-management.module').then(
+            (m) => m.UserManagementModule,
+          ),
+        data: { animation: 'Users' },
+      },
+      {
+        path: 'realtor-management',
+        loadChildren: () =>
+          import('./realtor-management/realtor-management.module').then(
+            (m) => m.RealtorManagementModule,
+          ),
+        data: { animation: 'Realtors' },
+      },
+      {
+        path: 'admin-management',
+        loadChildren: () =>
+          import('./admin-management/admin-management.module').then(
+            (m) => m.AdminManagementModule,
+          ),
+        data: { animation: 'Admins' },
+      },
+      {
+        path: 'property-management',
+        loadChildren: () =>
+          import('./property-management/property-management.module').then(
+            (m) => m.PropertyManagementModule,
+          ),
+        data: { animation: 'Properties' },
+      },
+      {
+        path: 'finance-management',
+        loadChildren: () =>
+          import('./finance-management/finance-management.module').then(
+            (m) => m.FinanceManagementModule,
+          ),
+        data: { animation: 'Finance' },
+      },
+      {
+        path: 'subscriptions',
+        loadChildren: () =>
+          import('./subscriptions/subscriptions.module').then(
+            (m) => m.SubscriptionsModule,
+          ),
+        data: { animation: 'Subscriptions' },
+      },
+      {
+        path: 'legal',
+        loadChildren: () =>
+          import('./legal/legal.module').then(
+            (m) => m.LegalModule,
+          ),
+        data: { animation: 'Legal' },
+      },
 		],
 	},
 ];

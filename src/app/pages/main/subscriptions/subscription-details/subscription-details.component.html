@@ -67,6 +67,9 @@
           <nz-descriptions-item nzTitle="Last Name">
             <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ subscription.personalDetails.lastName }}</span>
           </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Maiden Name">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.personalDetails.maidenName }}</span>
+          </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Email">
             <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.personalDetails.email }}</span>
           </nz-descriptions-item>
@@ -87,6 +90,18 @@
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Address" [nzSpan]="2">
             <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.personalDetails.address }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Passport Photo" *ngIf="subscription.personalDetails.passportPhotoUrl">
+            <button nz-button nzType="default" nzSize="small" (click)="viewPassport()">
+              <span nz-icon nzType="eye"></span>
+              <span>View</span>
+            </button>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Identity Document" *ngIf="subscription.personalDetails.identityUploadUrl">
+            <button nz-button nzType="default" nzSize="small" (click)="viewIdentity()">
+              <span nz-icon nzType="file"></span>
+              <span>Open</span>
+            </button>
           </nz-descriptions-item>
         </nz-descriptions>
       </nz-card>
@@ -184,6 +199,12 @@
           <nz-descriptions-item nzTitle="Balance Due">
             <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.paymentDetails.balanceDue }}</span>
           </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Payment Date">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.paymentDetails.paymentDate | date: 'medium' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Purchase Status">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.paymentDetails.purchaseStatus }}</span>
+          </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Property Usage" [nzSpan]="2">
             <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.paymentDetails.propertyUsage }}</span>
           </nz-descriptions-item>
@@ -192,6 +213,105 @@
               <span nz-icon nzType="download"></span>
               <span>Download Receipt</span>
             </button>
+          </nz-descriptions-item>
+        </nz-descriptions>
+      </nz-card>
+
+      <!-- Purchase Details Card -->
+      <nz-card class="subscriptions-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '32px' }">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
+            <span nz-icon nzType="shopping" class="text-[#E41C24]"></span>
+          </div>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Purchase Details</h2>
+        </div>
+        <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
+          <nz-descriptions-item nzTitle="Purchase ID">
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ subscription.purchaseDetails.id }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="User ID">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.purchaseDetails.userId }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Unit ID">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.purchaseDetails.unitId }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Plan ID">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.purchaseDetails.planId }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Quantity">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.purchaseDetails.quantity }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Total Price">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.purchaseDetails.totalPrice }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Status">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.purchaseDetails.status }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Start Date">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.purchaseDetails.startDate | date: 'medium' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Paid At">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.purchaseDetails.paidAt | date: 'medium' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Referral Code" [nzSpan]="2">
+            <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.purchaseDetails.referralCode }}</span>
+          </nz-descriptions-item>
+        </nz-descriptions>
+      </nz-card>
+
+      <!-- Form Metadata Card -->
+      <nz-card class="subscriptions-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '32px' }">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
+            <span nz-icon nzType="profile" class="text-[#E41C24]"></span>
+          </div>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Form Metadata</h2>
+        </div>
+        <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
+          <nz-descriptions-item nzTitle="Form Status">
+            <nz-tag [nzColor]="getStatusColor(subscription.metadata.formStatus)">{{ subscription.metadata.formStatus }}</nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Accepted Terms">
+            <nz-tag [nzColor]="subscription.metadata.acceptedTerms ? 'success' : 'default'">{{ subscription.metadata.acceptedTerms ? 'Yes' : 'No' }}</nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Documentation Status">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.metadata.documentationStatus }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Documentation Sent At">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.metadata.documentationSentAt | date: 'medium' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Documentation Notes" [nzSpan]="2">
+            <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.metadata.documentationNotes }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Submitted At">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.metadata.submittedAt | date: 'medium' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Verified At">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.metadata.verifiedAt | date: 'medium' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Verified By">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.metadata.verifiedBy }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Rejection Reason" [nzSpan]="2">
+            <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.metadata.rejectionReason }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Admin Notes" [nzSpan]="2">
+            <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.metadata.adminNotes }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Realtor Consent">
+            <nz-tag [nzColor]="subscription.metadata.realtorConsent ? 'success' : 'default'">{{ subscription.metadata.realtorConsent ? 'Yes' : 'No' }}</nz-tag>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Realtor ID">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.metadata.realtorId }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Referral Code">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.metadata.referralCode }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Created At">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.metadata.createdAt | date: 'medium' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Updated At">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.metadata.updatedAt | date: 'medium' }}</span>
           </nz-descriptions-item>
         </nz-descriptions>
       </nz-card>

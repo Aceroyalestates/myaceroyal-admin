@@ -4,20 +4,17 @@ import { SharedModule } from './shared/shared.module';
 import { ErrorModalComponent } from './shared/components/error-modal/error-modal.component';
 import { LoaderService } from './core/services/loader.service';
 import { Subscription, filter } from 'rxjs';
-import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SharedModule, NzSpinModule, ErrorModalComponent],
+  imports: [RouterOutlet, SharedModule, ErrorModalComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'My Aceroyal Admin';
   private routeSub = new Subscription();
-  private loaderSub = new Subscription();
-  spinning = false;
-  spinTip = '';
+  // Using custom loader component; no local state needed
 
   constructor(private router: Router, private loader: LoaderService) {}
 
@@ -34,15 +31,10 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       });
 
-    // Bind loader state to nz-spin
-    this.loaderSub = this.loader.loaderState$.subscribe(state => {
-      this.spinning = state.isLoading;
-      this.spinTip = state.message || '';
-    });
   }
 
   ngOnDestroy(): void {
     this.routeSub.unsubscribe();
-    this.loaderSub.unsubscribe();
+    // nothing else
   }
 }
