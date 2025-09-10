@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription as RxSubscription } from 'rxjs';
-import { ThemeService } from 'src/app/core/services/theme.service';
 import { SubscriptionService } from 'src/app/core/services/subscription.service';
 import { GetFormsParams } from 'src/app/core/models/subscriptions';
+import { ThemeService } from 'src/app/core/services/theme.service';
 import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
 import { SearchBarComponent } from 'src/app/shared/components/search-bar/search-bar.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -194,7 +194,6 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
   ngOnInit(): void {
     // Component initialization
     this.fetchForms();
-    
     // Subscribe to theme changes
     this.themeSubscription = this.themeService.theme$.subscribe(() => {
       // Reinitialize chart when theme changes
@@ -220,10 +219,11 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
     if (this.chartCanvas) {
       const ctx = this.chartCanvas.nativeElement.getContext('2d');
       if (ctx) {
-        // Check for dark mode
-        const isDarkMode = document.documentElement.classList.contains('dark');
-        const textColor = isDarkMode ? '#d1d5db' : '#6B7280';
-        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const cs = getComputedStyle(document.documentElement);
+        const primary = cs.getPropertyValue('--primary').trim() || '#E41C24';
+        const textColor = cs.getPropertyValue('--muted').trim() || '#6B7280';
+        const gridColor = cs.getPropertyValue('--border').trim() || 'rgba(0, 0, 0, 0.1)';
+        const isDark = document.documentElement.classList.contains('dark');
         
         this.chart = new Chart(ctx, {
           type: 'line',
@@ -232,12 +232,12 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
             datasets: [{
               label: 'Subscriptions',
               data: this.chartData.data,
-              borderColor: '#E41C24',
+              borderColor: primary,
               backgroundColor: 'rgba(228, 28, 36, 0.1)',
               tension: 0.4,
               fill: true,
-              pointBackgroundColor: '#E41C24',
-              pointBorderColor: isDarkMode ? '#1f1f23' : '#fff',
+              pointBackgroundColor: primary,
+              pointBorderColor: '#fff',
               pointBorderWidth: 2,
               pointRadius: 5,
               pointHoverRadius: 7
@@ -251,10 +251,10 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
                 display: false
               },
               tooltip: {
-                backgroundColor: isDarkMode ? 'rgba(31, 31, 35, 0.95)' : 'rgba(0, 0, 0, 0.8)',
+                backgroundColor: isDark ? 'rgba(31, 31, 35, 0.95)' : 'rgba(0, 0, 0, 0.8)',
                 titleColor: '#fff',
                 bodyColor: '#fff',
-                borderColor: '#E41C24',
+                borderColor: primary,
                 borderWidth: 1
               }
             },
