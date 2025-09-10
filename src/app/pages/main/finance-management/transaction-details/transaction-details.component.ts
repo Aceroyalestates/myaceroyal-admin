@@ -16,9 +16,11 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/breadcrumb.component';
+import { FinanceService } from 'src/app/core/services/finance.service';
+import { FinanceTransaction } from 'src/app/core/models/finance';
 
 interface TransactionDetail {
-  id: number;
+  id: string;
   paymentType: string;
   client: string;
   modeOfPayment: string;
@@ -76,73 +78,19 @@ export class TransactionDetailsComponent implements OnInit {
   validateComment = '';
   sendToClientType = 'receipt'; // 'receipt' or 'invoice'
 
-  // Mock transaction data - replace with actual API call
-  private mockTransactions: TransactionDetail[] = [
-    {
-      id: 1,
-      paymentType: 'Property Purchase',
-      client: 'John Doe',
-      modeOfPayment: 'Bank Transfer',
-      amount: '₦2,500,000',
-      date: '2024-01-15',
-      status: 'Pending Review',
-      property: 'Luxury Apartment - Block A, Unit 12',
-      reference: 'TXN-2024-001-LP',
-      description: 'Initial payment for luxury apartment purchase',
-      clientEmail: 'john.doe@email.com',
-      clientPhone: '+234 801 234 5678',
-      paymentMethod: 'First Bank Transfer',
-      transactionFee: '₦12,500',
-      netAmount: '₦2,487,500',
-      evidenceOfPayment: 'assets/documents/bank-transfer-receipt.pdf'
-    },
-    {
-      id: 2,
-      paymentType: 'Rent Payment',
-      client: 'Jane Smith',
-      modeOfPayment: 'Paystack',
-      amount: '₦500,000',
-      date: '2024-01-10',
-      status: 'Successful',
-      property: 'Office Complex - Floor 3, Suite 305',
-      reference: 'TXN-2024-002-RC',
-      description: 'Monthly rent payment for office space',
-      clientEmail: 'jane.smith@email.com',
-      clientPhone: '+234 802 345 6789',
-      paymentMethod: 'Paystack - Debit Card',
-      transactionFee: '₦7,500',
-      netAmount: '₦492,500'
-      // No evidenceOfPayment for Paystack - it's automatic
-    },
-    {
-      id: 3,
-      paymentType: 'Service Fee',
-      client: 'Mike Johnson',
-      modeOfPayment: 'Bank Transfer',
-      amount: '₦150,000',
-      date: '2024-01-12',
-      status: 'Pending Review',
-      property: 'Commercial Space - Unit B2',
-      reference: 'TXN-2024-003-SF',
-      description: 'Service fee payment for property management',
-      clientEmail: 'mike.johnson@email.com',
-      clientPhone: '+234 803 456 7890',
-      paymentMethod: 'UBA Bank Transfer',
-      transactionFee: '₦2,250',
-      netAmount: '₦147,750'
-      // No evidenceOfPayment property - means no evidence uploaded yet
-    }
-  ];
+  // No mock data; use API
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private financeService: FinanceService
   ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.transactionId = params.get('id');
+      console.log('[TransactionDetailsComponent] ngOnInit -> transactionId', this.transactionId);
       if (this.transactionId) {
         this.loadTransactionDetails(this.transactionId);
       }
@@ -151,13 +99,22 @@ export class TransactionDetailsComponent implements OnInit {
 
   loadTransactionDetails(id: string): void {
     this.loading = true;
-    
-    // Simulate API call
-    setTimeout(() => {
-      const transaction = this.mockTransactions.find(t => t.id.toString() === id);
-      this.transaction = transaction || null;
-      this.loading = false;
-    }, 1000);
+
+    console.log('[TransactionDetailsComponent] loadTransactionDetails -> id', id);
+    this.financeService.getTransactionById(id).subscribe({
+      next: (t) => {
+        console.log('[TransactionDetailsComponent] loadTransactionDetails -> response', t);
+        this.transaction = this.mapToDetail(t);
+      },
+      error: (err) => {
+        console.error('[TransactionDetailsComponent] loadTransactionDetails -> error', err);
+        this.transaction = null;
+      },
+      complete: () => {
+        console.log('[TransactionDetailsComponent] loadTransactionDetails -> complete');
+        this.loading = false;
+      }
+    });
   }
 
   getStatusColor(status: string): string {
@@ -237,11 +194,14 @@ export class TransactionDetailsComponent implements OnInit {
   }
 
   onApproveAndSendToLegal(): void {
-    if (this.transaction) {
-      this.message.success('Transaction approved and sent to legal team for document processing');
-      // Update transaction status
-      this.transaction.status = 'Approved - Legal Processing';
-    }
+    if (!this.transaction) return;
+    this.financeService.updateTransaction(this.transaction.id, { action: 'approve', comment: 'Approved and sent to legal' })
+      .subscribe({
+        next: () => {
+          this.message.success('Transaction approved and sent to legal team for document processing');
+          this.transaction!.status = 'Approved - Legal Processing';
+        }
+      });
   }
 
   onValidateTransaction(): void {
@@ -276,12 +236,16 @@ export class TransactionDetailsComponent implements OnInit {
       return;
     }
 
-    if (this.transaction) {
-      this.transaction.status = 'Under Review';
-      this.message.success('Transaction sent for review with comments');
-      this.isReviewModalVisible = false;
-      this.reviewComment = '';
-    }
+    if (!this.transaction) return;
+    this.financeService.updateTransaction(this.transaction.id, { action: 'review', comment: this.reviewComment })
+      .subscribe({
+        next: () => {
+          this.transaction!.status = 'Under Review';
+          this.message.success('Transaction sent for review with comments');
+          this.isReviewModalVisible = false;
+          this.reviewComment = '';
+        }
+      });
   }
 
   handleReviewCancel(): void {
@@ -296,12 +260,16 @@ export class TransactionDetailsComponent implements OnInit {
       return;
     }
 
-    if (this.transaction) {
-      this.transaction.status = 'Rejected';
-      this.message.success('Transaction rejected successfully');
-      this.isRejectModalVisible = false;
-      this.rejectComment = '';
-    }
+    if (!this.transaction) return;
+    this.financeService.updateTransaction(this.transaction.id, { action: 'reject', reason: this.rejectComment })
+      .subscribe({
+        next: () => {
+          this.transaction!.status = 'Rejected';
+          this.message.success('Transaction rejected successfully');
+          this.isRejectModalVisible = false;
+          this.rejectComment = '';
+        }
+      });
   }
 
   handleRejectCancel(): void {
@@ -327,16 +295,50 @@ export class TransactionDetailsComponent implements OnInit {
       this.message.error('Please provide instructions for legal team');
       return;
     }
-    if (this.transaction) {
-      this.transaction.status = 'Approved - Legal Processing';
-      this.message.success('Transaction validated and sent to legal team with instructions');
-      this.isValidateModalVisible = false;
-      this.validateComment = '';
-    }
+    if (!this.transaction) return;
+    this.financeService.updateTransaction(this.transaction.id, { action: 'approve', comment: this.validateComment })
+      .subscribe({
+        next: () => {
+          this.transaction!.status = 'Approved - Legal Processing';
+          this.message.success('Transaction validated and sent to legal team with instructions');
+          this.isValidateModalVisible = false;
+          this.validateComment = '';
+        }
+      });
   }
 
   handleValidateCancel(): void {
     this.isValidateModalVisible = false;
     this.validateComment = '';
+  }
+
+  private formatCurrency(value: any): string {
+    const num = Number(value);
+    if (isNaN(num)) return String(value ?? '₦0');
+    return '₦' + num.toLocaleString();
+  }
+
+  private mapToDetail(t: FinanceTransaction): TransactionDetail {
+    const anyT = t as any;
+    const amount = anyT['amount'];
+    const fee = anyT['fee'];
+    return {
+      id: String(anyT['id'] ?? ''),
+      paymentType: anyT['payment_type'] || anyT['type'] || 'Payment',
+      client: anyT['user']?.['full_name'] || anyT['customer_name'] || anyT['client'] || '—',
+      modeOfPayment: anyT['method'] || anyT['mode'] || '—',
+      amount: this.formatCurrency(amount),
+      date: anyT['createdAt'] || anyT['date'] || '',
+      status: String(anyT['status'] || 'pending'),
+      property: anyT['property']?.['name'] || anyT['property_name'] || '—',
+      reference: anyT['reference'] || anyT['ref'] || '—',
+      description: anyT['description'] || '',
+      clientEmail: anyT['user']?.['email'] || anyT['client_email'] || '',
+      clientPhone: anyT['user']?.['phone'] || anyT['client_phone'] || '',
+      paymentMethod: anyT['method'] || '—',
+      transactionFee: this.formatCurrency(fee),
+      netAmount: this.formatCurrency(anyT['net_amount'] ?? (Number(amount || 0) - Number(fee || 0))),
+      evidenceOfPayment: anyT['evidence_url'] || anyT['receipt_url'],
+    };
   }
 }

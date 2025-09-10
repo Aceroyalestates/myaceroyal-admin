@@ -15,25 +15,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 import Chart from 'chart.js/auto';
-
-interface FinanceMetric {
-  id: number;
-  title: string;
-  amount: string;
-  percentage: string;
-  trend: 'up' | 'down';
-  color: string;
-}
-
-interface Transaction {
-  id: number;
-  paymentType: string;
-  client: string;
-  modeOfPayment: string;
-  amount: string;
-  status: 'Pending' | 'Approved' | 'Under Review' | 'Failed';
-  action: string;
-}
+import { FinanceService } from 'src/app/core/services/finance.service';
+import { FinanceTransaction, TransactionListParams, FinanceMetric, Transaction } from 'src/app/core/models/finance';
 
 @Component({
   selector: 'app-finance-management',
@@ -60,7 +43,7 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
   
   chart: Chart | null = null;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private financeService: FinanceService) {}
   
   // Finance metrics data - can be replaced with API data
   financeMetrics: FinanceMetric[] = [
@@ -82,72 +65,9 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
     }
   ];
 
-  // Transaction data - can be replaced with API data
-  transactions: Transaction[] = [
-    {
-      id: 1,
-      paymentType: 'Payment for Property',
-      client: 'Patience Endurance',
-      modeOfPayment: 'Bank Transfer',
-      amount: '₦ 300,000,000',
-      status: 'Pending',
-      action: 'View Details'
-    },
-    {
-      id: 2,
-      paymentType: 'Payment for Property',
-      client: 'Patience Endurance',
-      modeOfPayment: 'Paystack',
-      amount: '₦ 300,000,000',
-      status: 'Approved',
-      action: 'View Details'
-    },
-    {
-      id: 3,
-      paymentType: 'Payment for Property',
-      client: 'Patience Endurance',
-      modeOfPayment: 'Bank Cheque',
-      amount: '₦ 300,000,000',
-      status: 'Under Review',
-      action: 'View Details'
-    },
-    {
-      id: 4,
-      paymentType: 'Payment for Property',
-      client: 'Patience Endurance',
-      modeOfPayment: 'Paystack',
-      amount: '₦ 300,000,000',
-      status: 'Approved',
-      action: 'View Details'
-    },
-    {
-      id: 5,
-      paymentType: 'Payment for Property',
-      client: 'Patience Endurance',
-      modeOfPayment: 'Bank Transfer',
-      amount: '₦ 300,000,000',
-      status: 'Pending',
-      action: 'View Details'
-    },
-    {
-      id: 6,
-      paymentType: 'Payment for Property',
-      client: 'Patience Endurance',
-      modeOfPayment: 'Bank Transfer',
-      amount: '₦ 300,000,000',
-      status: 'Failed',
-      action: 'View Details'
-    },
-    {
-      id: 7,
-      paymentType: 'Payment for Property',
-      client: 'Patience Endurance',
-      modeOfPayment: 'Paystack',
-      amount: '₦ 300,000,000',
-      status: 'Under Review',
-      action: 'View Details'
-    }
-  ];
+  // Transactions fetched from API
+  transactions: Transaction[] = [];
+  loading = false;
 
   // Chart data - can be replaced with API data
   chartData = {
@@ -232,7 +152,9 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
   ];
 
   ngOnInit(): void {
-    // Component initialization - API calls can be made here
+    // Load initial data
+    console.log('[FinanceManagementComponent] ngOnInit');
+    this.fetchTransactions();
   }
 
   ngAfterViewInit(): void {
@@ -324,8 +246,9 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
   }
 
   onSearch(): void {
-    // Implement search functionality - can filter transactions or call API
-    console.log('Searching for:', this.searchTerm);
+    // Trigger API fetch with search term (client-side term for now)
+    console.log('[FinanceManagementComponent] onSearch', { term: this.searchTerm });
+    this.fetchTransactions();
   }
 
   onSearchChange(searchTerm: string): void {
@@ -344,31 +267,26 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
   onPropertyNameChange(propertyName: string): void {
     this.selectedPropertyName = propertyName;
     console.log('Property name filter changed:', propertyName);
-    // Trigger API call or filter data
+    // Not mapped to API currently
   }
 
   onModeOfPaymentChange(modeOfPayment: string): void {
     this.selectedModeOfPayment = modeOfPayment;
     console.log('Mode of payment filter changed:', modeOfPayment);
-    // Trigger API call or filter data
+    console.log('[FinanceManagementComponent] onModeOfPaymentChange', { modeOfPayment });
+    this.fetchTransactions();
   }
 
   onPaymentStatusChange(paymentStatus: string): void {
     this.selectedPaymentStatus = paymentStatus;
     console.log('Payment status filter changed:', paymentStatus);
-    // Trigger API call or filter data
+    console.log('[FinanceManagementComponent] onPaymentStatusChange', { paymentStatus });
+    this.fetchTransactions();
   }
 
   performSearch(): void {
-    console.log('Performing search with filters:', {
-      searchTerm: this.searchTerm,
-      propertyName: this.selectedPropertyName,
-      modeOfPayment: this.selectedModeOfPayment,
-      paymentStatus: this.selectedPaymentStatus,
-      startDate: this.startDate,
-      endDate: this.endDate
-    });
-    // Implement actual search/filter logic here
+    // Trigger API fetch with current filters
+    this.fetchTransactions();
   }
 
   onExport(): void {
@@ -381,7 +299,7 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
       this.dateRange = dateRange;
     }
     console.log('Date range changed:', this.startDate, this.endDate);
-    // Implement date filtering logic
+    // Fetch with date filters
     this.performSearch();
   }
 
@@ -445,6 +363,89 @@ export class FinanceManagementComponent implements OnInit, AfterViewInit, OnDest
   ngOnDestroy(): void {
     if (this.chart) {
       this.chart.destroy();
+    }
+  }
+
+  private fetchTransactions(): void {
+    this.loading = true;
+    const params: TransactionListParams = {
+      page: 1,
+      limit: 10,
+      sort_by: 'createdAt',
+      sort_order: 'DESC',
+    };
+
+    if (this.selectedModeOfPayment) {
+      params.method = this.selectedModeOfPayment;
+    }
+    if (this.selectedPaymentStatus) {
+      params.status = this.selectedPaymentStatus;
+    }
+    if (this.startDate) {
+      params.from_date = this.formatDate(this.startDate);
+    }
+    if (this.endDate) {
+      params.to_date = this.formatDate(this.endDate);
+    }
+
+    console.log('[FinanceManagementComponent] fetchTransactions -> params', params);
+    this.financeService.getTransactions(params).subscribe({
+      next: (res) => {
+        console.log('[FinanceManagementComponent] fetchTransactions -> response', res);
+        const mapped = (res.data || []).map((t: FinanceTransaction): Transaction => ({
+          id: String(t.id ?? ''),
+          paymentType: 'Purchase Payment',
+          client: t.user_id ? String(t.user_id) : '—',
+          modeOfPayment: t.method || '—',
+          amount: this.formatCurrency(t.amount),
+          status: this.mapStatus(t.status),
+          action: 'View Details',
+        }));
+        this.transactions = mapped;
+      },
+      error: () => {
+        console.error('[FinanceManagementComponent] fetchTransactions -> error');
+        this.transactions = [];
+      },
+      complete: () => {
+        console.log('[FinanceManagementComponent] fetchTransactions -> complete');
+        this.loading = false;
+      }
+    });
+  }
+
+  private formatDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  private formatCurrency(value: any): string {
+    const num = Number(value);
+    if (isNaN(num)) return String(value ?? '₦0');
+    return '₦ ' + num.toLocaleString();
+  }
+
+  private mapStatus(status: any): string {
+    const s = String(status || '').toLowerCase();
+    switch (s) {
+      case 'approved':
+      case 'success':
+      case 'successful':
+        return 'Approved';
+      case 'pending':
+      case 'processing':
+      case 'in_review':
+        return 'Pending';
+      case 'under review':
+      case 'review':
+        return 'Under Review';
+      case 'failed':
+      case 'rejected':
+        return 'Failed';
+      default:
+        return status ? String(status) : 'Pending';
     }
   }
 }

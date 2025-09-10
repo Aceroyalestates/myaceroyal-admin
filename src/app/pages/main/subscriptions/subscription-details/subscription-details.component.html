@@ -22,7 +22,7 @@
         <span>Back</span>
       </button>
       <div>
-        <h1 class="text-[#4F4F4F] dark:text-gray-300 text-[28px] font-semibold mb-1">Subscription Details</h1>
+        <h1 class="text-[#4F4F4F] dark:text-gray-400 text-[28px] font-semibold mb-1">Subscription Details</h1>
         <p class="text-[#7A7A7A] dark:text-gray-400 text-[14px]" *ngIf="subscription">
           Reference: {{ subscription.reference }}
         </p>
@@ -55,35 +55,35 @@
           <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
             <span nz-icon nzType="user" class="text-[#E41C24]"></span>
           </div>
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Personal Details</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Personal Details</h2>
         </div>
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
           <nz-descriptions-item nzTitle="First Name">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ subscription.personalDetails.firstName }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ subscription.personalDetails.firstName }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Middle Name">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ subscription.personalDetails.middleName }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ subscription.personalDetails.middleName }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Last Name">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ subscription.personalDetails.lastName }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ subscription.personalDetails.lastName }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Email">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.personalDetails.email }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.personalDetails.email }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Phone">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.personalDetails.phone }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.personalDetails.phone }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Date of Birth">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.personalDetails.dateOfBirth | date: 'longDate' }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.personalDetails.dateOfBirth | date: 'longDate' }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Nationality">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.personalDetails.nationality }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.personalDetails.nationality }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="ID Number">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.personalDetails.idNumber }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.personalDetails.idNumber }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Marital Status">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.personalDetails.maritalStatus }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.personalDetails.maritalStatus }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Address" [nzSpan]="2">
             <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.personalDetails.address }}</span>
@@ -97,20 +97,20 @@
           <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
             <span nz-icon nzType="team" class="text-[#E41C24]"></span>
           </div>
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Next of Kin Details</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Next of Kin Details</h2>
         </div>
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
           <nz-descriptions-item nzTitle="Full Name">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ subscription.nextOfKinDetails.fullName }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ subscription.nextOfKinDetails.fullName }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Relationship">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.nextOfKinDetails.relationship }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.nextOfKinDetails.relationship }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Phone">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.nextOfKinDetails.phone }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.nextOfKinDetails.phone }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Email">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.nextOfKinDetails.email }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.nextOfKinDetails.email }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Address" [nzSpan]="2">
             <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.nextOfKinDetails.address }}</span>
@@ -124,23 +124,23 @@
           <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
             <span nz-icon nzType="briefcase" class="text-[#E41C24]"></span>
           </div>
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Employment Details</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Employment Details</h2>
         </div>
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
           <nz-descriptions-item nzTitle="Employment Status">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ subscription.employmentDetails.employmentStatus }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ subscription.employmentDetails.employmentStatus }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Employer Name">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.employmentDetails.employerName }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.employmentDetails.employerName }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Job Title">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.employmentDetails.jobTitle }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.employmentDetails.jobTitle }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Monthly Income">
             <span class="text-[#E41C24] font-bold text-[16px]">{{ subscription.employmentDetails.monthlyIncome }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Years of Employment">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.employmentDetails.yearsOfEmployment }} years</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.employmentDetails.yearsOfEmployment }} years</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Work Address" [nzSpan]="1">
             <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.employmentDetails.workAddress }}</span>
@@ -154,14 +154,14 @@
           <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
             <span nz-icon nzType="credit-card" class="text-[#E41C24]"></span>
           </div>
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Payment Details</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Payment Details</h2>
         </div>
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
           <nz-descriptions-item nzTitle="Property Purchased" [nzSpan]="2">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ subscription.paymentDetails.propertyPurchased }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ subscription.paymentDetails.propertyPurchased }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Total Units">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.paymentDetails.totalUnits }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.paymentDetails.totalUnits }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Unit Price">
             <span class="text-[#E41C24] font-bold">{{ subscription.paymentDetails.unitPrice }}</span>
@@ -173,13 +173,25 @@
             <span class="text-[#10B981] font-bold">{{ subscription.paymentDetails.initialDeposit }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Payment Plan">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.paymentDetails.paymentPlan }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.paymentDetails.paymentPlan }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Payment Method">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.paymentDetails.paymentMethod }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Source of Funds">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.paymentDetails.sourceOfFunds }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.paymentDetails.sourceOfFunds }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Balance Due">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.paymentDetails.balanceDue }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Property Usage" [nzSpan]="2">
             <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.paymentDetails.propertyUsage }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Receipt" [nzSpan]="2" *ngIf="subscription.paymentDetails.receiptUrl">
+            <button nz-button nzType="default" nzSize="small" (click)="downloadReceipt()">
+              <span nz-icon nzType="download"></span>
+              <span>Download Receipt</span>
+            </button>
           </nz-descriptions-item>
         </nz-descriptions>
       </nz-card>
@@ -190,20 +202,20 @@
           <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
             <span nz-icon nzType="home" class="text-[#E41C24]"></span>
           </div>
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Realtor Details</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Realtor Details</h2>
         </div>
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
           <nz-descriptions-item nzTitle="Realtor Name">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ subscription.realtorDetails.name }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ subscription.realtorDetails.name }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="License Number">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.realtorDetails.licenseNumber }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.realtorDetails.licenseNumber }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Phone">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.realtorDetails.phone }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.realtorDetails.phone }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Email">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.realtorDetails.email }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.realtorDetails.email }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Agency" [nzSpan]="2">
             <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.realtorDetails.agency }}</span>
@@ -217,14 +229,14 @@
           <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
             <span nz-icon nzType="customer-service" class="text-[#E41C24]"></span>
           </div>
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Customer Details</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Customer Details</h2>
         </div>
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
           <nz-descriptions-item nzTitle="Preferred Contact">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.customerDetails.preferredContactMethod }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.customerDetails.preferredContactMethod }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="How did you hear about us">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.customerDetails.hearAboutUs }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.customerDetails.hearAboutUs }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Investment Goals" [nzSpan]="2">
             <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.customerDetails.investmentGoals }}</span>
@@ -242,7 +254,7 @@
       <!-- Status & Actions Card -->
       <nz-card class="subscriptions-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 mb-8" [nzBodyStyle]="{ padding: '24px' }">
         <div class="text-center mb-6">
-          <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold mb-4">Subscription Status</h3>
+          <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold mb-4">Subscription Status</h3>
           
           <!-- Status Badge -->
           <nz-tag [nzColor]="getStatusColor(subscription.status)" class="px-4 py-2 rounded-full font-medium text-[14px] mb-4">
@@ -253,7 +265,7 @@
           <div class="mb-6">
             <div class="flex items-center justify-between mb-2">
               <span class="text-[#7A7A7A] dark:text-gray-400 text-[14px]">Completion</span>
-              <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ getCompletionPercentage() }}%</span>
+              <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ getCompletionPercentage() }}%</span>
             </div>
             <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div 
@@ -267,11 +279,11 @@
           <div class="text-left space-y-2 text-[14px]">
             <div class="flex justify-between">
               <span class="text-[#7A7A7A] dark:text-gray-400">Submitted:</span>
-              <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.submissionDate | date: 'mediumDate' }}</span>
+              <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.submissionDate | date: 'mediumDate' }}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-[#7A7A7A] dark:text-gray-400">Last Updated:</span>
-              <span class="text-[#4F4F4F] dark:text-gray-300">{{ subscription.lastUpdated | date: 'mediumDate' }}</span>
+              <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.lastUpdated | date: 'mediumDate' }}</span>
             </div>
           </div>
         </div>
@@ -310,13 +322,13 @@
       
       <!-- Quick Summary Card -->
       <nz-card class="subscriptions-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
-        <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold mb-4">Quick Summary</h3>
+        <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold mb-4">Quick Summary</h3>
         
         <div class="space-y-4">
           <div class="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg">
             <span nz-icon nzType="user" class="text-[#E41C24]"></span>
             <div>
-              <p class="text-[#4F4F4F] dark:text-gray-300 font-medium mb-0">{{ subscription.personalDetails.firstName }} {{ subscription.personalDetails.lastName }}</p>
+              <p class="text-[#4F4F4F] dark:text-gray-400 font-medium mb-0">{{ subscription.personalDetails.firstName }} {{ subscription.personalDetails.lastName }}</p>
               <p class="text-[#7A7A7A] dark:text-gray-400 text-[12px] mb-0">Primary Contact</p>
             </div>
           </div>
@@ -324,7 +336,7 @@
           <div class="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg">
             <span nz-icon nzType="home" class="text-[#E41C24]"></span>
             <div>
-              <p class="text-[#4F4F4F] dark:text-gray-300 font-medium mb-0">{{ subscription.paymentDetails.totalUnits }} Units</p>
+              <p class="text-[#4F4F4F] dark:text-gray-400 font-medium mb-0">{{ subscription.paymentDetails.totalUnits }} Units</p>
               <p class="text-[#7A7A7A] dark:text-gray-400 text-[12px] mb-0">{{ subscription.paymentDetails.propertyPurchased }}</p>
             </div>
           </div>
@@ -332,7 +344,7 @@
           <div class="flex items-center gap-3 p-3 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-lg">
             <span nz-icon nzType="dollar" class="text-[#E41C24]"></span>
             <div>
-              <p class="text-[#4F4F4F] dark:text-gray-300 font-medium mb-0">{{ subscription.paymentDetails.totalAmount }}</p>
+              <p class="text-[#4F4F4F] dark:text-gray-400 font-medium mb-0">{{ subscription.paymentDetails.totalAmount }}</p>
               <p class="text-[#7A7A7A] dark:text-gray-400 text-[12px] mb-0">Total Investment</p>
             </div>
           </div>

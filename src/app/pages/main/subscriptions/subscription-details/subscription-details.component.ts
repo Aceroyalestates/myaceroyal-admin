@@ -10,6 +10,7 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { SubscriptionService } from 'src/app/core/services/subscription.service';
 
 interface SubscriptionDetails {
   id: number;
@@ -61,6 +62,9 @@ interface SubscriptionDetails {
     sourceOfFunds: string;
     propertyUsage: string;
     initialDeposit: string;
+    paymentMethod: string;
+    balanceDue: string;
+    receiptUrl?: string;
   };
   
   // Realtor Details
@@ -106,7 +110,8 @@ export class SubscriptionDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private message: NzMessageService
+    private message: NzMessageService,
+    private subscriptionService: SubscriptionService
   ) {}
 
   ngOnInit(): void {
@@ -117,74 +122,18 @@ export class SubscriptionDetailsComponent implements OnInit {
   loadSubscriptionDetails(): void {
     this.loading = true;
     
-    // Simulate API call - replace with actual service call
-    setTimeout(() => {
-      this.subscription = {
-        id: parseInt(this.subscriptionId),
-        reference: `SUB-${this.subscriptionId.padStart(6, '0')}`,
-        status: 'In Progress',
-        submissionDate: '2024-08-15',
-        lastUpdated: '2024-08-20',
-        
-        personalDetails: {
-          firstName: 'John',
-          middleName: 'Michael',
-          lastName: 'Doe',
-          email: 'john.doe@email.com',
-          phone: '+234 803 123 4567',
-          dateOfBirth: '1990-05-15',
-          nationality: 'Nigerian',
-          idNumber: 'NIN-12345678901',
-          maritalStatus: 'Married',
-          address: '123 Main Street, Victoria Island, Lagos State'
-        },
-        
-        nextOfKinDetails: {
-          fullName: 'Jane Smith Doe',
-          relationship: 'Spouse',
-          phone: '+234 803 987 6543',
-          email: 'jane.doe@email.com',
-          address: '123 Main Street, Victoria Island, Lagos State'
-        },
-        
-        employmentDetails: {
-          employmentStatus: 'Employed',
-          employerName: 'Tech Solutions Ltd',
-          jobTitle: 'Software Engineer',
-          workAddress: '456 Business District, Ikeja, Lagos',
-          monthlyIncome: '₦2,500,000',
-          yearsOfEmployment: '5'
-        },
-        
-        paymentDetails: {
-          propertyPurchased: 'Royal Gardens Estate - Block A',
-          totalUnits: 2,
-          unitPrice: '₦45,000,000',
-          totalAmount: '₦90,000,000',
-          paymentPlan: 'Installmental (24 months)',
-          sourceOfFunds: 'Employment Income',
-          propertyUsage: 'Personal Residence',
-          initialDeposit: '₦18,000,000'
-        },
-        
-        realtorDetails: {
-          name: 'Sarah Johnson',
-          licenseNumber: 'REL-2024-0123',
-          phone: '+234 802 555 1234',
-          email: 'sarah.j@aceroyal.com',
-          agency: 'Ace Royal Estates'
-        },
-        
-        customerDetails: {
-          preferredContactMethod: 'Email',
-          hearAboutUs: 'Social Media',
-          additionalRequests: 'Close to schools and hospitals',
-          investmentGoals: 'Long-term investment and personal residence'
-        }
-      };
-      
-      this.loading = false;
-    }, 1000);
+    this.subscriptionService.getFormById(this.subscriptionId).subscribe({
+      next: (item: any) => {
+        this.subscription = this.mapToDetails(item);
+      },
+      error: (err) => {
+        console.error('[SubscriptionDetails] loadSubscriptionDetails -> error', err);
+        this.message.error('Failed to load subscription details');
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
   }
 
   onBack(): void {
@@ -240,5 +189,106 @@ export class SubscriptionDetailsComponent implements OnInit {
 
   editSubscription(): void {
     this.message.info('Edit subscription functionality coming soon...');
+  }
+
+  downloadReceipt(): void {
+    const url = this.subscription?.paymentDetails.receiptUrl;
+    if (!url) {
+      this.message.warning('No receipt available');
+      return;
+    }
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.click();
+    } catch {
+      window.open(url, '_blank');
+    }
+  }
+
+  private mapToDetails(it: any): SubscriptionDetails {
+    const fullName = it['owner']?.['full_name']
+      || [it['first_name'], it['last_name']].filter(Boolean).join(' ').trim()
+      || it['email']
+      || '';
+    const employmentStatus = it['employer_name'] ? 'Employed' : '—';
+    const purchase = it['purchase'] || {};
+    return {
+      id: 0,
+      reference: String(it['id'] || ''),
+      status: this.toTitleCase(String(it['form_status'] || 'Pending')) as any,
+      submissionDate: it['createdAt'] || '',
+      lastUpdated: it['updatedAt'] || '',
+
+      personalDetails: {
+        firstName: it['first_name'] || '',
+        middleName: it['middle_name'] || '',
+        lastName: it['last_name'] || '',
+        email: it['email'] || '',
+        phone: it['phone'] || '',
+        dateOfBirth: it['date_of_birth'] || '',
+        nationality: it['nationality'] || '',
+        idNumber: it['means_of_identity'] || '',
+        maritalStatus: it['marital_status'] || '',
+        address: it['residential_address'] || ''
+      },
+
+      nextOfKinDetails: {
+        fullName: [it['nok_first_name'], it['nok_last_name']].filter(Boolean).join(' ').trim(),
+        relationship: it['nok_relationship'] || '',
+        phone: it['nok_phone'] || '',
+        email: it['nok_email'] || '',
+        address: it['nok_address'] || ''
+      },
+
+      employmentDetails: {
+        employmentStatus,
+        employerName: it['employer_name'] || '',
+        jobTitle: it['employer_designation'] || '',
+        workAddress: it['employer_address'] || '',
+        monthlyIncome: '',
+        yearsOfEmployment: ''
+      },
+
+      paymentDetails: {
+        propertyPurchased: this.toTitleCase(String(it['property_type'] || '')),
+        totalUnits: purchase['quantity'] || 0,
+        unitPrice: purchase['total_price'] ? `₦${Number(purchase['total_price']).toLocaleString()}` : '',
+        totalAmount: it['amount_paid'] ? `₦${Number(it['amount_paid']).toLocaleString()}` : '',
+        paymentPlan: purchase['plan_id'] ? String(purchase['plan_id']) : '',
+        sourceOfFunds: it['source_of_funds'] || '',
+        propertyUsage: it['property_usage'] || '',
+        initialDeposit: purchase['initial_payment_due'] ? `₦${Number(purchase['initial_payment_due']).toLocaleString()}` : '',
+        paymentMethod: this.toTitleCase(String(purchase['payment_method'] || '')),
+        balanceDue: purchase['balance_due'] ? `₦${Number(purchase['balance_due']).toLocaleString()}` : '',
+        receiptUrl: it['payment_receipt_url'] || ''
+      },
+
+      realtorDetails: {
+        name: it['realtor_name'] || '',
+        licenseNumber: '',
+        phone: it['realtor_phone'] || '',
+        email: it['realtor_email'] || '',
+        agency: ''
+      },
+
+      customerDetails: {
+        preferredContactMethod: '',
+        hearAboutUs: '',
+        additionalRequests: it['admin_notes'] || '',
+        investmentGoals: ''
+      }
+    };
+  }
+
+  private toTitleCase(value: string): string {
+    if (!value) return value;
+    return value
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
   }
 }

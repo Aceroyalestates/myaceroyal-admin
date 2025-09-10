@@ -20,52 +20,52 @@
       />
       <div class="flex flex-col gap-5 w-full">
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Email Address</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Email Address</p>
+          <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
             {{ user.email }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Phone Number</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Phone Number</p>
+          <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
             {{ user.phone_number }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Gender</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Gender</p>
+          <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
             {{ user.gender }}
           </h2>
         </div>
         <div class="flex items-center justify-between w-11/12">
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">Joined</p>
+            <p class="text-[#7A7A7A] !text-medium !mb-2">Joined</p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
+              class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
             >
               {{ user.createdAt | date }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Properties</p>
+            <p class="text-[#7A7A7A] !text-medium !mb-2">Total Properties</p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
+              class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
             >
               {{user.financial_transactions.total_assets ||  '0'}}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Purchases</p>
+            <p class="text-[#7A7A7A] !text-medium !mb-2">Total Purchases</p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
+              class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
             >
               &#8358; {{user.financial_transactions.total_purchases ||  '0'}}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">Status</p>
+            <p class="text-[#7A7A7A] !text-medium !mb-2">Status</p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
+              class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
             >
               Active
             </h2>
@@ -77,42 +77,42 @@
       class="flex gap-6 py-8 px-6 border border-[#EBEBEB] rounded-lg w-full bg-background"
     >
       <div class="flex flex-col gap-8 w-full">
-        <h2 class="!text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
+        <h2 class="text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
           Financial Transactions
         </h2>
         <div class="flex items-center justify-between w-11/12">
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Assets</p>
+            <p class="text-[#7A7A7A] !text-medium !mb-2">Total Assets</p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
               &#8358; {{user.financial_transactions.total_assets ||  '0'}}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">Outstanding Bill</p>
+            <p class="text-[#7A7A7A] !text-medium !mb-2">Outstanding Bill</p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
               &#8358; {{user.financial_transactions.outstanding_bills ||  '0'}}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">
+            <p class="text-[#7A7A7A] !text-medium !mb-2">
               Number of Installments
             </p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
               {{user.financial_transactions.number_of_installments ||  '0'}}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">
+            <p class="text-[#7A7A7A] !text-medium !mb-2">
               Next Installment Payment
             </p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
               &#8358; {{user.financial_transactions.next_installment_payment ||  '0'}}
             </h2>

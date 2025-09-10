@@ -92,6 +92,9 @@ export class TableComponent implements OnInit, OnChanges {
   @Input() showExport = true;
   @Input() pageSize = 10;
   @Input() pageSizeOptions = [10, 20, 50, 100];
+  @Input() serverMode = false; // when true, rely on external pagination
+  @Input() totalCount?: number; // total items from server
+  @Input() page?: number; // current page from parent (1-based)
   @Input() sortable = true;
   @Input() responsive = true;
   @Input() bordered = true;
@@ -140,12 +143,21 @@ export class TableComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.currentPageSize = this.pageSize;
+    if (this.page && this.page > 0) {
+      this.currentPage = this.page;
+    }
     this.initializeFilters();
     this.updateData();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['data'] || changes['columns']) {
+    if (changes['page'] && this.page && this.page > 0) {
+      this.currentPage = this.page;
+    }
+    if (changes['pageSize'] && this.pageSize) {
+      this.currentPageSize = this.pageSize;
+    }
+    if (changes['data'] || changes['columns'] || changes['totalCount']) {
       this.updateData();
     }
   }
@@ -176,7 +188,7 @@ export class TableComponent implements OnInit, OnChanges {
     }
 
     this.filteredData = processedData;
-    this.total = processedData.length;
+    this.total = this.serverMode && this.totalCount !== undefined ? this.totalCount : processedData.length;
 
     // Apply pagination
     this.updateDisplayData();
@@ -223,9 +235,14 @@ export class TableComponent implements OnInit, OnChanges {
   }
 
   updateDisplayData(): void {
-    const startIndex = (this.currentPage - 1) * this.currentPageSize;
-    const endIndex = startIndex + this.currentPageSize;
-    this.displayData = this.filteredData.slice(startIndex, endIndex);
+    if (this.serverMode) {
+      // In server mode, parent provides already paged data
+      this.displayData = [...this.filteredData];
+    } else {
+      const startIndex = (this.currentPage - 1) * this.currentPageSize;
+      const endIndex = startIndex + this.currentPageSize;
+      this.displayData = this.filteredData.slice(startIndex, endIndex);
+    }
   }
 
   getCellValue(row: any, column: TableColumn | null): any {

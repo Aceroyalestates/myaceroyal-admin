@@ -33,38 +33,38 @@
 
       <div class="flex flex-wrap items-center justify-between w-11/12 gap-x-16">
         <div class="flex flex-col gap-4">
-          <p class="!text-[#7A7A7A] !text-medium">Full Name</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] !text-medium">Full Name</p>
+          <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
             {{ user.full_name }}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
-          <p class="!text-[#7A7A7A] !text-medium">Email Address</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] !text-medium">Email Address</p>
+          <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
             {{ user.email }}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
-          <p class="!text-[#7A7A7A] !text-medium">Realtor Tag</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] !text-medium">Realtor Tag</p>
+          <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
             {{ user.referral_code }}
           </h2>
         </div>
         <div class="flex flex-col gap-4">
-          <p class="!text-[#7A7A7A] !text-medium">Total Property Managed</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] !text-medium">Total Property Managed</p>
+          <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
            <!-- {{ user.total_property_managed }} -->
              N/A
           </h2>
         </div>
         <div class="flex flex-col gap-4">
-          <p class="!text-[#7A7A7A] !text-medium">Total Purchases</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] !text-medium">Total Purchases</p>
+          <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0">
             &#8358; N/A
           </h2>
         </div>
         <div class="flex flex-col gap-4">
-          <p class="!text-[#7A7A7A] !text-medium">Status</p>
+          <p class="text-[#7A7A7A] !text-medium">Status</p>
           <h2 class="!text-[#008028] text-normal font-medium text-[20px] !mb-0">
             {{ user.is_active ? "Active" : ("Inactive" | titlecase) }}
           </h2>
@@ -75,52 +75,52 @@
       class="flex gap-6 py-8 px-6 border border-[#EBEBEB] rounded-lg w-11/12 bg-background rounded-ss-none rounded-se-none"
     >
       <div class="flex flex-col gap-8 w-full">
-        <h2 class="!text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
+        <h2 class="text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
           Additional Details
         </h2>
         <div
           class="flex flex-wrap items-center max-w-11/12 gap-x-[93px] gap-y-8"
         >
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">Nationality</p>
+            <p class="text-[#7A7A7A] !text-medium !mb-2">Nationality</p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
               {{ nationality.name || "N/A" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">State of Origin</p>
+            <p class="text-[#7A7A7A] !text-medium !mb-2">State of Origin</p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
               {{ state.name || "N/A" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">Realtor</p>
+            <p class="text-[#7A7A7A] !text-medium !mb-2">Realtor</p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
               {{ user.address || "N/A" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">
+            <p class="text-[#7A7A7A] !text-medium !mb-2">
               Bank Verificatin Number (BVN)
             </p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
               {{ user.bank_verification_number || "N/A" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
-            <p class="!text-[#7A7A7A] !text-medium !mb-2">
+            <p class="text-[#7A7A7A] !text-medium !mb-2">
               National Identity Number (NIN)
             </p>
             <h2
-              class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
+              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
             >
               {{ user.national_identity_number || "N/A" }}
             </h2>

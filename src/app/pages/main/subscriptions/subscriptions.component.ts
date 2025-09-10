@@ -3,6 +3,8 @@ import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } fr
 import { Router } from '@angular/router';
 import { Subscription as RxSubscription } from 'rxjs';
 import { ThemeService } from 'src/app/core/services/theme.service';
+import { SubscriptionService } from 'src/app/core/services/subscription.service';
+import { GetFormsParams } from 'src/app/core/models/subscriptions';
 import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
 import { SearchBarComponent } from 'src/app/shared/components/search-bar/search-bar.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -28,15 +30,15 @@ interface SubscriptionMetric {
 }
 
 interface Subscription {
-  id: number;
+  id: string;
   reference: string;
   clientName: string;
   propertyName: string;
   formType: string;
-  status: 'Completed' | 'In Progress' | 'Pending' | 'Incomplete';
+  status: string;
   submissionDate: string;
   lastUpdated: string;
-  completionPercentage: number;
+  completionPercentage?: number;
 }
 
 @Component({
@@ -65,7 +67,11 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
   chart: Chart | null = null;
   private themeSubscription: RxSubscription = new RxSubscription();
 
-  constructor(private router: Router, private themeService: ThemeService) {}  // Subscription metrics data
+  constructor(
+    private router: Router,
+    private themeService: ThemeService,
+    private subscriptionService: SubscriptionService
+  ) {}
   subscriptionMetrics: SubscriptionMetric[] = [
     {
       id: 1,
@@ -102,63 +108,12 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
   ];
 
   // Subscription form data
-  subscriptions: Subscription[] = [
-    {
-      id: 1,
-      reference: 'SUB-000001',
-      clientName: 'John Michael Doe',
-      propertyName: 'Royal Gardens Estate - Block A',
-      formType: 'Property Purchase Form',
-      status: 'In Progress',
-      submissionDate: '2024-08-15',
-      lastUpdated: '2024-08-20',
-      completionPercentage: 75
-    },
-    {
-      id: 2,
-      reference: 'SUB-000002',
-      clientName: 'Jane Smith',
-      propertyName: 'Ocean View Apartments',
-      formType: 'Investment Form',
-      status: 'Completed',
-      submissionDate: '2024-08-10',
-      lastUpdated: '2024-08-18',
-      completionPercentage: 100
-    },
-    {
-      id: 3,
-      reference: 'SUB-000003',
-      clientName: 'Robert Johnson',
-      propertyName: 'City Center Complex',
-      formType: 'Property Purchase Form',
-      status: 'Incomplete',
-      submissionDate: '2024-08-12',
-      lastUpdated: '2024-08-12',
-      completionPercentage: 35
-    },
-    {
-      id: 4,
-      reference: 'SUB-000004',
-      clientName: 'Sarah Williams',
-      propertyName: 'Green Valley Estate',
-      formType: 'Rental Agreement Form',
-      status: 'Pending',
-      submissionDate: '2024-08-18',
-      lastUpdated: '2024-08-19',
-      completionPercentage: 60
-    },
-    {
-      id: 5,
-      reference: 'SUB-000005',
-      clientName: 'Michael Brown',
-      propertyName: 'Skyline Towers',
-      formType: 'Investment Form',
-      status: 'In Progress',
-      submissionDate: '2024-08-14',
-      lastUpdated: '2024-08-21',
-      completionPercentage: 85
-    }
-  ];
+  subscriptions: Subscription[] = [];
+  loading = false;
+  // Server pagination state
+  pageIndex = 1;
+  pageSize = 10;
+  total = 0;
 
   // Chart data
   chartData = {
@@ -169,7 +124,6 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
   // Search and filter properties
   searchTerm: string = '';
   selectedPeriod: string = 'Last 30 Days';
-  selectedPlanType: string = '';
   selectedStatus: string = '';
   startDate: Date | null = null;
   endDate: Date | null = null;
@@ -239,6 +193,7 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnInit(): void {
     // Component initialization
+    this.fetchForms();
     
     // Subscribe to theme changes
     this.themeSubscription = this.themeService.theme$.subscribe(() => {
@@ -331,21 +286,32 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   onExport(): void {
-    console.log('Exporting subscription data...');
+    const params = this.currentFilters();
+    this.subscriptionService.exportForms({ ...params, format: 'csv' }).subscribe({
+      next: (blob) => {
+        if (blob instanceof Blob) {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'property-forms.csv';
+          a.click();
+          window.URL.revokeObjectURL(url);
+        } else {
+          console.log('Export JSON:', blob);
+        }
+      }
+    });
   }
 
   onSearchTermChange(term: string): void {
     this.searchTerm = term;
-    // Implement search filtering logic
-  }
-
-  onPlanTypeChange(planType: string): void {
-    this.selectedPlanType = planType;
-    // Implement plan type filtering logic
+    this.pageIndex = 1;
+    this.fetchForms();
   }
 
   onDateRangeChange(): void {
-    // Implement date range filtering logic
+    this.pageIndex = 1;
+    this.fetchForms();
   }
 
   onTableAction(event: { action: string; row: any }): void {
@@ -359,5 +325,89 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
 
   onSelectionChange(selectedItems: Subscription[]): void {
     console.log('Selected subscriptions:', selectedItems);
+  }
+
+  onPageChange(event: { page: number; size: number }): void {
+    this.pageIndex = event.page;
+    this.pageSize = event.size;
+    this.fetchForms();
+  }
+
+  private fetchForms(): void {
+    this.loading = true;
+    const params = this.currentFilters();
+    console.log('[SubscriptionsComponent] fetchForms -> params', params);
+    this.subscriptionService.getForms(params).subscribe({
+      next: (res) => {
+        console.log('[SubscriptionsComponent] fetchForms -> response', res);
+        const items = (res.data || []) as any[];
+        this.subscriptions = items.map((it) => {
+          const fullName = it['owner']?.['full_name']
+            || [it['first_name'], it['last_name']].filter(Boolean).join(' ').trim()
+            || it['email']
+            || '—';
+          const property = it['purchase']?.['unit']?.['id']
+            ? `Unit #${it['purchase']['unit']['id']}`
+            : (it['property_type'] ? this.toTitleCase(String(it['property_type'])) : '—');
+          return {
+            id: String(it['id'] ?? ''),
+            reference: String(it['id'] ?? ''),
+            clientName: fullName,
+            propertyName: property,
+            formType: 'Property Purchase Form',
+            status: this.toTitleCase(String(it['form_status'] || '—')),
+            submissionDate: it['createdAt'] || it['created_at'] || '',
+            lastUpdated: it['updatedAt'] || it['updated_at'] || '',
+          } as Subscription;
+        });
+        // Update server pagination from response if present
+        this.total = (res as any)?.pagination?.total ?? this.subscriptions.length;
+        this.pageIndex = (res as any)?.pagination?.page ?? this.pageIndex;
+        this.pageSize = (res as any)?.pagination?.limit ?? this.pageSize;
+      },
+      error: (err) => {
+        console.error('[SubscriptionsComponent] fetchForms -> error', err);
+        this.subscriptions = [];
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  private currentFilters(): GetFormsParams {
+    const params: GetFormsParams = {
+      page: this.pageIndex,
+      limit: this.pageSize,
+      search: this.searchTerm || undefined,
+      sortBy: 'created_at',
+      sortOrder: 'DESC',
+    };
+    if (this.selectedStatus) {
+      params.status = this.selectedStatus.toLowerCase().replace(/\s+/g, '_');
+    }
+    if (this.startDate) {
+      params.fromDate = this.formatDate(this.startDate);
+    }
+    if (this.endDate) {
+      params.toDate = this.formatDate(this.endDate);
+    }
+    return params;
+  }
+
+  private formatDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  private toTitleCase(value: string): string {
+    if (!value) return value;
+    return value
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
   }
 }

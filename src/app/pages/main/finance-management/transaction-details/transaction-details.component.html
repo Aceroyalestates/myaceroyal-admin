@@ -22,7 +22,7 @@
         <span class="flex items-center">Back</span>
       </button>
       <div>
-        <h1 class="text-[#4F4F4F] dark:text-gray-300 text-[28px] font-semibold mb-1">Transaction Details</h1>
+        <h1 class="text-[#4F4F4F] dark:text-gray-400 text-[28px] font-semibold mb-1">Transaction Details</h1>
         <p class="text-[#7A7A7A] dark:text-gray-400 text-[14px]" *ngIf="transaction">
           Reference: {{ transaction.reference }}
         </p>
@@ -50,29 +50,29 @@
     <div class="lg:col-span-2">
       <nz-card class="transaction-info-card transaction-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '32px' }">
         <div class="mb-6">
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-4">Transaction Information</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-4">Transaction Information</h2>
         </div>
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
           <nz-descriptions-item nzTitle="Transaction ID">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ transaction.id }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ transaction.id }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Reference">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ transaction.reference }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ transaction.reference }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Payment Type">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.paymentType }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.paymentType }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Amount">
             <span class="text-[#E41C24] font-bold text-[18px]">{{ transaction.amount }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Transaction Fee">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.transactionFee }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.transactionFee }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Net Amount">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-semibold">{{ transaction.netAmount }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-semibold">{{ transaction.netAmount }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Date">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.date | date: 'fullDate' }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.date | date: 'fullDate' }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Status">
             <nz-tag [nzColor]="getStatusColor(transaction.status)" class="px-3 py-1 rounded-full font-medium">
@@ -80,10 +80,10 @@
             </nz-tag>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Payment Method">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.paymentMethod }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.paymentMethod }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Property">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.property }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.property }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Description" [nzSpan]="2">
             <span class="text-[#7A7A7A] dark:text-gray-400">{{ transaction.description }}</span>
@@ -94,11 +94,11 @@
       <!-- Client Information -->
       <nz-card class="client-info-card transaction-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '32px' }">
         <div class="mb-6">
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-4">Client Information</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-4">Client Information</h2>
         </div>
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
           <nz-descriptions-item nzTitle="Name">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ transaction.client }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ transaction.client }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Email">
             <a [href]="'mailto:' + transaction.clientEmail" class="text-[#E41C24] hover:text-[#d1181f]">{{ transaction.clientEmail }}</a>
@@ -107,7 +107,7 @@
             <a [href]="'tel:' + transaction.clientPhone" class="text-[#E41C24] hover:text-[#d1181f]">{{ transaction.clientPhone }}</a>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Mode of Payment">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.modeOfPayment }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.modeOfPayment }}</span>
           </nz-descriptions-item>
         </nz-descriptions>
       </nz-card>
@@ -118,7 +118,7 @@
       <!-- Quick Actions -->
       <nz-card class="quick-actions-card transaction-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
         <div class="mb-4">
-          <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Quick Actions</h3>
+          <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold">Quick Actions</h3>
         </div>
         <div class="quick-actions-buttons">
           <!-- Download Evidence (only for transactions with evidence) -->
@@ -213,7 +213,7 @@
       <!-- Transaction Status -->
       <nz-card class="status-info-card transaction-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
         <div class="mb-4">
-          <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Status Information</h3>
+          <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold">Status Information</h3>
         </div>
         <div class="text-center">
           <nz-tag [nzColor]="getStatusColor(transaction.status)" class="text-[16px] px-6 py-3 rounded-full font-semibold">
@@ -236,7 +236,7 @@
     (nzOnOk)="handleReviewOk()">
     <ng-container *nzModalContent>
       <div class="mb-4">
-        <p class="text-gray-600 dark:text-gray-300 mb-4">
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
           Please provide comments for this transaction review. This will help track the review process.
         </p>
         <nz-form-item>
@@ -290,7 +290,7 @@
     (nzOnOk)="handleValidateOk()">
     <ng-container *nzModalContent>
       <div class="mb-4">
-        <p class="text-gray-600 dark:text-gray-300 mb-4">
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
           Please provide instructions for the legal team to proceed with documentation. This will help them understand the specific requirements for this transaction.
         </p>
         <nz-form-item>
@@ -324,7 +324,7 @@
     (nzOnOk)="handleSendToClientOk()">
     <ng-container *nzModalContent>
       <div class="mb-4">
-        <p class="text-gray-600 dark:text-gray-300 mb-4">
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
           Choose what to send to the client:
         </p>
         <nz-form-item>

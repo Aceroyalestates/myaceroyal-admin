@@ -23,7 +23,7 @@
         </div>
         
         <div class="flex items-center justify-between">
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[32px] font-semibold mb-0">{{ metric.amount }}</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[32px] font-semibold mb-0">{{ metric.amount }}</h2>
           <nz-tag [nzColor]="metric.color">
             <span nz-icon nzType="arrow-up"></span>
             {{ metric.percentage }} This Month
@@ -40,7 +40,7 @@
         <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
           <span nz-icon nzType="line-chart" class="text-[#E41C24]"></span>
         </div>
-        <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Transaction Balance</h3>
+        <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Transaction Balance</h3>
       </div>
       
       <nz-select [(ngModel)]="selectedPeriod" class="w-40" nzSize="default">
@@ -51,7 +51,7 @@
     </div>
     
     <div class="mb-4">
-      <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[32px] font-bold mb-1">₦300,000,000</h2>
+      <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[32px] font-bold mb-1">₦300,000,000</h2>
       <div class="flex items-center gap-2">
         <nz-tag nzColor="success">
           <span nz-icon nzType="arrow-up"></span>
@@ -72,7 +72,7 @@
   <!-- Recent Financial Activity Section -->
   <nz-card class="finance-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
     <div class="flex items-center justify-between mb-6">
-      <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[24px] font-semibold mb-0">Recent Financial Activity</h3>
+      <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[24px] font-semibold mb-0">Recent Financial Activity</h3>
       <button 
         nz-button 
         nzType="primary"
@@ -116,7 +116,7 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <span class="text-[#4F4F4F] dark:text-gray-300 text-sm whitespace-nowrap">Start Date</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 text-sm whitespace-nowrap">Start Date</span>
             <nz-date-picker 
               [(ngModel)]="startDate"
               (ngModelChange)="onDateRangeChange()"
@@ -127,7 +127,7 @@
           </div>
           
           <div class="flex items-center gap-2">
-            <span class="text-[#4F4F4F] dark:text-gray-300 text-sm whitespace-nowrap">End Date</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 text-sm whitespace-nowrap">End Date</span>
             <nz-date-picker 
               [(ngModel)]="endDate"
               (ngModelChange)="onDateRangeChange()"
@@ -145,6 +145,7 @@
       [data]="transactions"
       [columns]="columns"
       [actions]="actions"
+      [loading]="loading"
       [showSearch]="false"
       [showFilters]="true"
       [showSelection]="true"
