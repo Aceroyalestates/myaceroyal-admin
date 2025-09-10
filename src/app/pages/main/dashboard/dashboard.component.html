@@ -44,6 +44,45 @@
       }
     </div>
 
+    <!-- Analytics Charts -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '16px' }">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Revenue Trend (Last 12 Months)</h3>
+        </div>
+        <div class="h-72">
+          <canvas #revenueChart></canvas>
+        </div>
+      </nz-card>
+
+      <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '16px' }">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Payments by Method</h3>
+        </div>
+        <div class="h-72">
+          <canvas #paymentsChart></canvas>
+        </div>
+      </nz-card>
+
+      <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '16px' }">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Property Status Overview</h3>
+        </div>
+        <div class="h-72">
+          <canvas #propertiesChart></canvas>
+        </div>
+      </nz-card>
+
+      <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '16px' }">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Top Realtors by Closed Deals</h3>
+        </div>
+        <div class="h-72">
+          <canvas #realtorsChart></canvas>
+        </div>
+      </nz-card>
+    </div>
+
     <!-- Property Section -->
     <div class="rounded-lg border-2 border-[#EEF2F6] bg-background p-10 flex flex-col gap-10 mb-16">
       <p class="text-normal font-medium text-[#4F4F4F] text-[32px]">
@@ -118,137 +157,58 @@
       </div>
     </div>
 
-    <!-- System Activity Report (Admin/Realtor/User activities) -->
-    <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
-      <div class="flex items-center justify-between mb-7 px-7">
-        <div class="flex flex-col gap-2">
-          <p class="text-normal font-medium text-[#4F4F4F] text-[32px]">
-            System Activity Report
-          </p>
-          <p class="text-medium text-[#4F4F4F]">
-            Track admin, realtor, and user activities with date range and role filters
-          </p>
-        </div>
-        
-        <!-- Filters in same line -->
-        <div class="flex items-center gap-4 flex-wrap">
-          <!-- Date Range Filters -->
-          <div class="flex items-center gap-2">
-            <span class="text-[#4F4F4F] text-sm whitespace-nowrap">Start Date</span>
-            <nz-date-picker 
-              [(ngModel)]="systemReportFilters.startDate"
-              nzFormat="yyyy-MM-dd"
-              nzPlaceHolder="Start Date"
-              class="w-40">
-            </nz-date-picker>
+    <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '0' }">
+      <nz-tabset>
+        <nz-tab nzTitle="Audit Trail">
+          <div class="px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
+            <app-search-bar class="max-w-md flex-1" placeholder="Search activities..." (search)="onSystemSearch($event)"></app-search-bar>
+            <div class="flex items-center gap-4">
+              <nz-date-picker [(ngModel)]="systemReportFilters.startDate" (ngModelChange)="onSystemDateChange()" nzFormat="yyyy-MM-dd" nzPlaceHolder="Start Date" class="w-40"></nz-date-picker>
+              <nz-date-picker [(ngModel)]="systemReportFilters.endDate" (ngModelChange)="onSystemDateChange()" nzFormat="yyyy-MM-dd" nzPlaceHolder="End Date" class="w-40"></nz-date-picker>
+            </div>
           </div>
-          
-          <div class="flex items-center gap-2">
-            <span class="text-[#4F4F4F] text-sm whitespace-nowrap">End Date</span>
-            <nz-date-picker 
-              [(ngModel)]="systemReportFilters.endDate"
-              nzFormat="yyyy-MM-dd"
-              nzPlaceHolder="End Date"
-              class="w-40">
-            </nz-date-picker>
+          <div class="px-4 pb-6">
+            <app-table
+              [data]="filteredSystemActivities"
+              [columns]="systemReportColumns"
+              [actions]="systemReportActions"
+              [loading]="systemReportLoading"
+              [showSelection]="false"
+              [showPagination]="true"
+              [showSearch]="false"
+              [showFilters]="false"
+              [showExport]="false"
+              (actionClick)="onSystemReportAction($event)"
+              class="w-full"
+            />
           </div>
-          
-          <!-- User Role Filter -->
-          <div class="flex items-center gap-2">
-            <nz-select
-              [(ngModel)]="systemReportFilters.userRole"
-              nzAllowClear
-              nzPlaceHolder="All Roles"
-              class="w-32"
-            >
-              <nz-option nzValue="admin" nzLabel="Admin"></nz-option>
-              <nz-option nzValue="realtor" nzLabel="Realtor"></nz-option>
-              <nz-option nzValue="user" nzLabel="User"></nz-option>
-            </nz-select>
+        </nz-tab>
+        <nz-tab nzTitle="Customer Activity">
+          <div class="px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
+            <app-search-bar class="max-w-md flex-1" placeholder="Search customer activity..." (search)="onCustomerSearch($event)"></app-search-bar>
+            <div class="flex items-center gap-4">
+              <nz-date-picker [(ngModel)]="customerReportFilters.startDate" (ngModelChange)="onCustomerDateChange()" nzFormat="yyyy-MM-dd" nzPlaceHolder="Start Date" class="w-40"></nz-date-picker>
+              <nz-date-picker [(ngModel)]="customerReportFilters.endDate" (ngModelChange)="onCustomerDateChange()" nzFormat="yyyy-MM-dd" nzPlaceHolder="End Date" class="w-40"></nz-date-picker>
+            </div>
           </div>
-        </div>
-      </div>
-      <app-table
-        [data]="systemActivities"
-        [columns]="systemReportColumns"
-        [actions]="systemReportActions"
-        [loading]="systemReportLoading"
-        [showSelection]="false"
-        [showPagination]="true"
-        [showSearch]="true"
-        [showFilters]="false"
-        [showExport]="false"
-        (actionClick)="onSystemReportAction($event)"
-        class="w-full"
-      />
-    </div>
-
-    <!-- Customer Activity Report -->
-    <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
-      <div class="flex items-center justify-between mb-7 px-7">
-        <div class="flex flex-col gap-2">
-          <p class="text-normal font-medium text-[#4F4F4F] text-[32px]">
-            Customer Activity Report
-          </p>
-          <p class="text-medium text-[#4F4F4F]">
-            Track customer activities: account creation, subscriptions, payments, etc.
-          </p>
-        </div>
-        
-        <!-- Filters in same line -->
-        <div class="flex items-center gap-4 flex-wrap">
-          <!-- Date Range Filters -->
-          <div class="flex items-center gap-2">
-            <span class="text-[#4F4F4F] text-sm whitespace-nowrap">Start Date</span>
-            <nz-date-picker 
-              [(ngModel)]="customerReportFilters.startDate"
-              nzFormat="yyyy-MM-dd"
-              nzPlaceHolder="Start Date"
-              class="w-40">
-            </nz-date-picker>
+          <div class="px-4 pb-6">
+            <app-table
+              [data]="filteredCustomerActivities"
+              [columns]="customerReportColumns"
+              [actions]="customerReportActions"
+              [loading]="customerReportLoading"
+              [showSelection]="false"
+              [showPagination]="true"
+              [showSearch]="false"
+              [showFilters]="false"
+              [showExport]="false"
+              (actionClick)="onCustomerReportAction($event)"
+              class="w-full"
+            />
           </div>
-          
-          <div class="flex items-center gap-2">
-            <span class="text-[#4F4F4F] text-sm whitespace-nowrap">End Date</span>
-            <nz-date-picker 
-              [(ngModel)]="customerReportFilters.endDate"
-              nzFormat="yyyy-MM-dd"
-              nzPlaceHolder="End Date"
-              class="w-40">
-            </nz-date-picker>
-          </div>
-          
-          <!-- Activity Type Filter -->
-          <div class="flex items-center gap-2">
-            <nz-select
-              [(ngModel)]="customerReportFilters.activityType"
-              nzAllowClear
-              nzPlaceHolder="All Activities"
-              class="w-40"
-            >
-              <nz-option nzValue="account_created" nzLabel="Account Created"></nz-option>
-              <nz-option nzValue="subscription_form" nzLabel="Subscription Form"></nz-option>
-              <nz-option nzValue="payment_made" nzLabel="Payment Made"></nz-option>
-              <nz-option nzValue="property_viewed" nzLabel="Property Viewed"></nz-option>
-              <nz-option nzValue="inquiry_sent" nzLabel="Inquiry Sent"></nz-option>
-            </nz-select>
-          </div>
-        </div>
-      </div>
-      <app-table
-        [data]="customerActivities"
-        [columns]="customerReportColumns"
-        [actions]="customerReportActions"
-        [loading]="customerReportLoading"
-        [showSelection]="false"
-        [showPagination]="true"
-        [showSearch]="true"
-        [showFilters]="false"
-        [showExport]="false"
-        (actionClick)="onCustomerReportAction($event)"
-        class="w-full"
-      />
-    </div>
+        </nz-tab>
+      </nz-tabset>
+    </nz-card>
 
     <!-- Recent Activity Section -->
     <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">

@@ -59,5 +59,8 @@ export class ProgressService {
   private set(partial: Partial<ProgressState>): void {
     this.state$.next({ ...this.state$.value, ...partial });
   }
-}
 
+  getSnapshot(): ProgressState {
+    return this.state$.value;
+  }
+}

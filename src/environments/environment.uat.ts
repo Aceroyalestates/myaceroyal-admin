@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
   apiUrl: 'https://myaceroyal-backend.onrender.com/api',
+  mock: false,
 
 
   

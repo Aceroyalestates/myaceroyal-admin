@@ -30,7 +30,13 @@ export class AppComponent implements OnInit, OnDestroy {
           this.progress.start();
         }
         if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
-          this.progress.complete();
+          // Defer completion to HTTP interceptor if requests fire; otherwise finish quickly
+          setTimeout(() => {
+            const snap = this.progress.getSnapshot();
+            if (snap.visible && snap.value < 20) {
+              this.progress.complete();
+            }
+          }, 300);
         }
       });
 

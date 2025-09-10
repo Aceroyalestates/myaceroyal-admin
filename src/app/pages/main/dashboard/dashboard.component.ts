@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 import {
   TableAction,
@@ -10,11 +10,19 @@ import { Metric } from 'src/app/core/types/general';
 import { Metrics, PAGE_SIZE } from 'src/app/core/constants';
 import { FormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { DashboardService } from '../../../core/services/dashboard.service';
+import { MockDataService } from 'src/app/core/services/mock-data.service';
+import { environment } from 'src/environments/environment';
 import { forkJoin, Subscription } from 'rxjs';
 import { Property } from 'src/app/core/models/properties';
 import { Activity } from 'src/app/core/models/generic';
 import { PaymentDetailsComponent } from './payment-details/payment-details.component';
+import Chart from 'chart.js/auto';
+import { ThemeService } from 'src/app/core/services/theme.service';
+import { SearchBarComponent } from 'src/app/shared/components/search-bar/search-bar.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,12 +32,16 @@ import { PaymentDetailsComponent } from './payment-details/payment-details.compo
     IconComponent,
     FormsModule,
     NzSelectModule,
+    NzDatePickerModule,
+    NzCardModule,
+    NzTabsModule,
+    SearchBarComponent,
     PaymentDetailsComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   loading = false;
   error: string | null = null;
   activities!: Activity[];
@@ -75,6 +87,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   properties!: Property[];
   isVisible = false
   activity: Activity = {} as Activity;
+  // Charts
+  @ViewChild('revenueChart', { static: false }) revenueChartRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('paymentsChart', { static: false }) paymentsChartRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('propertiesChart', { static: false }) propertiesChartRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('realtorsChart', { static: false }) realtorsChartRef!: ElementRef<HTMLCanvasElement>;
+
+  private revenueChart?: Chart;
+  private paymentsChart?: Chart;
+  private propertiesChart?: Chart;
+  private realtorsChart?: Chart;
 
   // Report Filters
   systemReportFilters = {
@@ -92,6 +114,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Report Data
   systemActivities: any[] = [];
   customerActivities: any[] = [];
+  filteredSystemActivities: any[] = [];
+  filteredCustomerActivities: any[] = [];
   systemReportLoading = false;
   customerReportLoading = false;
 
@@ -197,7 +221,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
   constructor(
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private themeService: ThemeService,
+    private mockData: MockDataService
   ) {}
 
   ngOnInit(): void {
@@ -205,132 +231,61 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.initializeReportDates();
     this.loadSystemReport();
     this.loadCustomerReport();
+    this.themeService.theme$.subscribe(() => {
+      this.rebuildCharts();
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.initAllCharts();
   }
 
   private initializeReportDates(): void {
+    if (environment.mock) {
+      // Leave empty to show all mock records by default
+      this.systemReportFilters.startDate = '';
+      this.systemReportFilters.endDate = '';
+      this.customerReportFilters.startDate = '';
+      this.customerReportFilters.endDate = '';
+      return;
+    }
     const today = new Date();
     const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
-    
     this.systemReportFilters.startDate = thirtyDaysAgo.toISOString().split('T')[0];
     this.systemReportFilters.endDate = today.toISOString().split('T')[0];
-    
     this.customerReportFilters.startDate = thirtyDaysAgo.toISOString().split('T')[0];
     this.customerReportFilters.endDate = today.toISOString().split('T')[0];
   }
 
   loadSystemReport(): void {
     this.systemReportLoading = true;
-    
-    // Mock data for system activities
-    setTimeout(() => {
-      this.systemActivities = [
-        {
-          id: 1,
-          user_name: 'John Admin',
-          user_role: 'Admin',
-          action: 'Property Created',
-          details: 'Created new property: Lagos Luxury Apartment',
-          date: '2024-12-09 10:30 AM',
-          status: 'Completed'
-        },
-        {
-          id: 2,
-          user_name: 'Sarah Realtor',
-          user_role: 'Realtor',
-          action: 'Client Meeting',
-          details: 'Met with potential buyer for Property #123',
-          date: '2024-12-09 02:15 PM',
-          status: 'Completed'
-        },
-        {
-          id: 3,
-          user_name: 'Mike User',
-          user_role: 'User',
-          action: 'Profile Updated',
-          details: 'Updated contact information and preferences',
-          date: '2024-12-09 04:45 PM',
-          status: 'Completed'
-        },
-        {
-          id: 4,
-          user_name: 'Admin System',
-          user_role: 'Admin',
-          action: 'Report Generated',
-          details: 'Generated monthly revenue report',
-          date: '2024-12-09 06:00 PM',
-          status: 'Completed'
-        },
-        {
-          id: 5,
-          user_name: 'Jane Realtor',
-          user_role: 'Realtor',
-          action: 'Property Updated',
-          details: 'Updated pricing for Property #456',
-          date: '2024-12-09 08:20 PM',
-          status: 'Completed'
-        }
-      ];
-      this.systemReportLoading = false;
-    }, 1000);
+    if (environment.mock) {
+      this.mockData.getSystemActivities().subscribe(items => {
+        this.systemActivities = items;
+        this.systemReportLoading = false;
+        this.applySystemFilters();
+      });
+      return;
+    }
+    // TODO: real API call when available
+    this.systemReportLoading = false;
+    this.applySystemFilters();
   }
 
   loadCustomerReport(): void {
     this.customerReportLoading = true;
     
-    // Mock data for customer activities
-    setTimeout(() => {
-      this.customerActivities = [
-        {
-          id: 1,
-          customer_name: 'Alice Johnson',
-          activity_type: 'Account Created',
-          description: 'New customer registration completed',
-          date: '2024-12-09 09:15 AM',
-          status: 'Active'
-        },
-        {
-          id: 2,
-          customer_name: 'Bob Williams',
-          activity_type: 'Subscription Form',
-          description: 'Filled premium subscription form',
-          date: '2024-12-09 11:30 AM',
-          status: 'Pending'
-        },
-        {
-          id: 3,
-          customer_name: 'Carol Davis',
-          activity_type: 'Payment Made',
-          description: 'Payment of ₦50,000 for property consultation',
-          date: '2024-12-09 01:45 PM',
-          status: 'Completed'
-        },
-        {
-          id: 4,
-          customer_name: 'David Brown',
-          activity_type: 'Property Viewed',
-          description: 'Viewed Lagos Luxury Apartment details',
-          date: '2024-12-09 03:20 PM',
-          status: 'Active'
-        },
-        {
-          id: 5,
-          customer_name: 'Emma Wilson',
-          activity_type: 'Inquiry Sent',
-          description: 'Sent inquiry about Abuja property pricing',
-          date: '2024-12-09 05:30 PM',
-          status: 'Pending'
-        },
-        {
-          id: 6,
-          customer_name: 'Frank Miller',
-          activity_type: 'Payment Made',
-          description: 'Payment of ₦2,500,000 for property purchase',
-          date: '2024-12-09 07:10 PM',
-          status: 'Completed'
-        }
-      ];
-      this.customerReportLoading = false;
-    }, 1000);
+    if (environment.mock) {
+      this.mockData.getCustomerActivities().subscribe(items => {
+        this.customerActivities = items;
+        this.customerReportLoading = false;
+        this.applyCustomerFilters();
+      });
+      return;
+    }
+    // TODO: real API call when available
+    this.customerReportLoading = false;
+    this.applyCustomerFilters();
   }
 
   onSystemReportAction(event: { action: string; row: any }): void {
@@ -374,7 +329,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Cleanup if needed
+    this.destroyCharts();
   }
 
   loadUsers() {
@@ -409,6 +364,216 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const b = parseInt(hex.slice(5, 7), 16);
 
     return `rgba(${r}, ${g}, ${b}, 0.12)`;
+  }
+
+  // ===== Report filtering =====
+  systemSearchTerm = '';
+  customerSearchTerm = '';
+
+  onSystemSearch(term: string) {
+    this.systemSearchTerm = term;
+    this.applySystemFilters();
+  }
+
+  onCustomerSearch(term: string) {
+    this.customerSearchTerm = term;
+    this.applyCustomerFilters();
+  }
+
+  onSystemDateChange() { this.applySystemFilters(); }
+  onCustomerDateChange() { this.applyCustomerFilters(); }
+
+  private applySystemFilters(): void {
+    const { startDate, endDate } = this.systemReportFilters;
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    const term = this.systemSearchTerm.toLowerCase();
+    this.filteredSystemActivities = this.systemActivities.filter(a => {
+      const dateOk = this.inRange(this.parseDate(a.date), start, end);
+      const text = `${a.user_name} ${a.user_role} ${a.action} ${a.details}`.toLowerCase();
+      const searchOk = !term || text.includes(term);
+      return dateOk && searchOk;
+    });
+  }
+
+  private applyCustomerFilters(): void {
+    const { startDate, endDate } = this.customerReportFilters;
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    const term = this.customerSearchTerm.toLowerCase();
+    this.filteredCustomerActivities = this.customerActivities.filter(a => {
+      const dateOk = this.inRange(this.parseDate(a.date), start, end);
+      const text = `${a.customer_name} ${a.activity_type} ${a.description} ${a.status}`.toLowerCase();
+      const searchOk = !term || text.includes(term);
+      return dateOk && searchOk;
+    });
+  }
+
+  private parseDate(val: string): Date | null {
+    if (!val) return null;
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  private inRange(date: Date | null, start: Date | null, end: Date | null): boolean {
+    if (!date) return true; // keep if missing
+    if (start && date < start) return false;
+    if (end) {
+      // include entire end day
+      const endOfDay = new Date(end);
+      endOfDay.setHours(23, 59, 59, 999);
+      if (date > endOfDay) return false;
+    }
+    return true;
+  }
+
+  // ============ Charts ============
+  private cssVars() {
+    const cs = getComputedStyle(document.documentElement);
+    return {
+      primary: cs.getPropertyValue('--primary').trim() || '#E41C24',
+      text: cs.getPropertyValue('--text').trim() || '#111827',
+      muted: cs.getPropertyValue('--muted').trim() || '#6b7280',
+      border: cs.getPropertyValue('--border').trim() || '#e5e7eb',
+      surface: cs.getPropertyValue('--surface').trim() || '#ffffff',
+    };
+  }
+
+  private initAllCharts(): void {
+    this.destroyCharts();
+    this.initRevenueChart();
+    this.initPaymentsChart();
+    this.initPropertiesChart();
+    this.initRealtorsChart();
+  }
+
+  private rebuildCharts(): void {
+    this.initAllCharts();
+  }
+
+  private destroyCharts(): void {
+    this.revenueChart?.destroy();
+    this.paymentsChart?.destroy();
+    this.propertiesChart?.destroy();
+    this.realtorsChart?.destroy();
+  }
+
+  private initRevenueChart(): void {
+    const ctx = this.revenueChartRef?.nativeElement.getContext('2d');
+    if (!ctx) return;
+    const v = this.cssVars();
+    this.revenueChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+          label: 'Revenue (₦)',
+          data: [12, 18, 14, 22, 30, 28, 35, 40, 38, 45, 48, 52].map(n => n * 1_000_000),
+          borderColor: v.primary,
+          backgroundColor: 'rgba(228, 28, 36, 0.12)',
+          pointBackgroundColor: v.primary,
+          tension: 0.35,
+          borderWidth: 3,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            ticks: {
+              color: v.muted,
+              callback: (val: any) => '₦' + (Number(val)/1_000_000).toFixed(0) + 'M'
+            },
+            grid: { color: v.border }
+          },
+          x: { ticks: { color: v.muted }, grid: { display: false } }
+        },
+        plugins: { legend: { labels: { color: v.text } } }
+      }
+    });
+  }
+
+  private initPaymentsChart(): void {
+    const ctx = this.paymentsChartRef?.nativeElement.getContext('2d');
+    if (!ctx) return;
+    const v = this.cssVars();
+    this.paymentsChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Paystack', 'Bank Transfer', 'Cheque', 'Cash'],
+        datasets: [{
+          data: [54, 32, 8, 6],
+          backgroundColor: [v.primary, '#10B981', '#3B82F6', '#F59E0B'],
+          borderColor: v.surface,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { color: v.text } }
+        }
+      }
+    });
+  }
+
+  private initPropertiesChart(): void {
+    const ctx = this.propertiesChartRef?.nativeElement.getContext('2d');
+    if (!ctx) return;
+    const v = this.cssVars();
+    const d = this.propertyAnalytics;
+    this.propertiesChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Available', 'Pending', 'Sold'],
+        datasets: [{
+          label: 'Units',
+          data: [d.available, d.pending, d.sold],
+          backgroundColor: [ '#10B981', '#F59E0B', v.primary ],
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { ticks: { color: v.muted }, grid: { display: false } },
+          y: { ticks: { color: v.muted }, grid: { color: v.border } }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+  private initRealtorsChart(): void {
+    const ctx = this.realtorsChartRef?.nativeElement.getContext('2d');
+    if (!ctx) return;
+    const v = this.cssVars();
+    this.realtorsChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Realtor A', 'Realtor B', 'Realtor C', 'Realtor D', 'Realtor E'],
+        datasets: [{
+          label: 'Closed Deals',
+          data: [24, 19, 15, 12, 9],
+          backgroundColor: v.primary,
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { ticks: { color: v.muted } },
+          x: { ticks: { color: v.muted }, grid: { color: v.border } }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
   }
   onTableAction(event: { action: string; row: Activity }) {
     console.log('Table action:', event.action, 'Row:', event.row);
