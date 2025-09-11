@@ -1,14 +1,3 @@
 <ng-container [ngSwitch]="type">
-  <svg
-    *ngSwitchCase="'fi'"
-    width="24"
-    height="24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  >
-    <use [attr.href]="'icons/feather/' + name + '.svg'"></use>
-  </svg>
+  <span *ngSwitchCase="'fi'" [innerHTML]="svgContent"></span>
 </ng-container>

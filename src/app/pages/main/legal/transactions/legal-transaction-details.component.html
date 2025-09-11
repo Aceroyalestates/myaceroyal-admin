@@ -1,0 +1,55 @@
+<main class="legal-main-wrapper flex flex-col w-full p-6">
+  <div class="mb-8">
+    <app-breadcrumb [items]="[{label:'Legal', url:'/main/legal'},{label:'Transactions', url:'/main/legal/transactions'},{label:'Details'}]"></app-breadcrumb>
+  </div>
+
+  <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Transaction Details</h3>
+      <button nz-button nzType="primary" [nzLoading]="sending" (click)="markContractSent()">Mark Contract Sent</button>
+    </div>
+
+    <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }">
+      <nz-descriptions-item nzTitle="Client">
+        <span>{{ tx?.payer?.full_name || tx?.purchase?.buyer?.full_name || '—' }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Email">
+        <span>{{ tx?.payer?.email || tx?.purchase?.buyer?.email || '—' }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Address">
+        <span>{{ tx?.payer?.address || '—' }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Property">
+        <span>{{ tx?.purchase?.unit?.property?.name || '—' }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Unit">
+        <span>{{ tx?.purchase?.unit?.id || '—' }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Payment Type">
+        <span>{{ tx?.purchase?.plan_id ? 'Installment' : 'Outright' }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Invoice #">
+        <span>{{ tx?.payment_reference || '—' }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Total Price">
+        <span>₦ {{ tx?.purchase?.total_price | number }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Initial Payment">
+        <span>₦ {{ tx?.amount | number }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Initial Payment Date">
+        <span>{{ tx?.paid_at || tx?.createdAt | date: 'medium' }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Initial Payment Receipt" [nzSpan]="2" *ngIf="tx?.proof_url">
+        <a [href]="tx?.proof_url" target="_blank">View Receipt</a>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Realtor" [nzSpan]="2">
+        <span>{{ tx?.realtor?.full_name || tx?.realtor_name || '—' }}</span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Realtor Email" [nzSpan]="2">
+        <span>{{ tx?.realtor?.email || tx?.realtor_email || '—' }}</span>
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</main>
+

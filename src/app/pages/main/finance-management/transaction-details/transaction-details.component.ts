@@ -17,25 +17,52 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/breadcrumb.component';
 import { FinanceService } from 'src/app/core/services/finance.service';
-import { FinanceTransaction } from 'src/app/core/models/finance';
+import { FinanceTransaction, UpdateTransactionRequest } from 'src/app/core/models/finance';
 
 interface TransactionDetail {
   id: string;
-  paymentType: string;
+  paymentType: string; // e.g. Purchase Payment
   client: string;
-  modeOfPayment: string;
+  modeOfPayment: string; // method
   amount: string;
-  date: string;
+  date: string; // createdAt
   status: string;
-  property: string;
-  reference: string;
+  property: string; // purchase.unit.property.name
+  reference: string; // payment_reference
+  gatewayReference?: string; // gateway_reference
   description: string;
   clientEmail: string;
   clientPhone: string;
-  paymentMethod: string;
+  paymentMethod: string; // method
   transactionFee: string;
   netAmount: string;
-  evidenceOfPayment?: string; // URL to evidence document/image
+  evidenceOfPayment?: string; // proof_url or receipt_url
+  errorMessage?: string;
+  approvedBy?: string | null;
+  approvedAt?: string | null;
+  paidAt?: string | null;
+  reviewNote?: string | null;
+  reuploadRequested?: boolean;
+  reuploadMessage?: string | null;
+  rejectionReason?: string | null;
+  reviewedBy?: string | null;
+  reviewedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  // Purchase context
+  purchase?: {
+    id?: string;
+    totalPrice?: string;
+    initialPaymentDue?: string;
+    balanceDue?: string;
+    status?: string;
+    paymentMethod?: string;
+    propertyName?: string;
+    propertyLocation?: string;
+    unitId?: number | string;
+    unitPrice?: string;
+  };
+  appliedTo?: any;
 }
 
 @Component({
@@ -65,18 +92,21 @@ export class TransactionDetailsComponent implements OnInit {
   transactionId: string | null = null;
   transaction: TransactionDetail | null = null;
   loading = true;
+  approveLoading = false;
 
   // Modal states
   isReviewModalVisible = false;
-  isRejectModalVisible = false;
   isSendToClientModalVisible = false;
   isValidateModalVisible = false;
+  isEditModalVisible = false;
+  validateLoading = false;
   
   // Form data
   reviewComment = '';
-  rejectComment = '';
+  reviewDecision: 'request_reupload' | 'reinitiate' = 'request_reupload';
   validateComment = '';
   sendToClientType = 'receipt'; // 'receipt' or 'invoice'
+  selectedProofFile: File | null = null;
 
   // No mock data; use API
 
@@ -142,24 +172,36 @@ export class TransactionDetailsComponent implements OnInit {
 
   // Transaction status checks
   isPaystackTransaction(): boolean {
-    return this.transaction?.modeOfPayment.toLowerCase() === 'paystack';
+    const mode = (this.transaction?.modeOfPayment || '').toLowerCase();
+    return mode === 'paystack';
   }
 
   isBankTransferOrCheck(): boolean {
-    const mode = this.transaction?.modeOfPayment.toLowerCase();
-    return mode === 'bank transfer' || mode === 'check';
+    const mode = (this.transaction?.modeOfPayment || '').toLowerCase();
+    return mode === 'bank transfer' || mode === 'check' || mode === 'cheque';
   }
 
   isSuccessfulTransaction(): boolean {
-    return this.transaction?.status.toLowerCase() === 'successful';
+    const s = (this.transaction?.status || '').toLowerCase();
+    return s === 'successful' || s === 'approved' || s === 'completed';
   }
 
   isPendingReview(): boolean {
-    return this.transaction?.status.toLowerCase() === 'pending review';
+    const s = (this.transaction?.status || '').toLowerCase();
+    return s === 'pending review' || s === 'pending' || s === 'in_review';
   }
 
   isRejected(): boolean {
-    return this.transaction?.status.toLowerCase() === 'rejected';
+    const s = (this.transaction?.status || '').toLowerCase();
+    return s === 'rejected' || s === 'failed';
+  }
+
+  canApprovePaystack(): boolean {
+    if (!this.transaction) return false;
+    if (!this.isPaystackTransaction()) return false;
+    const s = (this.transaction.status || '').toLowerCase();
+    // Paystack payments are successful by default; allow approve when not yet approved/rejected
+    return s !== 'approved' && s !== 'rejected' && s !== 'failed';
   }
 
   isApproved(): boolean {
@@ -168,12 +210,9 @@ export class TransactionDetailsComponent implements OnInit {
   }
 
   canTakeActions(): boolean {
-    const status = this.transaction?.status.toLowerCase();
-    // Can take actions if transaction is either "Successful" (Paystack) or "Pending Review" (Bank Transfer)
-    // but not if already approved or rejected
-    return (status === 'successful' || status === 'pending review') && 
-           !this.isRejected() && 
-           !this.isApproved();
+    const s = (this.transaction?.status || '').toLowerCase();
+    // Allow actions on pending/in_review/successful, but not if approved/rejected
+    return (s === 'pending' || s === 'pending review' || s === 'in_review' || s === 'successful') && !this.isRejected() && !this.isApproved();
   }
 
   hasEvidenceOfPayment(): boolean {
@@ -189,17 +228,59 @@ export class TransactionDetailsComponent implements OnInit {
     }
   }
 
+  showEditModal(): void {
+    this.isEditModalVisible = true;
+    this.selectedProofFile = null;
+  }
+
+  handleEditOk(): void {
+    if (!this.transaction || !this.selectedProofFile) {
+      this.message.error('Please select a file to upload');
+      return;
+    }
+    this.financeService.uploadTransactionProof(this.transaction.id, this.selectedProofFile).subscribe({
+      next: () => {
+        this.message.success('Proof of payment uploaded successfully');
+        this.isEditModalVisible = false;
+        this.selectedProofFile = null;
+        // Reload to reflect new proof URL if backend returns it on GET
+        this.loadTransactionDetails(this.transaction!.id);
+      },
+      error: () => {
+        this.message.error('Failed to upload proof of payment');
+      }
+    });
+  }
+
+  handleEditCancel(): void {
+    this.isEditModalVisible = false;
+    this.selectedProofFile = null;
+  }
+
+  onProofFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement | null;
+    const file = input && input.files && input.files.length > 0 ? input.files[0] : null;
+    this.selectedProofFile = file;
+  }
+
   onDownloadReceipt(): void {
     this.onDownloadEvidence();
   }
 
   onApproveAndSendToLegal(): void {
     if (!this.transaction) return;
+    this.approveLoading = true;
     this.financeService.updateTransaction(this.transaction.id, { action: 'approve', comment: 'Approved and sent to legal' })
       .subscribe({
         next: () => {
           this.message.success('Transaction approved and sent to legal team for document processing');
           this.transaction!.status = 'Approved - Legal Processing';
+        },
+        error: () => {
+          this.message.error('Failed to approve transaction');
+        },
+        complete: () => {
+          this.approveLoading = false;
         }
       });
   }
@@ -219,31 +300,30 @@ export class TransactionDetailsComponent implements OnInit {
     this.reviewComment = '';
   }
 
-  showRejectModal(): void {
-    this.isRejectModalVisible = true;
-    this.rejectComment = '';
-  }
-
   showSendToClientModal(): void {
     this.isSendToClientModalVisible = true;
     this.sendToClientType = 'receipt';
   }
 
-  // Review transaction
+  // Review decision (request reupload or reinitiate)
   handleReviewOk(): void {
-    if (!this.reviewComment.trim()) {
-      this.message.error('Please provide review comments');
-      return;
-    }
-
     if (!this.transaction) return;
-    this.financeService.updateTransaction(this.transaction.id, { action: 'review', comment: this.reviewComment })
+    const action = this.reviewDecision === 'request_reupload' ? 'request_reupload' : 'reinitiate';
+    const payload: UpdateTransactionRequest = { action, message: this.reviewComment || undefined } as any;
+    this.financeService.updateTransaction(this.transaction.id, payload)
       .subscribe({
         next: () => {
-          this.transaction!.status = 'Under Review';
-          this.message.success('Transaction sent for review with comments');
+          const msg = this.reviewDecision === 'request_reupload' ? 'Requested reupload of proof from user' : 'Requested user to reinitiate transaction';
+          this.message.success(msg);
           this.isReviewModalVisible = false;
           this.reviewComment = '';
+          // Mark locally
+          if (this.reviewDecision === 'request_reupload') {
+            if (this.transaction) {
+              this.transaction.reuploadRequested = true;
+              this.transaction.reuploadMessage = payload.message || '';
+            }
+          }
         }
       });
   }
@@ -253,29 +333,6 @@ export class TransactionDetailsComponent implements OnInit {
     this.reviewComment = '';
   }
 
-  // Reject transaction
-  handleRejectOk(): void {
-    if (!this.rejectComment.trim()) {
-      this.message.error('Please provide rejection reason');
-      return;
-    }
-
-    if (!this.transaction) return;
-    this.financeService.updateTransaction(this.transaction.id, { action: 'reject', reason: this.rejectComment })
-      .subscribe({
-        next: () => {
-          this.transaction!.status = 'Rejected';
-          this.message.success('Transaction rejected successfully');
-          this.isRejectModalVisible = false;
-          this.rejectComment = '';
-        }
-      });
-  }
-
-  handleRejectCancel(): void {
-    this.isRejectModalVisible = false;
-    this.rejectComment = '';
-  }
 
   // Send to client
   handleSendToClientOk(): void {
@@ -296,6 +353,7 @@ export class TransactionDetailsComponent implements OnInit {
       return;
     }
     if (!this.transaction) return;
+    this.validateLoading = true;
     this.financeService.updateTransaction(this.transaction.id, { action: 'approve', comment: this.validateComment })
       .subscribe({
         next: () => {
@@ -303,6 +361,12 @@ export class TransactionDetailsComponent implements OnInit {
           this.message.success('Transaction validated and sent to legal team with instructions');
           this.isValidateModalVisible = false;
           this.validateComment = '';
+        },
+        error: () => {
+          this.message.error('Failed to validate and approve transaction');
+        },
+        complete: () => {
+          this.validateLoading = false;
         }
       });
   }
@@ -322,23 +386,52 @@ export class TransactionDetailsComponent implements OnInit {
     const anyT = t as any;
     const amount = anyT['amount'];
     const fee = anyT['fee'];
+    const purchase = anyT['purchase'] || {};
+    const unit = purchase['unit'] || {};
+    const property = unit['property'] || {};
     return {
       id: String(anyT['id'] ?? ''),
       paymentType: anyT['payment_type'] || anyT['type'] || 'Payment',
-      client: anyT['user']?.['full_name'] || anyT['customer_name'] || anyT['client'] || '—',
-      modeOfPayment: anyT['method'] || anyT['mode'] || '—',
+      client: anyT['payer']?.['full_name'] || anyT['purchase']?.['buyer']?.['full_name'] || anyT['user']?.['full_name'] || anyT['customer_name'] || anyT['client'] || '—',
+      modeOfPayment: anyT['method'] || anyT['payment_method'] || anyT['mode'] || '—',
       amount: this.formatCurrency(amount),
       date: anyT['createdAt'] || anyT['date'] || '',
       status: String(anyT['status'] || 'pending'),
-      property: anyT['property']?.['name'] || anyT['property_name'] || '—',
-      reference: anyT['reference'] || anyT['ref'] || '—',
+      property: property['name'] || anyT['property']?.['name'] || anyT['property_name'] || '—',
+      reference: anyT['payment_reference'] || anyT['reference'] || anyT['ref'] || '—',
+      gatewayReference: anyT['gateway_reference'] || undefined,
       description: anyT['description'] || '',
-      clientEmail: anyT['user']?.['email'] || anyT['client_email'] || '',
-      clientPhone: anyT['user']?.['phone'] || anyT['client_phone'] || '',
-      paymentMethod: anyT['method'] || '—',
+      clientEmail: anyT['payer']?.['email'] || anyT['purchase']?.['buyer']?.['email'] || anyT['user']?.['email'] || anyT['client_email'] || '',
+      clientPhone: anyT['payer']?.['phone_number'] || anyT['purchase']?.['buyer']?.['phone_number'] || anyT['user']?.['phone'] || anyT['client_phone'] || '',
+      paymentMethod: anyT['method'] || anyT['payment_method'] || '—',
       transactionFee: this.formatCurrency(fee),
       netAmount: this.formatCurrency(anyT['net_amount'] ?? (Number(amount || 0) - Number(fee || 0))),
-      evidenceOfPayment: anyT['evidence_url'] || anyT['receipt_url'],
+      evidenceOfPayment: anyT['proof_url'] || anyT['evidence_url'] || anyT['receipt_url'],
+      errorMessage: anyT['error_message'] || undefined,
+      approvedBy: anyT['approved_by'] || null,
+      approvedAt: anyT['approved_at'] || null,
+      paidAt: anyT['paid_at'] || null,
+      reviewNote: anyT['review_note'] || null,
+      reuploadRequested: !!anyT['reupload_requested'],
+      reuploadMessage: anyT['reupload_message'] || null,
+      rejectionReason: anyT['rejection_reason'] || null,
+      reviewedBy: anyT['reviewed_by'] || null,
+      reviewedAt: anyT['reviewed_at'] || null,
+      createdAt: anyT['createdAt'] || undefined,
+      updatedAt: anyT['updatedAt'] || undefined,
+      purchase: {
+        id: purchase['id'],
+        totalPrice: purchase['total_price'],
+        initialPaymentDue: purchase['initial_payment_due'],
+        balanceDue: purchase['balance_due'],
+        status: purchase['status'],
+        paymentMethod: purchase['payment_method'],
+        propertyName: property['name'],
+        propertyLocation: property['location'],
+        unitId: unit['id'],
+        unitPrice: unit['price'],
+      },
+      appliedTo: anyT['applied_to'],
     };
   }
 }

@@ -129,35 +129,38 @@
       </div>
     </div>
   </div>
-  <div class="flex items-center justify-between mb-10">
-    <p class="text-[#4F4F4F] text-normal text-2xl">Properties List</p>
-    <nz-select
-      ngModel="All Properties"
-      nzAllowClear
-      nzPlaceHolder="All Properties"
-      class="!w-[200px]"
-    >
-      <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-      <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
-      <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
-      <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
-      <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
-    </nz-select>
-  </div>
-  <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-10">
-    <app-table
-      [data]="properties"
-      [columns]="columns"
-      [actions]="actions"
-      [loading]="loading"
-      [showSelection]="true"
-      [showPagination]="true"
-      [showSearch]="true"
-      [showFilters]="true"
-      (selectionChange)="onSelectionChange($event)"
-      (actionClick)="onTableAction($event)"
-      (rowClick)="onRowClick($event)"
-      class="w-full"
-    />
+  <div class="mb-6">
+    <nz-tabset [nzSelectedIndex]="activeTab==='sales'?0:1" (nzSelectedIndexChange)="activeTab = $event===0?'sales':'clients'">
+      <nz-tab nzTitle="Properties Sold">
+        <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-6">
+          <app-table
+            [data]="salesData"
+            [columns]="salesColumns"
+            [loading]="loading"
+            [showSelection]="false"
+            [showPagination]="true"
+            [showSearch]="true"
+            [showFilters]="true"
+            class="w-full"
+          ></app-table>
+          <nz-empty *ngIf="!loading && salesData.length===0" nzNotFoundContent="No sales found for this realtor"></nz-empty>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Clients">
+        <div class="rounded-lg border-2 border-[#EEF2F6] bg-background px-4 py-6">
+          <app-table
+            [data]="clientsData"
+            [columns]="clientsColumns"
+            [loading]="loading"
+            [showSelection]="false"
+            [showPagination]="true"
+            [showSearch]="true"
+            [showFilters]="true"
+            class="w-full"
+          ></app-table>
+          <nz-empty *ngIf="!loading && clientsData.length===0" nzNotFoundContent="No clients found for this realtor"></nz-empty>
+        </div>
+      </nz-tab>
+    </nz-tabset>
   </div>
 </main>

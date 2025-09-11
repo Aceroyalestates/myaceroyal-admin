@@ -16,6 +16,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 import Chart from 'chart.js/auto';
@@ -56,6 +57,7 @@ interface Subscription {
     NzRadioModule,
     NzDatePickerModule,
     NzDividerModule,
+    NzTabsModule,
     FormsModule
   ],
   templateUrl: './subscriptions.component.html',
@@ -155,6 +157,18 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
       type: 'text'
     },
     {
+      key: 'planName',
+      title: 'Plan',
+      sortable: true,
+      type: 'text'
+    },
+    {
+      key: 'realtorName',
+      title: 'Realtor',
+      sortable: true,
+      type: 'text'
+    },
+    {
       key: 'status',
       title: 'Status',
       sortable: true,
@@ -213,6 +227,15 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
       this.chart.destroy();
     }
     this.themeSubscription.unsubscribe();
+  }
+
+  // Match dashboard/finance metric background style
+  getTransparentColor(hex: string): string {
+    if (!hex || !hex.startsWith('#')) return hex || 'transparent';
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.12)`;
   }
 
   initChart(): void {
@@ -314,6 +337,12 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.fetchForms();
   }
 
+  onStatusChange(value: string): void {
+    this.selectedStatus = value || '';
+    this.pageIndex = 1;
+    this.fetchForms();
+  }
+
   onTableAction(event: { action: string; row: any }): void {
     const subscription = event.row as Subscription;
     switch (event.action) {
@@ -333,7 +362,7 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.fetchForms();
   }
 
-  private fetchForms(): void {
+  fetchForms(): void {
     this.loading = true;
     const params = this.currentFilters();
     console.log('[SubscriptionsComponent] fetchForms -> params', params);
@@ -346,14 +375,25 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
             || [it['first_name'], it['last_name']].filter(Boolean).join(' ').trim()
             || it['email']
             || '—';
-          const property = it['purchase']?.['unit']?.['id']
-            ? `Unit #${it['purchase']['unit']['id']}`
-            : (it['property_type'] ? this.toTitleCase(String(it['property_type'])) : '—');
+          const property = it['purchase']?.['unit']?.['property']?.['name']
+            || (it['purchase']?.['unit']?.['id'] ? `Unit #${it['purchase']['unit']['id']}` : undefined)
+            || (it['property_type'] ? this.toTitleCase(String(it['property_type'])) : '—');
+          const planName = it['plan']?.['name']
+            || it['installment_plan']?.['name']
+            || it['plan_name']
+            || it['selected_plan']
+            || '—';
+          const realtorName = it['realtor_name']
+            || it['realtor']?.['full_name']
+            || it['realtor']
+            || '—';
           return {
             id: String(it['id'] ?? ''),
             reference: String(it['id'] ?? ''),
             clientName: fullName,
             propertyName: property,
+            planName,
+            realtorName,
             formType: 'Property Purchase Form',
             status: this.toTitleCase(String(it['form_status'] || '—')),
             submissionDate: it['createdAt'] || it['created_at'] || '',

@@ -59,6 +59,20 @@ export class FinanceService {
       );
   }
 
+  /** Upload or replace transaction proof (evidence of payment) */
+  uploadTransactionProof(id: string, file: File): Observable<IResponse> {
+    const endpoint = `${this.baseEndpoint}/${id}/proof`;
+    console.log('[FinanceService] uploadTransactionProof -> request', { endpoint, fileName: file?.name });
+    return this.http
+      .uploadFile<IResponse>(endpoint, file)
+      .pipe(
+        tap({
+          next: (res) => console.log('[FinanceService] uploadTransactionProof -> response', res),
+          error: (err) => console.error('[FinanceService] uploadTransactionProof -> error', err)
+        })
+      );
+  }
+
   private buildQueryParams(params: TransactionListParams): Record<string, string> {
     const entries = Object.entries(params).filter(([, v]) => v !== undefined && v !== null);
     return entries.reduce<Record<string, string>>((acc, [k, v]) => {
