@@ -6,30 +6,24 @@
     ></app-breadcrumb>
   </div>
 
-  <!-- Metrics Cards -->
-  <div class="flex items-center gap-6 mb-8">
-    @for(metric of subscriptionMetrics; track metric.id) {
-      <nz-card class="subscriptions-container flex-1 rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center"
-               [ngStyle]="{ 'background-color': metric.color + '20' }">
-            @if(metric.title === 'Total Subscriptions') {
-              <span nz-icon nzType="team" [ngStyle]="{ color: metric.color }"></span>
-            } @else {
-              <span nz-icon nzType="calendar" [ngStyle]="{ color: metric.color }"></span>
-            }
+  <!-- Metrics Cards (consistent style) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    @for(metric of subscriptionMetrics; track metric.id){
+      <div
+        class="flex flex-col gap-6 p-6 border border-[#EEF2F6] dark:border-gray-600 rounded-lg w-full"
+        [ngStyle]="{ 'background-color': getTransparentColor(metric.color) }"
+      >
+        <p class="text-[#7A7A7A] dark:text-gray-400 text-normal text-[20px]">{{ metric.title }}</p>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-4">
+            <p class="text-[#4F4F4F] dark:text-gray-300 text-[32px] text-normal">{{ metric.amount }}</p>
+            <span class="flex items-center gap-1" [ngStyle]="{ color: metric.color }">
+              <app-icon name="arrow-up"></app-icon>
+              <p class="font-medium text-normal">{{ metric.percentage }}</p>
+            </span>
           </div>
-          <p class="text-[#7A7A7A] dark:text-gray-400 text-[16px] font-medium mb-0">{{ metric.title }}</p>
         </div>
-        
-        <div class="flex items-center justify-between">
-          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[32px] font-semibold mb-0">{{ metric.amount }}</h2>
-          <nz-tag [nzColor]="metric.color">
-            <span nz-icon nzType="arrow-up"></span>
-            {{ metric.percentage }} This Month
-          </nz-tag>
-        </div>
-      </nz-card>
+      </div>
     }
   </div>
 
@@ -83,18 +77,6 @@
       </button>
     </div>
 
-    <!-- Status Tabs -->
-    <div class="mb-4">
-      <nz-tabset [nzSelectedIndex]="selectedStatus ? (selectedStatus==='completed'?1:selectedStatus==='in_progress'?2:selectedStatus==='rejected'?3:selectedStatus==='incomplete'?4:0) : 0"
-                  (nzSelectedIndexChange)="selectedStatus = $event===0 ? '' : ($event===1?'completed':$event===2?'in_progress':$event===3?'rejected':'incomplete'); pageIndex=1; fetchForms()">
-        <nz-tab nzTitle="All"></nz-tab>
-        <nz-tab nzTitle="Completed"></nz-tab>
-        <nz-tab nzTitle="In Progress"></nz-tab>
-        <nz-tab nzTitle="Rejected"></nz-tab>
-        <nz-tab nzTitle="Incomplete"></nz-tab>
-      </nz-tabset>
-    </div>
-
     <!-- Custom Filter Bar -->
     <div class="p-4 border-b border-gray-200 dark:border-gray-600 mb-4">
       <div class="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4 lg:items-center lg:justify-between">
@@ -110,6 +92,23 @@
 
         <!-- Date Range Filters -->
         <div class="flex items-center gap-4 flex-wrap">
+          <!-- Status Filter -->
+          <div class="flex items-center gap-2">
+            <span class="text-[#4F4F4F] dark:text-gray-400 text-sm whitespace-nowrap">Status</span>
+            <nz-select 
+              [(ngModel)]="selectedStatus"
+              (ngModelChange)="onStatusChange($event)"
+              nzPlaceHolder="All Statuses"
+              nzAllowClear
+              class="w-48">
+              <nz-option nzValue="" nzLabel="All"></nz-option>
+              <nz-option nzValue="completed" nzLabel="Completed"></nz-option>
+              <nz-option nzValue="in_progress" nzLabel="In Progress"></nz-option>
+              <nz-option nzValue="rejected" nzLabel="Rejected"></nz-option>
+              <nz-option nzValue="incomplete" nzLabel="Incomplete"></nz-option>
+              <nz-option nzValue="pending" nzLabel="Pending"></nz-option>
+            </nz-select>
+          </div>
           <div class="flex items-center gap-2">
             <span class="text-[#4F4F4F] dark:text-gray-400 text-sm whitespace-nowrap">Start Date</span>
             <nz-date-picker 

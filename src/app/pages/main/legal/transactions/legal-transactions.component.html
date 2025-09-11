@@ -1,0 +1,39 @@
+<main class="legal-main-wrapper flex flex-col w-full p-6">
+  <div class="mb-8">
+    <app-breadcrumb [items]="[{label:'Legal', url:'/main/legal'},{label:'Transactions'}]"></app-breadcrumb>
+  </div>
+
+  <!-- Metrics -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    @for(m of metrics; track m.id){
+      <div class="flex flex-col gap-6 p-6 border border-[#EEF2F6] dark:border-gray-600 rounded-lg w-full" [ngStyle]="{'background-color': getTransparentColor(m.color)}">
+        <p class="text-[#7A7A7A] dark:text-gray-400 text-normal text-[20px]">{{ m.title }}</p>
+        <p class="text-[#4F4F4F] dark:text-gray-300 text-[32px] text-normal">{{ m.value }}</p>
+      </div>
+    }
+  </div>
+
+  <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Approved Transactions (For Documentation)</h3>
+      <nz-select [(ngModel)]="statusFilter" (ngModelChange)="onStatusChange($event)" class="w-48" nzAllowClear nzPlaceHolder="Status">
+        <nz-option nzValue="approved" nzLabel="Approved"></nz-option>
+        <nz-option nzValue="contract_sent" nzLabel="Contract Sent"></nz-option>
+      </nz-select>
+    </div>
+
+    <app-table
+      [data]="rows"
+      [columns]="columns"
+      [actions]="actions"
+      [loading]="loading"
+      [showSelection]="false"
+      [showPagination]="true"
+      [showSearch]="true"
+      (search)="onSearch($event)"
+      (actionClick)="onAction($event)"
+      class="w-full"
+    ></app-table>
+  </nz-card>
+</main>
+

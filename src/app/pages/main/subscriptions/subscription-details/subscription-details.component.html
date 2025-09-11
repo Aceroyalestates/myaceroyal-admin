@@ -370,6 +370,56 @@
 
     <!-- Sidebar - Right Side -->
     <div class="lg:col-span-1">
+      <!-- Customer Information Card -->
+      <nz-card class="subscriptions-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 mb-8" [nzBodyStyle]="{ padding: '24px' }">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
+            <span nz-icon nzType="idcard" class="text-[#E41C24]"></span>
+          </div>
+          <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold mb-0">Customer Information</h3>
+        </div>
+        <div class="flex items-center gap-3 mb-4">
+          <img *ngIf="subscription.owner.avatar" [src]="subscription.owner.avatar" alt="avatar" class="w-12 h-12 rounded-full object-cover border"/>
+          <div>
+            <p class="text-[#4F4F4F] dark:text-gray-300 font-medium mb-0">{{ subscription.owner.fullName || ((subscription.personalDetails.firstName || '') + ' ' + (subscription.personalDetails.lastName || '')) }}</p>
+            <nz-tag [nzColor]="subscription.owner.isVerified ? 'success' : 'default'" class="mt-1">{{ subscription.owner.isVerified ? 'Verified' : 'Unverified' }}</nz-tag>
+          </div>
+        </div>
+        <div class="mb-4" *ngIf="subscription.metadata.documentationStatus">
+          <span class="text-[#7A7A7A] dark:text-gray-400 text-sm">Documentation:</span>
+          <nz-tag class="ml-2" [nzColor]="getDocStatusColor(subscription.metadata.documentationStatus)">{{ subscription.metadata.documentationStatus }}</nz-tag>
+        </div>
+        <nz-descriptions nzBordered [nzColumn]="{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
+          <nz-descriptions-item nzTitle="Email">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.owner.email || subscription.personalDetails.email }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Phone">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ subscription.owner.phone || subscription.personalDetails.phone }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="User ID" *ngIf="subscription.metadata.userId">
+            <span class="text-[#7A7A7A] dark:text-gray-400">{{ subscription.metadata.userId }}</span>
+          </nz-descriptions-item>
+        </nz-descriptions>
+        <div class="mt-4 flex items-center justify-between">
+          <div *ngIf="subscription.realtorDetails.name" class="text-sm">
+            <span class="text-[#7A7A7A] dark:text-gray-400">Realtor:</span>
+            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ subscription.realtorDetails.name }}</span>
+            <nz-tag class="ml-2" [nzColor]="subscription.metadata.realtorConsent ? 'success' : 'default'">
+              {{ subscription.metadata.realtorConsent ? 'Consent: Yes' : 'Consent: No' }}
+            </nz-tag>
+          </div>
+          <div class="flex items-center gap-2">
+            <button nz-button nzType="default" *ngIf="subscription.metadata.userId" (click)="viewUser(subscription.metadata.userId)">
+              <span nz-icon nzType="user"></span>
+              <span>View User</span>
+            </button>
+            <button nz-button nzType="default" *ngIf="subscription.metadata.realtorId" (click)="viewRealtor(subscription.metadata.realtorId)">
+              <span nz-icon nzType="team"></span>
+              <span>View Realtor</span>
+            </button>
+          </div>
+        </div>
+      </nz-card>
       
       <!-- Status & Actions Card -->
       <nz-card class="subscriptions-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 mb-8" [nzBodyStyle]="{ padding: '24px' }">

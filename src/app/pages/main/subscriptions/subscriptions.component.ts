@@ -16,6 +16,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 import Chart from 'chart.js/auto';
@@ -56,6 +57,7 @@ interface Subscription {
     NzRadioModule,
     NzDatePickerModule,
     NzDividerModule,
+    NzTabsModule,
     FormsModule
   ],
   templateUrl: './subscriptions.component.html',
@@ -227,6 +229,15 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.themeSubscription.unsubscribe();
   }
 
+  // Match dashboard/finance metric background style
+  getTransparentColor(hex: string): string {
+    if (!hex || !hex.startsWith('#')) return hex || 'transparent';
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.12)`;
+  }
+
   initChart(): void {
     if (this.chartCanvas) {
       const ctx = this.chartCanvas.nativeElement.getContext('2d');
@@ -326,6 +337,12 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.fetchForms();
   }
 
+  onStatusChange(value: string): void {
+    this.selectedStatus = value || '';
+    this.pageIndex = 1;
+    this.fetchForms();
+  }
+
   onTableAction(event: { action: string; row: any }): void {
     const subscription = event.row as Subscription;
     switch (event.action) {
@@ -345,7 +362,7 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
     this.fetchForms();
   }
 
-  private fetchForms(): void {
+  fetchForms(): void {
     this.loading = true;
     const params = this.currentFilters();
     console.log('[SubscriptionsComponent] fetchForms -> params', params);

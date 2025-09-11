@@ -190,6 +190,28 @@ export class SubscriptionDetailsComponent implements OnInit {
     this.router.navigate(['/main/subscriptions']);
   }
 
+  viewUser(userId?: string): void {
+    const id = userId || this.subscription?.metadata?.userId;
+    if (!id) return;
+    this.router.navigate(['/main/user-management/view', id]);
+  }
+
+  viewRealtor(realtorId?: string): void {
+    const id = realtorId || this.subscription?.metadata?.realtorId;
+    if (!id) return;
+    this.router.navigate(['/main/realtor-management/details', id]);
+  }
+
+  getDocStatusColor(status: string | undefined): string {
+    const s = (status || '').toLowerCase();
+    if (!s) return 'default';
+    if (s.includes('not')) return 'default';
+    if (s.includes('in')) return 'processing';
+    if (s.includes('sent')) return 'warning';
+    if (s.includes('complete') || s.includes('done')) return 'success';
+    return 'default';
+  }
+
   getStatusColor(status: string): string {
     switch (status) {
       case 'Completed':
