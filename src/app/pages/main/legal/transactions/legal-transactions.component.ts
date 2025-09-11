@@ -42,23 +42,25 @@ export class LegalTransactionsComponent implements OnInit {
   // Table
   columns: TableColumn[] = [
     { key: 'client', title: 'Client', sortable: true, type: 'text' },
-    { key: 'email', title: 'Email', sortable: true, type: 'text' },
-    { key: 'address', title: 'Address', sortable: false, type: 'text' },
     { key: 'property', title: 'Property', sortable: true, type: 'text' },
-    { key: 'unit', title: 'Unit', sortable: true, type: 'text' },
-    { key: 'paymentType', title: 'Payment Type', sortable: true, type: 'text' },
     { key: 'invoice', title: 'Invoice #', sortable: true, type: 'text' },
-    { key: 'totalPrice', title: 'Total Price', sortable: true, type: 'text' },
-    { key: 'amountPaid', title: 'Initial Payment', sortable: true, type: 'text' },
-    { key: 'paymentDate', title: 'Initial Payment Date', sortable: true, type: 'date' },
-    { key: 'realtor', title: 'Realtor', sortable: true, type: 'text' },
+    { key: 'amountPaid', title: 'Amount', sortable: true, type: 'text' },
+    { key: 'paymentDate', title: 'Date', sortable: true, type: 'date' },
+    { key: 'status', title: 'Status', sortable: true, type: 'status' },
   ];
 
   actions: TableAction[] = [
     { key: 'view', label: 'View Details', color: '#E41C24', tooltip: 'View details' }
   ];
 
+  rowsAll: any[] = [];
   rows: any[] = [];
+
+  // Client-side filter helpers
+  selectedProperty = '';
+  selectedRealtor = '';
+  propertyOptions: string[] = [];
+  realtorOptions: string[] = [];
 
   constructor(private finance: FinanceService, private router: Router) {}
 
@@ -66,8 +68,8 @@ export class LegalTransactionsComponent implements OnInit {
     this.fetch();
   }
 
-  onSearch(term: string) {
-    this.searchTerm = term;
+  onSearch(term: any) {
+    this.searchTerm = String(term ?? '');
     this.fetch();
   }
 
@@ -90,12 +92,14 @@ export class LegalTransactionsComponent implements OnInit {
     this.finance.getTransactions(params).subscribe({
       next: (res) => {
         const data = (res.data || []).map((t: FinanceTransaction) => this.toRow(t));
-        this.rows = data;
+        this.rowsAll = data;
+        this.buildFilterOptions();
+        this.applyClientFilters();
         // Basic metrics
-        this.metrics[0].value = data.length; // pending docs (approx by filter)
-        this.metrics[2].value = data.length; // total approved in current view
+        this.metrics[0].value = this.rows.length; // pending docs (approx by filter)
+        this.metrics[2].value = this.rows.length; // total approved in current view
       },
-      error: () => { this.rows = []; },
+      error: () => { this.rowsAll = []; this.rows = []; },
       complete: () => { this.loading = false; }
     });
   }
@@ -119,6 +123,7 @@ export class LegalTransactionsComponent implements OnInit {
       totalPrice: purchase.total_price ? ('₦ ' + Number(purchase.total_price).toLocaleString()) : '—',
       amountPaid: t.amount ? ('₦ ' + Number(t.amount).toLocaleString()) : '—',
       paymentDate: t.paid_at || t.createdAt || '',
+      status: (t.status || '').toString(),
       realtor: realtorName + (realtorEmail ? ` (${realtorEmail})` : ''),
     };
   }
@@ -130,5 +135,49 @@ export class LegalTransactionsComponent implements OnInit {
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, 0.12)`;
   }
-}
 
+  private buildFilterOptions(): void {
+    const props = new Set<string>();
+    const realtors = new Set<string>();
+    for (const r of this.rowsAll) {
+      if (r.property && r.property !== '—') props.add(r.property);
+      if (r.realtor && r.realtor !== '—') realtors.add(r.realtor);
+    }
+    this.propertyOptions = Array.from(props).sort();
+    this.realtorOptions = Array.from(realtors).sort();
+  }
+
+  onPropertyChange(val: string) { this.selectedProperty = val || ''; this.applyClientFilters(); }
+  onRealtorChange(val: string) { this.selectedRealtor = val || ''; this.applyClientFilters(); }
+
+  private applyClientFilters(): void {
+    const term = (this.searchTerm || '').toLowerCase();
+    this.rows = this.rowsAll.filter(r => {
+      const okTerm = !term || (r.client?.toLowerCase().includes(term) || r.email?.toLowerCase().includes(term) || r.property?.toLowerCase().includes(term) || r.invoice?.toLowerCase().includes(term));
+      const okProp = !this.selectedProperty || r.property === this.selectedProperty;
+      const okRealtor = !this.selectedRealtor || r.realtor === this.selectedRealtor;
+      return okTerm && okProp && okRealtor;
+    });
+  }
+
+  onExport(): void {
+    const headers = [
+      'Client','Email','Address','Property','Unit','Payment Type','Invoice #','Total Price','Initial Payment','Initial Payment Date','Status','Realtor'
+    ];
+    const csvRows = [headers.join(',')];
+    for (const r of this.rows) {
+      const line = [
+        r.client, r.email, r.address, r.property, r.unit, r.paymentType, r.invoice,
+        r.totalPrice, r.amountPaid, r.paymentDate, r.status, r.realtor
+      ].map((v: any) => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(',');
+      csvRows.push(line);
+    }
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'legal-transactions.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+}

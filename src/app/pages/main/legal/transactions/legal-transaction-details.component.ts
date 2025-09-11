@@ -7,11 +7,12 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FinanceService } from 'src/app/core/services/finance.service';
+import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-legal-transaction-details',
   standalone: true,
-  imports: [CommonModule, NzCardModule, NzDescriptionsModule, NzButtonModule, NzTagModule],
+  imports: [CommonModule, NzCardModule, NzDescriptionsModule, NzButtonModule, NzTagModule, BreadcrumbComponent],
   templateUrl: './legal-transaction-details.component.html'
 })
 export class LegalTransactionDetailsComponent implements OnInit {
@@ -47,4 +48,3 @@ export class LegalTransactionDetailsComponent implements OnInit {
     });
   }
 }
-

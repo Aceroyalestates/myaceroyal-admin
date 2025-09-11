@@ -13,10 +13,10 @@
         class="flex flex-col gap-6 p-6 border border-[#EEF2F6] dark:border-gray-600 rounded-lg w-full"
         [ngStyle]="{ 'background-color': getTransparentColor(metric.color) }"
       >
-        <p class="text-[#7A7A7A] dark:text-gray-400 text-normal text-[20px]">{{ metric.title }}</p>
+        <p class="text-[#7A7A7A] text-normal text-[20px]">{{ metric.title }}</p>
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-4">
-            <p class="text-[#4F4F4F] dark:text-gray-300 text-[32px] text-normal">
+            <p class="text-[#4F4F4F] text-[32px] text-normal">
               {{ formatShortAmount(metric.amount) }}
             </p>
             <span
