@@ -83,6 +83,18 @@
       </button>
     </div>
 
+    <!-- Status Tabs -->
+    <div class="mb-4">
+      <nz-tabset [nzSelectedIndex]="selectedStatus ? (selectedStatus==='completed'?1:selectedStatus==='in_progress'?2:selectedStatus==='rejected'?3:selectedStatus==='incomplete'?4:0) : 0"
+                  (nzSelectedIndexChange)="selectedStatus = $event===0 ? '' : ($event===1?'completed':$event===2?'in_progress':$event===3?'rejected':'incomplete'); pageIndex=1; fetchForms()">
+        <nz-tab nzTitle="All"></nz-tab>
+        <nz-tab nzTitle="Completed"></nz-tab>
+        <nz-tab nzTitle="In Progress"></nz-tab>
+        <nz-tab nzTitle="Rejected"></nz-tab>
+        <nz-tab nzTitle="Incomplete"></nz-tab>
+      </nz-tabset>
+    </div>
+
     <!-- Custom Filter Bar -->
     <div class="p-4 border-b border-gray-200 dark:border-gray-600 mb-4">
       <div class="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4 lg:items-center lg:justify-between">

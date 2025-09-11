@@ -155,6 +155,18 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
       type: 'text'
     },
     {
+      key: 'planName',
+      title: 'Plan',
+      sortable: true,
+      type: 'text'
+    },
+    {
+      key: 'realtorName',
+      title: 'Realtor',
+      sortable: true,
+      type: 'text'
+    },
+    {
       key: 'status',
       title: 'Status',
       sortable: true,
@@ -346,14 +358,25 @@ export class SubscriptionsComponent implements OnInit, AfterViewInit, OnDestroy 
             || [it['first_name'], it['last_name']].filter(Boolean).join(' ').trim()
             || it['email']
             || '—';
-          const property = it['purchase']?.['unit']?.['id']
-            ? `Unit #${it['purchase']['unit']['id']}`
-            : (it['property_type'] ? this.toTitleCase(String(it['property_type'])) : '—');
+          const property = it['purchase']?.['unit']?.['property']?.['name']
+            || (it['purchase']?.['unit']?.['id'] ? `Unit #${it['purchase']['unit']['id']}` : undefined)
+            || (it['property_type'] ? this.toTitleCase(String(it['property_type'])) : '—');
+          const planName = it['plan']?.['name']
+            || it['installment_plan']?.['name']
+            || it['plan_name']
+            || it['selected_plan']
+            || '—';
+          const realtorName = it['realtor_name']
+            || it['realtor']?.['full_name']
+            || it['realtor']
+            || '—';
           return {
             id: String(it['id'] ?? ''),
             reference: String(it['id'] ?? ''),
             clientName: fullName,
             propertyName: property,
+            planName,
+            realtorName,
             formType: 'Property Purchase Form',
             status: this.toTitleCase(String(it['form_status'] || '—')),
             submissionDate: it['createdAt'] || it['created_at'] || '',
