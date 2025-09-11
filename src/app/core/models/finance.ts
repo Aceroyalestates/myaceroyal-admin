@@ -83,6 +83,7 @@ export interface Transaction {
   id: string;
   paymentType: string;
   client: string;
+  property?: string;
   modeOfPayment: string;
   amount: string;
   status: 'Pending' | 'Approved' | 'Under Review' | 'Failed' | string;
