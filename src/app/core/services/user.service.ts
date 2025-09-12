@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
-import { User, UsersResponse } from '../models/users';
+import {
+  User,
+  UserPurchaseDetailsResponse,
+  UserPurchasePaymentSchedulesResponse,
+  UsersResponse,
+} from '../models/users';
 import { PAGE_SIZE } from '../constants';
 
 @Injectable({
@@ -27,6 +32,21 @@ export class CustomerService {
     return this.httpService
       .get<{ data: User }>(`users/customers/${id}`)
       .pipe(map((response) => response.data));
+  }
+  getUserPuchaseDetailsById(
+    id: string
+  ): Observable<UserPurchaseDetailsResponse> {
+    return this.httpService
+      .get<{ data: UserPurchaseDetailsResponse }>(`purchases/${id}`)
+      .pipe(map((response) => response.data));
+  }
+
+  getUserPuchasePaymentSchedulesById(
+    id: string
+  ): Observable<UserPurchasePaymentSchedulesResponse> {
+    return this.httpService
+      .get<UserPurchasePaymentSchedulesResponse>(`purchases/${id}/schedules`)
+      .pipe(map((response) => response));
   }
 
   createUser(user: Partial<User>): Observable<User> {
