@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnInit, signal } from '@angular/core';
 import {
+  TableAction,
   TableColumn,
 } from 'src/app/shared/components/table/table.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { Metrics, People } from 'src/app/core/constants';
 import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { User } from 'src/app/core/models/users';
 import { forkJoin } from 'rxjs';
 import { Property } from 'src/app/core/models/properties';
@@ -69,28 +70,29 @@ export class ViewUserComponent implements OnInit {
     
   ];
 
-  // actions: TableAction[] = [
-  //   {
-  //     key: 'view',
-  //     label: 'View',
-  //     icon: 'eye',
-  //     color: 'blue',
-  //     tooltip: 'View details',
-  //   },
-  //   {
-  //     key: 'edit',
-  //     label: 'Edit',
-  //     icon: 'edit',
-  //     color: 'green',
-  //     tooltip: 'Edit user',
-  //   },
-  // ];
+  actions: TableAction[] = [
+    {
+      key: 'view',
+      label: 'View',
+      icon: 'eye',
+      color: 'blue',
+      tooltip: 'View details',
+    },
+    // {
+    //   key: 'edit',
+    //   label: 'Edit',
+    //   icon: 'edit',
+    //   color: 'green',
+    //   tooltip: 'Edit user',
+    // },
+  ];
   selectedPeople = signal<Person[]>([]);
 
   constructor(
     private customerService: CustomerService,
     private adminService: AdminService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private router: Router
   ) {
     // Optional effect to react to selected people changes
     effect(() => {
@@ -140,19 +142,20 @@ export class ViewUserComponent implements OnInit {
     }
   }
 
-  onRowClick(row: Person) {
+  onRowClick(row: any) {
     // Navigate to user details
-    window.location.href = `/main/user-management/view/${row.id}/${row.name}`;
+    this.router.navigate(['/main/user-management/view', row.id, row.name || row.full_name || 'property']);
   }
 
-  viewUser(user: Person) {
+  viewUser(user: any) {
     console.log('Viewing user:', user);
-    window.location.href = `/main/user-management/view/${user.id}/${user.name}`;
+    this.router.navigate(['/main/user-management/view', user.id, user.name || user.full_name || 'property']);
     // Already on user view page, could scroll to details or open modal
   }
 
-  editUser(user: Person) {
+  editUser(user: any) {
     console.log('Editing user:', user);
+    this.router.navigate(['/main/user-management/edit', user.id]);
     // Implement edit functionality
   }
 
