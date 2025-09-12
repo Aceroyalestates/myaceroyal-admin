@@ -51,7 +51,7 @@
             <h2
               class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
             >
-              {{user.financial_transactions.total_assets ||  '0'}}
+              {{ user.financial_transactions.total_assets || "0" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
@@ -59,7 +59,7 @@
             <h2
               class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0"
             >
-              &#8358; {{user.financial_transactions.total_purchases ||  '0'}}
+              &#8358; {{ user.financial_transactions.total_purchases || "0" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
@@ -83,38 +83,31 @@
         <div class="flex items-center justify-between w-11/12">
           <div class="flex flex-col gap-1">
             <p class="text-[#7A7A7A] !text-medium !mb-2">Total Assets</p>
-            <h2
-              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
-            >
-              &#8358; {{user.financial_transactions.total_assets ||  '0'}}
+            <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+              &#8358; {{ user.financial_transactions.total_assets || "0" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
             <p class="text-[#7A7A7A] !text-medium !mb-2">Outstanding Bill</p>
-            <h2
-              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
-            >
-              &#8358; {{user.financial_transactions.outstanding_bills ||  '0'}}
+            <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+              &#8358; {{ user.financial_transactions.outstanding_bills || "0" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
             <p class="text-[#7A7A7A] !text-medium !mb-2">
               Number of Installments
             </p>
-            <h2
-              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
-            >
-              {{user.financial_transactions.number_of_installments ||  '0'}}
+            <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+              {{ user.financial_transactions.number_of_installments || "0" }}
             </h2>
           </div>
           <div class="flex flex-col gap-1">
             <p class="text-[#7A7A7A] !text-medium !mb-2">
               Next Installment Payment
             </p>
-            <h2
-              class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0"
-            >
-              &#8358; {{user.financial_transactions.next_installment_payment ||  '0'}}
+            <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+              &#8358;
+              {{ user.financial_transactions.next_installment_payment || "0" }}
             </h2>
           </div>
         </div>
@@ -141,6 +134,7 @@
     [data]="properties"
     [columns]="columns"
     [showSelection]="false"
+    [actions]="actions"
     [showPagination]="true"
     [showSearch]="true"
     [showFilters]="true"
