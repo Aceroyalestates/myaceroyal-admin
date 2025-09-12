@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { PAGE_SIZE } from 'src/app/core/constants';
@@ -68,11 +68,18 @@ export class AdminManagementComponent implements OnInit {
       color: 'blue',
       tooltip: 'View details',
     },
+    {
+      key: 'edit',
+      label: 'Edit',
+      icon: 'edit',
+      color: 'green',
+      tooltip: 'Edit admin',
+    },
   ];
 
   selectedPeople = signal<User[]>([]);
 
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadUsers()
@@ -134,18 +141,19 @@ export class AdminManagementComponent implements OnInit {
 
   onRowClick(row: User) {
     // Navigate to details page
-    window.location.href = `/main/admin-management/details/${row.id}`;
+    this.router.navigate(['/main/admin-management/details', row.id]);
   }
 
   viewAdmin(admin: User) {
     console.log('Viewing admin:', admin);
     // Navigate to details page
-    window.location.href = `/main/admin-management/details/${admin.id}`;
+    this.router.navigate(['/main/admin-management/details', admin.id]);
   }
-
+  
   editAdmin(admin: User) {
     console.log('Editing admin:', admin);
-    // Implement edit functionality
+    // Navigate to edit page
+    this.router.navigate(['/main/admin-management/new', admin.id]);
   }
 
   deleteAdmin(admin: User) {

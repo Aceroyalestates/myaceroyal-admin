@@ -147,6 +147,7 @@ export class ViewUserComponent implements OnInit {
 
   viewUser(user: Person) {
     console.log('Viewing user:', user);
+    window.location.href = `/main/user-management/view/${user.id}/${user.name}`;
     // Already on user view page, could scroll to details or open modal
   }
 
