@@ -11,12 +11,12 @@ const routes: Routes = [
     component: UserManagementComponent,
   },
   {
-    path: 'view/:id',
-    component: ViewUserComponent,
+    path: 'view/:userId/:userName/:purchaseId/:propertyName',
+    component: ViewUserPropertyComponent,
   },
   {
-    path: 'view/:id/:slug',
-    component: ViewUserPropertyComponent,
+    path: 'view/:id',
+    component: ViewUserComponent,
   },
 ];
 

@@ -143,13 +143,14 @@ export class ViewUserComponent implements OnInit {
   }
 
   onRowClick(row: any) {
-    // Navigate to user details
-    this.router.navigate(['/main/user-management/view', row.id, row.name || row.full_name || 'property']);
+    // Navigate to property details
+    console.log('Row clicked:', row);
+    this.router.navigate(['/main/user-management/view', this.id, this.user?.full_name || 'User', row.id, row.name || row.unit?.property?.name || 'Property']);
   }
 
   viewUser(user: any) {
     console.log('Viewing user:', user);
-    this.router.navigate(['/main/user-management/view', user.id, user.name || user.full_name || 'property']);
+    this.router.navigate(['/main/user-management/view', this.id, this.user?.full_name || 'User', user.id, user.name || user.unit?.property?.name || 'Property']);
     // Already on user view page, could scroll to details or open modal
   }
 
