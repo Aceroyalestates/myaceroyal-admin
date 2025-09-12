@@ -134,7 +134,8 @@ export class RealtorManagementComponent {
 
   editRealtor(realtor: User) {
     console.log('Editing realtor:', realtor);
-    // Implement edit functionality
+    // Navigate to edit page
+    this.router.navigate(['/main/realtor-management/new', realtor.id]);
   }
 
   deleteRealtor(realtor: User) {

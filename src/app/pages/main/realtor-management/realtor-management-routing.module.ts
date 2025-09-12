@@ -18,6 +18,10 @@ const routes: Routes = [
     path: 'new',
     component: AddRealtorComponent,
   },
+  {
+    path: 'new/:id',
+    component: AddRealtorComponent,
+  },
 ];
 
 @NgModule({
