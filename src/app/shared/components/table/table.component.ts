@@ -50,8 +50,6 @@ export interface TableAction {
   tooltip?: string;
 }
 
-// ...existing code...
-
 export interface TableFilter {
   [key: string]: any;
 }
