@@ -22,7 +22,7 @@
         <span class="flex items-center">Back</span>
       </button>
       <div>
-        <h1 class="text-[#4F4F4F] dark:text-gray-300 text-[28px] font-semibold mb-1">Transaction Details</h1>
+        <h1 class="text-[#4F4F4F] dark:text-gray-400 text-[28px] font-semibold mb-1">Transaction Details</h1>
         <p class="text-[#7A7A7A] dark:text-gray-400 text-[14px]" *ngIf="transaction">
           Reference: {{ transaction.reference }}
         </p>
@@ -50,43 +50,49 @@
     <div class="lg:col-span-2">
       <nz-card class="transaction-info-card transaction-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '32px' }">
         <div class="mb-6">
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-4">Transaction Information</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-4">Transaction Information</h2>
         </div>
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
           <nz-descriptions-item nzTitle="Transaction ID">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ transaction.id }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ transaction.id }}</span>
           </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Reference">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ transaction.reference }}</span>
+          <nz-descriptions-item nzTitle="Payment Reference">
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ transaction.reference }}</span>
           </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Payment Type">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.paymentType }}</span>
+          <nz-descriptions-item nzTitle="Gateway Reference">
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ transaction.gatewayReference || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Payment Method">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.paymentMethod }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Amount">
             <span class="text-[#E41C24] font-bold text-[18px]">{{ transaction.amount }}</span>
-          </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Transaction Fee">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.transactionFee }}</span>
-          </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Net Amount">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-semibold">{{ transaction.netAmount }}</span>
-          </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Date">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.date | date: 'fullDate' }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Status">
             <nz-tag [nzColor]="getStatusColor(transaction.status)" class="px-3 py-1 rounded-full font-medium">
               {{ transaction.status }}
             </nz-tag>
           </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Payment Method">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.paymentMethod }}</span>
+          <nz-descriptions-item nzTitle="Created At">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.createdAt || transaction.date | date: 'medium' }}</span>
           </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Property">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.property }}</span>
+          <nz-descriptions-item nzTitle="Paid At">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.paidAt || '—' }}</span>
           </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="Description" [nzSpan]="2">
-            <span class="text-[#7A7A7A] dark:text-gray-400">{{ transaction.description }}</span>
+          <nz-descriptions-item nzTitle="Approved By">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.approvedBy || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Approved At">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.approvedAt || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Reviewed By">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.reviewedBy || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Reviewed At">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.reviewedAt || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Error Message" [nzSpan]="2" *ngIf="transaction.errorMessage">
+            <span class="text-[#7A7A7A] dark:text-gray-400">{{ transaction.errorMessage }}</span>
           </nz-descriptions-item>
         </nz-descriptions>
       </nz-card>
@@ -94,11 +100,11 @@
       <!-- Client Information -->
       <nz-card class="client-info-card transaction-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '32px' }">
         <div class="mb-6">
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-4">Client Information</h2>
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-4">Client Information</h2>
         </div>
         <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
           <nz-descriptions-item nzTitle="Name">
-            <span class="text-[#4F4F4F] dark:text-gray-300 font-medium">{{ transaction.client }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400 font-medium">{{ transaction.client }}</span>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Email">
             <a [href]="'mailto:' + transaction.clientEmail" class="text-[#E41C24] hover:text-[#d1181f]">{{ transaction.clientEmail }}</a>
@@ -107,7 +113,40 @@
             <a [href]="'tel:' + transaction.clientPhone" class="text-[#E41C24] hover:text-[#d1181f]">{{ transaction.clientPhone }}</a>
           </nz-descriptions-item>
           <nz-descriptions-item nzTitle="Mode of Payment">
-            <span class="text-[#4F4F4F] dark:text-gray-300">{{ transaction.modeOfPayment }}</span>
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.modeOfPayment }}</span>
+          </nz-descriptions-item>
+        </nz-descriptions>
+      </nz-card>
+
+      <!-- Purchase Information -->
+      <nz-card class="transaction-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '32px' }">
+        <div class="mb-6">
+          <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-4">Purchase Information</h2>
+        </div>
+        <nz-descriptions nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }" class="custom-descriptions">
+          <nz-descriptions-item nzTitle="Property">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.purchase?.propertyName || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Location">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.purchase?.propertyLocation || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Unit ID">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.purchase?.unitId || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Unit Price">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.purchase?.unitPrice || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Total Price">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.purchase?.totalPrice || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Initial Due">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.purchase?.initialPaymentDue || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Balance Due">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.purchase?.balanceDue || '—' }}</span>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="Purchase Status">
+            <span class="text-[#4F4F4F] dark:text-gray-400">{{ transaction.purchase?.status || '—' }}</span>
           </nz-descriptions-item>
         </nz-descriptions>
       </nz-card>
@@ -118,7 +157,7 @@
       <!-- Quick Actions -->
       <nz-card class="quick-actions-card transaction-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
         <div class="mb-4">
-          <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Quick Actions</h3>
+          <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold">Quick Actions</h3>
         </div>
         <div class="quick-actions-buttons">
           <!-- Download Evidence (only for transactions with evidence) -->
@@ -127,21 +166,33 @@
             nz-button 
             nzType="default" 
             nzBlock 
-            class="rounded-lg h-12 font-medium" 
+            class="rounded-lg h-12 font-medium mb-3" 
             (click)="onDownloadEvidence()">
             <span nz-icon nzType="download" nzTheme="outline" class="flex items-center"></span>
             <span class="flex items-center">Evidence of Payment</span>
+          </button>
+          <!-- Edit transaction: upload (or replace) proof of payment -->
+          <button 
+            *ngIf="isBankTransferOrCheck()"
+            nz-button 
+            nzType="default" 
+            nzBlock 
+            class="rounded-lg h-12 font-medium mb-3" 
+            (click)="showEditModal()">
+            <span nz-icon nzType="edit" nzTheme="outline" class="flex items-center"></span>
+            <span class="flex items-center">Edit Transaction (Upload Proof)</span>
           </button>
 
           <!-- Action Buttons Based on Status and Payment Mode (only for pending transactions) -->
           
           <!-- For Paystack Successful (but still pending approval) -->
           <button 
-            *ngIf="isPaystackTransaction() && canTakeActions() && isSuccessfulTransaction()"
+            *ngIf="isPaystackTransaction() && canApprovePaystack()"
             nz-button 
             nzType="primary" 
             nzBlock 
             class="rounded-lg h-12 font-medium bg-green-600 border-green-600" 
+            [nzLoading]="approveLoading"
             (click)="onApproveAndSendToLegal()">
             <span nz-icon nzType="check" class="flex items-center"></span>
             <span class="flex items-center">Approve & Send to Legal</span>
@@ -159,9 +210,9 @@
             <span class="flex items-center">Validate & Approve</span>
           </button>
 
-          <!-- Review Transaction (only for pending transactions with evidence) -->
+          <!-- Review Transaction (Bank transfer/cheque): choose reupload or reinitiate -->
           <button 
-            *ngIf="canTakeActions() && hasEvidenceOfPayment()"
+            *ngIf="isBankTransferOrCheck() && canTakeActions()"
             nz-button 
             nzType="default" 
             nzBlock 
@@ -171,18 +222,6 @@
             <span class="flex items-center">Review Transaction</span>
           </button>
 
-          <!-- Reject Button (only for pending transactions) -->
-          <button 
-            *ngIf="canTakeActions()"
-            nz-button 
-            nzType="default" 
-            nzDanger
-            nzBlock 
-            class="rounded-lg h-12 font-medium" 
-            (click)="showRejectModal()">
-            <span nz-icon nzType="close" class="flex items-center"></span>
-            <span class="flex items-center">Reject Transaction</span>
-          </button>
 
           <nz-divider class="my-4"></nz-divider>
 
@@ -213,17 +252,19 @@
       <!-- Transaction Status -->
       <nz-card class="status-info-card transaction-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
         <div class="mb-4">
-          <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Status Information</h3>
+          <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold">Status Information</h3>
         </div>
         <div class="text-center">
           <nz-tag [nzColor]="getStatusColor(transaction.status)" class="text-[16px] px-6 py-3 rounded-full font-semibold">
             {{ transaction.status }}
           </nz-tag>
           <p class="text-[#7A7A7A] dark:text-gray-400 mt-4 text-[14px]">
-            Last updated: {{ transaction.date | date: 'medium' }}
+            Last updated: {{ transaction.updatedAt || transaction.date | date: 'medium' }}
           </p>
-        </div>
+      </div>
       </nz-card>
+      
+      <!-- removed review/applied cards per spec -->
     </div>
   </div>
 
@@ -231,21 +272,30 @@
   <nz-modal
     [(nzVisible)]="isReviewModalVisible"
     nzTitle="Review Transaction"
-    nzWidth="500px"
+    nzWidth="520px"
     (nzOnCancel)="handleReviewCancel()"
     (nzOnOk)="handleReviewOk()">
     <ng-container *nzModalContent>
       <div class="mb-4">
-        <p class="text-gray-600 dark:text-gray-300 mb-4">
-          Please provide comments for this transaction review. This will help track the review process.
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
+          Select a decision for this manual payment. You may also add a note for the user.
         </p>
         <nz-form-item>
-          <nz-form-label>Review Comments</nz-form-label>
+          <nz-form-label>Decision</nz-form-label>
+          <nz-form-control>
+            <nz-radio-group [(ngModel)]="reviewDecision">
+              <label nz-radio nzValue="request_reupload"><span class="ml-2">Request user to reupload proof of payment</span></label>
+              <label nz-radio nzValue="reinitiate"><span class="ml-2">Ask user to reinitiate the transaction</span></label>
+            </nz-radio-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="mt-3">
+          <nz-form-label>Message to user (optional)</nz-form-label>
           <nz-form-control>
             <textarea
               nz-input
               [(ngModel)]="reviewComment"
-              placeholder="Enter your review comments..."
+              placeholder="Add helpful details for the user..."
               rows="4"
               class="w-full"></textarea>
           </nz-form-control>
@@ -254,43 +304,35 @@
     </ng-container>
   </nz-modal>
 
-  <!-- Reject Transaction Modal -->
+  <!-- Edit Transaction Modal: Upload Proof -->
   <nz-modal
-    [(nzVisible)]="isRejectModalVisible"
-    nzTitle="Reject Transaction"
+    [(nzVisible)]="isEditModalVisible"
+    nzTitle="Upload Proof of Payment"
     nzWidth="500px"
-    (nzOnCancel)="handleRejectCancel()"
-    (nzOnOk)="handleRejectOk()">
+    (nzOnCancel)="handleEditCancel()"
+    (nzOnOk)="handleEditOk()">
     <ng-container *nzModalContent>
       <div class="mb-4">
-        <p class="text-red-600 dark:text-red-400 mb-4">
-          ⚠️ This action will reject the transaction. Please provide a reason for rejection.
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
+          Select the image or PDF proof of payment to attach to this transaction.
         </p>
-        <nz-form-item>
-          <nz-form-label>Rejection Reason</nz-form-label>
-          <nz-form-control>
-            <textarea
-              nz-input
-              [(ngModel)]="rejectComment"
-              placeholder="Enter reason for rejection..."
-              rows="4"
-              class="w-full"></textarea>
-          </nz-form-control>
-        </nz-form-item>
+        <input type="file" accept="image/*,application/pdf" (change)="onProofFileChange($event)" />
       </div>
     </ng-container>
   </nz-modal>
+
 
   <!-- Validate Transaction Modal -->
   <nz-modal
     [(nzVisible)]="isValidateModalVisible"
     nzTitle="Validate Transaction & Send to Legal"
     nzWidth="500px"
+    [nzOkLoading]="validateLoading"
     (nzOnCancel)="handleValidateCancel()"
     (nzOnOk)="handleValidateOk()">
     <ng-container *nzModalContent>
       <div class="mb-4">
-        <p class="text-gray-600 dark:text-gray-300 mb-4">
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
           Please provide instructions for the legal team to proceed with documentation. This will help them understand the specific requirements for this transaction.
         </p>
         <nz-form-item>
@@ -324,7 +366,7 @@
     (nzOnOk)="handleSendToClientOk()">
     <ng-container *nzModalContent>
       <div class="mb-4">
-        <p class="text-gray-600 dark:text-gray-300 mb-4">
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
           Choose what to send to the client:
         </p>
         <nz-form-item>

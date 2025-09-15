@@ -5,64 +5,72 @@
         [items]="[
           { label: 'User Management', url: '/main/user-management' },
           { label: 'View User' },
-          { label: 'Racheal Endurance', url: '/main/user-management/view/2' },
-          { label: 'Eko Parapo Property' }
+          { label: userName || 'User', url: `/main/user-management/view/${userId}` },
+          { label: propertyName || purchaseDetails?.unit?.property?.name || 'Property' }
         ]"
       ></app-breadcrumb>
     </div>
+    
+    @if (loading) {
+      <div class="flex justify-center items-center py-8">
+        <nz-spin nzSize="large"></nz-spin>
+      </div>
+    } @else if (error) {
+      <nz-alert nzType="error" [nzMessage]="error" nzShowIcon class="mb-4"></nz-alert>
+    } @else if (purchaseDetails) {
     <div
       class="flex flex-col gap-8 w-full py-8 px-6 border border-[#EBEBEB] rounded-lg bg-background mb-8"
     >
-      <h2 class="!text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
+      <h2 class="text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
         Property Details
       </h2>
       <div class="flex items-center gap-12 max-w-11/12 flex-wrap">
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Date Purchased</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            05-12-2025
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Date Purchased</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ formatDate(purchaseDetails.createdAt) }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Category</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            Developed
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Property Category</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ purchaseDetails.unit?.property?.name || 'N/A' }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Type</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            2- Bedroom
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Property Type</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ purchaseDetails.unit?.unit_type?.name || 'N/A' }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">No of Units</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            1
+          <p class="text-[#7A7A7A] !text-medium !mb-2">No of Units</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ purchaseDetails.quantity || '1' }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Cost</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            &#8358; 300,000,000
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Property Cost</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ formatCurrency(purchaseDetails.total_price) }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Payment Type</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            Installment
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Payment Type</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ purchaseDetails.payment_method || 'Installment' }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Payment Status</p>
-          <h2 class="!text-[#FBBC05] text-normal font-semibold text-2xl !mb-0">
-            In Progress
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Payment Status</p>
+          <h2 [ngClass]="getStatusColor(purchaseDetails.status)" class="text-normal font-semibold text-2xl !mb-0">
+            {{ purchaseDetails.status || 'In Progress' }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Realtor</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            Endurance Peace
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Realtor</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ purchaseDetails.realtor_history?.[0]?.name || 'N/A' }}
           </h2>
         </div>
       </div>
@@ -70,157 +78,134 @@
     <div
       class="flex flex-col gap-8 w-full py-8 px-6 border border-[#EBEBEB] rounded-lg bg-background mb-8"
     >
-      <h2 class="!text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
-        Property Documentation
-      </h2>
-      <div class="flex flex-col gap-1">
-        <p class="!text-[#7A7A7A] !text-medium !mb-2">Subscription Form</p>
-        <span class="flex items-center gap-4">
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M36.6654 16.6654V24.9987C36.6654 33.332 33.332 36.6654 24.9987 36.6654H14.9987C6.66536 36.6654 3.33203 33.332 3.33203 24.9987V14.9987C3.33203 6.66536 6.66536 3.33203 14.9987 3.33203H23.332"
-              stroke="#7A7A7A"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M36.6654 16.6654H29.9987C24.9987 16.6654 23.332 14.9987 23.332 9.9987V3.33203L36.6654 16.6654Z"
-              stroke="#7A7A7A"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M11.668 21.668H21.668"
-              stroke="#7A7A7A"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-            <path
-              d="M11.668 28.332H18.3346"
-              stroke="#7A7A7A"
-              stroke-width="1.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
-          <h2
-            class="!text-[#E06714] text-normal font-medium text-[20px] !mb-0 underline"
-          >
-            Subscription form.pdf
-          </h2>
-        </span>
-      </div>
-    </div>
-    <div
-      class="flex flex-col gap-8 w-full py-8 px-6 border border-[#EBEBEB] rounded-lg bg-background mb-8"
-    >
-      <h2 class="!text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
+      <h2 class="text-[#4F4F4F] text-normal font-medium text-2xl !mb-0">
         Payment Plan
       </h2>
       <div class="flex items-center gap-12 max-w-11/12 flex-wrap">
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Property Price</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            &#8358; 300,000,000
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Property Price</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ formatCurrency(purchaseDetails.total_price) }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Installment Plan</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            6 Months
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Installment Plan</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ paymentSchedulesData?.summary?.totalSchedules || purchaseDetails.schedules?.length || 'N/A' }} {{ (paymentSchedulesData?.summary?.totalSchedules || purchaseDetails.schedules?.length) === 1 ? 'Payment' : 'Payments' }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Installment Paid</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            3
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Installment Paid</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ paymentSchedulesData?.summary?.statusBreakdown?.paid || 0 }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">
+          <p class="text-[#7A7A7A] !text-medium !mb-2">
             Outstanding Installment
           </p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            3
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ (paymentSchedulesData?.summary?.statusBreakdown?.pending || 0) + (paymentSchedulesData?.summary?.statusBreakdown?.overdue || 0) }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Total Amount Paid</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            &#8358; 300,000,000
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Total Amount Paid</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ formatCurrency(paymentSchedulesData?.summary?.totalAmountPaid || 0) }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] !text-medium !mb-2">Outstanding Amount</p>
-          <h2 class="!text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            &#8358; 300,000,000
+          <p class="text-[#7A7A7A] !text-medium !mb-2">Outstanding Amount</p>
+          <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
+            {{ formatCurrency(paymentSchedulesData?.summary?.remainingBalance || purchaseDetails.balance_due || 0) }}
           </h2>
         </div>
       </div>
     </div>
-  </div>
-  <div class="flex flex-col gap-2 mb-6">
-    <h2 class="!text-[#4F4F4F] text-normal text-2xl">Payment Schedule</h2>
-    <p class="text-normal !text-[#7A7A7A]">
-      You have been approved to make payment on behalf of the Client
-    </p>
-  </div>
-  <div
-    class="flex flex-col w-full max-w-9/12 gap-6"
-  >
-    @for (payment of paymentSchedules; track $index) {
+    
+    <div class="flex flex-col gap-2 mb-6">
+      <h2 class="text-[#4F4F4F] text-normal text-2xl">Payment Schedule</h2>
+      <p class="text-normal text-[#7A7A7A]">
+        You have been approved to make payment on behalf of the Client
+      </p>
+    </div>
     <div
-      class="flex flex-col gap-10 items-start rounded-lg border-2 border-[#EEF2F6] bg-background py-8 px-6 w-full"
+      class="flex flex-col w-full max-w-9/12 gap-6"
     >
-      <div class="flex items-center justify-between w-full">
-        <h2 class="text-normal">
-          {{ payment.currInstallment }}/{{ payment.noOfInstallment }}
-          installment
-        </h2>
-        @let statuses ={ paid : "!text-[#1FAF38] border border-[#34A85333]
-        bg-[#34A8531F]", pending:"!text-[#FBBC05] border border-[#FBBC0533]
-        bg-[#FBBC051F]", overdue:"!text-[#E41C24] border border-[#E41C2433]
-        bg-[#E41C241F]" };
-        <p
-          [ngClass]="statuses[payment.status]"
-          class="!px-6 !py-2 rounded-full w-[162px] text-center capitalize text-normal text-[20px]"
-        >
-          {{ payment.status }}
-        </p>
-      </div>
-      <div class="flex flex-col gap-6 w-full">
-        <div class="flex justify-between items-center">
-          <h4 class="!text-[#7A7A7A] !text-normal !font-normal text-[20px]">
-            Amount
-          </h4>
-          <p class="!text-[#7A7A7A] text-normal text-2xl !font-medium">
-            &#8358; {{ payment.amount }}
+      @for (payment of paymentSchedulesData?.data || []; track payment.id) {
+      <div
+        class="flex flex-col gap-10 items-start rounded-lg border-2 border-[#EEF2F6] bg-background py-8 px-6 w-full"
+      >
+        <div class="flex items-center justify-between w-full">
+          <h2 class="text-normal">
+            {{ payment.installment_number }}/{{ paymentSchedulesData?.summary?.totalSchedules || 1 }}
+            installment
+          </h2>
+          <p
+            [ngClass]="getStatusColor(payment.status)"
+            class="!px-6 !py-2 rounded-full w-[162px] text-center capitalize text-normal text-[20px]"
+          >
+            {{ payment.status }}
           </p>
         </div>
-        <div class="flex justify-between items-center">
-          <h4 class="!text-[#7A7A7A] !text-normal !font-normal text-[20px]">
-            Date Due
-          </h4>
-          <p class="!text-[#7A7A7A] text-normal text-2xl !font-medium">
-            {{ payment.date }}
-          </p>
+        <div class="flex flex-col gap-6 w-full">
+          <div class="flex justify-between items-center">
+            <h4 class="text-[#7A7A7A] !text-normal !font-normal text-[20px]">
+              Amount Due
+            </h4>
+            <p class="text-[#7A7A7A] text-normal text-2xl !font-medium">
+              {{ formatCurrency(payment.amount_due) }}
+            </p>
+          </div>
+          <div class="flex justify-between items-center">
+            <h4 class="text-[#7A7A7A] !text-normal !font-normal text-[20px]">
+              Amount Paid
+            </h4>
+            <p class="text-[#7A7A7A] text-normal text-2xl !font-medium">
+              {{ formatCurrency(payment.amount_paid) }}
+            </p>
+          </div>
+          <div class="flex justify-between items-center">
+            <h4 class="text-[#7A7A7A] !text-normal !font-normal text-[20px]">
+              Date Due
+            </h4>
+            <p class="text-[#7A7A7A] text-normal text-2xl !font-medium">
+              {{ formatDate(payment.due_date) }}
+            </p>
+          </div>
+          @if (payment.paid_at) {
+          <div class="flex justify-between items-center">
+            <h4 class="text-[#7A7A7A] !text-normal !font-normal text-[20px]">
+              Date Paid
+            </h4>
+            <p class="text-[#7A7A7A] text-normal text-2xl !font-medium">
+              {{ formatDate(payment.paid_at) }}
+            </p>
+          </div>
+          }
+          @if (payment.is_overdue && payment.days_overdue > 0) {
+          <div class="flex justify-between items-center">
+            <h4 class="text-[#E41C24] !text-normal !font-normal text-[20px]">
+              Days Overdue
+            </h4>
+            <p class="text-[#E41C24] text-normal text-2xl !font-medium">
+              {{ payment.days_overdue }} days
+            </p>
+          </div>
+          }
         </div>
+        @if(payment.status.toLowerCase() !== "paid"){
+        <button class="bg-primary !text-white text-medium font-medium rounded-full px-8 py-4">
+          Send Reminder
+        </button>
+        }
       </div>
-      @if(payment.status.toLowerCase() !== "paid"){
-      <button class="bg-primary !text-white text-medium font-medium rounded-full px-8 py-4">
-        Send Reminder
-      </button>
       }
     </div>
+    } @else {
+      <div class="flex justify-center items-center py-8">
+        <p class="text-[#7A7A7A] text-lg">No purchase data available</p>
+      </div>
     }
   </div>
 </main>

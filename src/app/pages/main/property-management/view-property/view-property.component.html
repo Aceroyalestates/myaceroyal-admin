@@ -12,10 +12,10 @@
       class="property-view-container flex flex-col gap-6 py-5 px-7 border border-[#EBEBEB] dark:border-gray-600 rounded-lg w-full bg-white dark:bg-[#1f1f23] mb-8"
       *ngIf="property"
     >
-        <h2 class="!text-[#4F4F4F] dark:!text-gray-300 text-normal font-medium text-[20px] !mb-0 !pb-0">
+        <h2 class="text-[#4F4F4F] dark:!text-gray-400 text-normal font-medium text-[20px] !mb-0 !pb-0">
                 {{ property.name }}
         </h2>
-        <div class="flex !text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2 !mt-0 !pt-0">
+        <div class="flex text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2 !mt-0 !pt-0">
             <app-icon name="pin"></app-icon>
             {{ property.location }}
         </div>
@@ -77,38 +77,38 @@
       </div>
       <div class="flex flex-col gap-5 w-full">
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Property Category</p>
-          <h2 class="!text-[#4F4F4F] dark:!text-gray-300 text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Property Category</p>
+          <h2 class="text-[#4F4F4F] dark:!text-gray-400 text-normal font-medium text-[20px] !mb-0">
             {{ property.property_type.name }} Property
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Property Location</p>
-          <h2 class="!text-[#4F4F4F] dark:!text-gray-300 text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Property Location</p>
+          <h2 class="text-[#4F4F4F] dark:!text-gray-400 text-normal font-medium text-[20px] !mb-0">
             {{ property.location }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Property Address</p>
-          <h2 class="!text-[#4F4F4F] dark:!text-gray-300 text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Property Address</p>
+          <h2 class="text-[#4F4F4F] dark:!text-gray-400 text-normal font-medium text-[20px] !mb-0">
             {{ property.address }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Property Description</p>
-          <h2 class="!text-[#4F4F4F] dark:!text-gray-300 text-normal font-medium text-[20px] !mb-0">
+          <p class="text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Property Description</p>
+          <h2 class="text-[#4F4F4F] dark:!text-gray-400 text-normal font-medium text-[20px] !mb-0">
             {{ property.description }}
           </h2>
         </div>
 
         <div *ngIf="property.property_features && property.property_features.length > 0" class="flex flex-col gap-1">
-          <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Amenities</p>
+          <p class="text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Amenities</p>
         <div class="flex flex-col gap-1">
           <div class="flex gap-4 flex-wrap">
                 @for(am of property.property_features; track am) {
                   <div class="amenity-badge flex bg-tertiary items-center gap-2 bg-gray-100 dark:bg-gray-700 p-2 rounded">
                     <app-icon class="!text-primary text-[10px]" name="power"></app-icon>
-                    <h2 class="!text-[#4F4F4F] dark:!text-gray-300 text-normal font-medium text-[16px] !mb-0">
+                    <h2 class="text-[#4F4F4F] dark:!text-gray-400 text-normal font-medium text-[16px] !mb-0">
                       {{ am.feature.name }}
                     </h2>
                   </div>
@@ -122,22 +122,22 @@
             @for (unit of property.property_units; track unit.id; let i = $index) {
               <nz-collapse-panel [nzHeader]="unit.unit_type.name" [nzActive]="i === 0" [nzShowArrow]="true">
                 <div class="flex flex-col gap-0">
-                  <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Unit Type</p>
-                  <h2 class="!text-[#4F4F4F] dark:!text-gray-300 text-normal font-medium text-[20px] !mb-0">
+                  <p class="text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Unit Type</p>
+                  <h2 class="text-[#4F4F4F] dark:!text-gray-400 text-normal font-medium text-[20px] !mb-0">
                     {{ unit.unit_type.name }}
                   </h2>
                 </div>
                 <div class="flex flex-col gap-0 pt-2">
-                  <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Amount</p>
-                  <h2 class="!text-[#4F4F4F] dark:!text-gray-300 text-normal font-medium text-[20px] !mb-0">
+                  <p class="text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Amount</p>
+                  <h2 class="text-[#4F4F4F] dark:!text-gray-400 text-normal font-medium text-[20px] !mb-0">
                     {{ unit.price | currency: 'NGN' }}
                   </h2>
                 </div>
                 @if (unit.property_installment_plans && unit.property_installment_plans.length > 0) {
                   @for (plan of unit.property_installment_plans; track plan.id) {
                     <div class="flex flex-col gap-0 pt-2">
-                      <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Installment Type</p>
-                      <h2 class="!text-[#4F4F4F] dark:!text-gray-300 text-normal font-medium text-[20px] !mb-0">
+                      <p class="text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Installment Type</p>
+                      <h2 class="text-[#4F4F4F] dark:!text-gray-400 text-normal font-medium text-[20px] !mb-0">
                         {{ plan.property_plan.title }} Installment
                       </h2>
                     </div>

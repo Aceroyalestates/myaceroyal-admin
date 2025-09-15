@@ -14,7 +14,7 @@
       <!-- <form nz-form [formGroup]="editForm" (ngSubmit)="submit()">
         <div class="flex flex-row justify-between items-center py-5">
           @if(!editingName) {
-            <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+            <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
               {{ property.name }}
             </h2>
             <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('name', true)"></app-icon>
@@ -40,14 +40,48 @@
           }
         </div>
 
-        
+        <div class="flex items-center gap-6 py-5">
+          <div class="grid grid-cols-3 items-center gap-6">
+            @for(img of property.property_images; track img.id) {
+              <div class="relative">
+                <img
+                  src="{{img.image_url}}"
+                  alt="property image"
+                  class="w-full h-full rounded-lg object-cover hover:scale-105 transition-transform duration-200 hover:brightness-50"
+                />
+                <app-icon
+                  class="!text-white !text-sm absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:scale-150 hover:!text-red-500"
+                  name="trash"
+                  (click)="removeImage(img.id)"
+                  [class.disabled]="isLoading"
+                ></app-icon>
+              </div>
+            }
+
+            <div class="relative flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-400 w-full aspect-square rounded-lg hover:bg-gray-100 !p-12">
+              <input
+                type="file"
+                id="fileInput"
+                (change)="onImageSelected($event)"
+                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+                [disabled]="isLoading"
+              />
+              <label for="fileInput" class="block px-4 py-2 bg-primary text-white rounded cursor-pointer" *ngIf="!isLoading">
+                Upload Image
+              </label>
+              <label class="block px-4 py-2 bg-primary text-white rounded cursor-not-allowed" *ngIf="isLoading">
+                Loading...
+              </label>
+            </div>
+          </div>
+        </div>
         <div class="flex flex-col gap-5 w-full">
           <div class="flex flex-col justify-center gap-y-8 w-full">
             <div class="w-full">
-              <p class="!text-[#7A7A7A] !text-sm !font-semibold">Property Category</p>
+              <p class="text-[#7A7A7A] !text-sm !font-semibold">Property Category</p>
               <div class="flex flex-row justify-between items-center">
                 @if(!editingCategory) {
-                  <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+                  <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
                     {{ property.property_type.name }} Property
                   </h2>
                   <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('property_type', true)"></app-icon>
@@ -76,10 +110,10 @@
               </div>
             </div>
             <div class="">
-              <p class="!text-[#7A7A7A] !text-sm !font-semibold">Property Location</p>
+              <p class="text-[#7A7A7A] !text-sm !font-semibold">Property Location</p>
               <div class="flex flex-row justify-between items-center">
                 @if(!editingLocation) {
-                  <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+                  <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
                     {{ property.location }}
                   </h2>
                   <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('location', true)"></app-icon>
@@ -103,10 +137,10 @@
               </div>
             </div>
             <div class="">
-              <p class="!text-[#7A7A7A] !text-sm !font-semibold">Property Address</p>
+              <p class="text-[#7A7A7A] !text-sm !font-semibold">Property Address</p>
               <div class="flex flex-row justify-between items-center">
                 @if(!editingAddress) {
-                  <h2 class="!text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
+                  <h2 class="text-[#4F4F4F] text-normal font-medium text-[20px] !mb-0 !pb-0 basis-2/3">
                     {{ property.address }}
                   </h2>
                   <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('address', true)"></app-icon>
@@ -136,7 +170,7 @@
               <nz-form-control nzErrorTip="Please enter property description">
                 <div class="flex justify-between w-full gap-4">
                   @if(!editingDescription) {
-                    <p class="!text-[#4F4F4F] text-normal font-medium !mb-0 !pb-0">
+                    <p class="text-[#4F4F4F] text-normal font-medium !mb-0 !pb-0">
                       {{ property.description }}
                     </p>
                     <app-icon class="!text-primary !text-sm cursor-pointer" name="edit" (click)="setEditingField('description', true)"></app-icon>
@@ -301,14 +335,14 @@
         </div>
       <form nz-form [formGroup]="formAmenities" (ngSubmit)="submitFormAmenities()">
         <div class="w-full">
-          <p class="!text-[#7A7A7A] !text-sm !font-semibold">Amenities</p>
+          <p class="text-[#7A7A7A] !text-sm !font-semibold">Amenities</p>
           <div class="flex flex-row justify-between items-center">
             @if(!editingAmenities) {
               <div class="flex gap-4 basis-4/5 flex-wrap">
                 @for(am of property.property_features; track am.feature_id) {
                   <div class="flex bg-tertiary items-center gap-2 bg-gray-100 p-2 rounded">
                     <app-icon class="!text-primary text-[10px]" name="power"></app-icon>
-                    <h2 class="!text-[#4F4F4F] text-normal font-medium text-[16px] !mb-0">
+                    <h2 class="text-[#4F4F4F] text-normal font-medium text-[16px] !mb-0">
                       {{ am.feature.name }}
                     </h2>
                   </div>
@@ -444,7 +478,7 @@
               </div>
               <div formArrayName="installment_plans" class="flex flex-col gap-4 mt-6 pl-8 border-l-2 border-dashed border-gray-200">
                 <div *ngFor="let plan of getInstallmentPlans(i).controls; let j = index; trackBy: trackByPlan" [formGroupName]="j">
-                  <div class="flex w-full justify-between items-center border-b border-gray-300 pb-2 mb-4">
+                  <div class="flex w-full justify-between items-center border-b border-gray-400 pb-2 mb-4">
                     <p class="text-gray-500 text-lg font-medium">Installment Details</p>
                     <button
                       type="button"
@@ -576,6 +610,16 @@
                 </button>
               </div>
             </div>
+              <!-- <div class="flex justify-center">
+                <button
+                  type="button"
+                  class="rounded-lg bg-primary py-2 px-6 text-sm !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed disabled:!text-gray-400"
+                  (click)="submitUnits()"
+                  [disabled]="isLoading || !unitTypeForm.valid "
+                >
+                  Save Units
+                </button>
+              </div> -->
           </div>
           <ng-template #noUnitTypes>
             <div *ngIf="!isLoading" class="text-gray-500">
@@ -588,7 +632,7 @@
       <div class="flex items-center justify-end gap-6">
         <button
           type="submit"
-          class="rounded-lg bg-primary py-3 px-16 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:!text-gray-300 disabled:cursor-not-allowed"
+          class="rounded-lg bg-primary py-3 px-16 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:!text-gray-400 disabled:cursor-not-allowed"
           [disabled]="isLoading || !unitTypeForm.valid"
           (click)="submitUnits()"
         >

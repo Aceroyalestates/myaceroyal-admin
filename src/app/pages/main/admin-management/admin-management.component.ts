@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { Metrics, PAGE_SIZE } from 'src/app/core/constants';
+import { PAGE_SIZE } from 'src/app/core/constants';
+import { Metric } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { User } from 'src/app/core/models/users';
 import { AdminService } from 'src/app/core/services/admin.service';
@@ -17,7 +18,7 @@ import { AdminService } from 'src/app/core/services/admin.service';
 export class AdminManagementComponent implements OnInit {
   loading = false;
   error: string | null = null;
-  userMetrics = Metrics;
+  userMetrics: Metric[] = [];
   users!: User[];
   lucy!: string;
   columns: TableColumn[] = [
@@ -67,11 +68,18 @@ export class AdminManagementComponent implements OnInit {
       color: 'blue',
       tooltip: 'View details',
     },
+    {
+      key: 'edit',
+      label: 'Edit',
+      icon: 'edit',
+      color: 'green',
+      tooltip: 'Edit admin',
+    },
   ];
 
   selectedPeople = signal<User[]>([]);
 
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadUsers()
@@ -81,18 +89,34 @@ export class AdminManagementComponent implements OnInit {
     this.adminService.getAdminUsers(1, PAGE_SIZE, {}).subscribe({
       next: (response) => {
         // Preprocess users to add unit_type_name
-        this.users = response.data.map((user) => ({
+        this.users = response.data.map((user: any) => ({
           ...user,
+          active_bool: user.is_active === true,
           createdAt: new Date(user.createdAt).toLocaleDateString(),
           is_active: user.is_active === true ? 'Active' : 'Inactive',
         }));
         this.loading = false;
+        this.updateAdminMetrics();
       },
       error: (error) => {
         this.loading = false;
         this.error = 'Failed to load users';
       },
     });
+  }
+
+  private updateAdminMetrics() {
+    const total = this.users?.length || 0;
+    const active = this.users?.filter((u: any) => u.active_bool === true).length || 0;
+    const superAdmins = this.users?.filter((u: any) => u.role?.label?.toLowerCase().includes('super')).length || 0;
+    const suspended = this.users?.filter((u: any) => u.is_account_locked === true || !!u.suspended_at).length || 0;
+
+    this.userMetrics = [
+      { id: 1, title: 'Total Admins', amount: total, percentage: '0', color: '#4D76B8' },
+      { id: 2, title: 'Active Admins', amount: active, percentage: '0', color: '#10B981' },
+      { id: 3, title: 'Super Admins', amount: superAdmins, percentage: '0', color: '#3B82F6' },
+      { id: 4, title: 'Suspended Admins', amount: suspended, percentage: '0', color: '#E41C24' }
+    ];
   }
 
   onSelectionChange(selected: User[]) {
@@ -117,18 +141,19 @@ export class AdminManagementComponent implements OnInit {
 
   onRowClick(row: User) {
     // Navigate to details page
-    window.location.href = `/main/admin-management/details/${row.id}`;
+    this.router.navigate(['/main/admin-management/details', row.id]);
   }
 
   viewAdmin(admin: User) {
     console.log('Viewing admin:', admin);
     // Navigate to details page
-    window.location.href = `/main/admin-management/details/${admin.id}`;
+    this.router.navigate(['/main/admin-management/details', admin.id]);
   }
-
+  
   editAdmin(admin: User) {
     console.log('Editing admin:', admin);
-    // Implement edit functionality
+    // Navigate to edit page
+    this.router.navigate(['/main/admin-management/new', admin.id]);
   }
 
   deleteAdmin(admin: User) {

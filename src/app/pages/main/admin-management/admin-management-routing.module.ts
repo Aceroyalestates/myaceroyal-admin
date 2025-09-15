@@ -18,6 +18,10 @@ const routes: Routes = [
     path: 'new',
     component: AddAdminComponent,
   },
+  {
+    path: 'new/:id',
+    component: AddAdminComponent,
+  },
 ];
 
 @NgModule({

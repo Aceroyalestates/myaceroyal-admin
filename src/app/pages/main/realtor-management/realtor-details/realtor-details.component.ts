@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { TableColumn, TableAction } from 'src/app/shared/components/table/table.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { Metrics, People } from 'src/app/core/constants';
 import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
@@ -15,7 +17,7 @@ import { CountryInterface, StateInterface } from 'src/app/core/models/generic';
 
 @Component({
   selector: 'app-realtor-details',
-  imports: [CommonModule, SharedModule, NzSelectModule],
+  imports: [CommonModule, SharedModule, NzSelectModule, NzTabsModule, NzEmptyModule],
   templateUrl: './realtor-details.component.html',
   styleUrl: './realtor-details.component.css',
 })
@@ -70,6 +72,27 @@ export class RealtorDetailsComponent {
     },
 
   ];
+
+  // Tabs state and report data (to be wired to API)
+  activeTab: 'sales' | 'clients' = 'sales';
+  salesColumns: TableColumn[] = [
+    { key: 'property', title: 'Property', sortable: true, type: 'text' },
+    { key: 'client', title: 'Client', sortable: true, type: 'text' },
+    { key: 'unit', title: 'Unit', sortable: true, type: 'text' },
+    { key: 'amount', title: 'Amount', sortable: true, type: 'text' },
+    { key: 'status', title: 'Status', sortable: true, type: 'status' },
+    { key: 'date', title: 'Date', sortable: true, type: 'text' },
+  ];
+  salesData: Array<{ id: string; property: string; client: string; unit: string; amount: string; status: string; date: string; }> = [];
+
+  clientsColumns: TableColumn[] = [
+    { key: 'name', title: 'Client', sortable: true, type: 'text' },
+    { key: 'email', title: 'Email', sortable: true, type: 'text' },
+    { key: 'phone', title: 'Phone', sortable: true, type: 'text' },
+    { key: 'purchases', title: 'Purchases', sortable: true, type: 'text' },
+    { key: 'total', title: 'Total Amount', sortable: true, type: 'text' },
+  ];
+  clientsData: Array<{ id: string; name: string; email: string; phone: string; purchases: number; total: string; }> = [];
 
   actions: TableAction[] = [
     {
@@ -176,14 +199,10 @@ export class RealtorDetailsComponent {
   }
 
   onRowClick(row: Person) {
-    // Navigate to user details
-    window.location.href = `/main/user-management/view/${row.id}/${row.name}`;
+    this.router.navigate(['/main/user-management/view', row.id, row.name]);
   }
 
-  viewUser(user: Person) {
-    console.log('Viewing user:', user);
-    window.location.href = `/main/user-management/view/${user.id}/${user.name}`;
-  }
+  viewUser(user: Person) { this.router.navigate(['/main/user-management/view', user.id, user.name]); }
 
   editUser(user: Person) {
     console.log('Editing user:', user);
@@ -209,4 +228,3 @@ export class RealtorDetailsComponent {
     console.log(this.selectedPeople);
   }
 }
-

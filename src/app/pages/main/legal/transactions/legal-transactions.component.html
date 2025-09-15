@@ -1,0 +1,64 @@
+<main class="legal-main-wrapper flex flex-col w-full p-6">
+  <div class="mb-8">
+    <app-breadcrumb [items]="[{label:'Legal', url:'/main/legal'},{label:'Transactions'}]"></app-breadcrumb>
+  </div>
+
+  <!-- Metrics -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    @for(m of metrics; track m.id){
+      <div
+        class="flex flex-col gap-6 p-6 border border-[#EEF2F6] dark:border-gray-600 rounded-lg w-full"
+        [ngStyle]="{ 'background-color': getTransparentColor(m.color) }"
+      >
+        <p class="text-[#7A7A7A] text-normal text-[20px]">{{ m.title }}</p>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-4">
+            <p class="text-[#4F4F4F] text-[32px] text-normal">{{ m.value }}</p>
+            <span class="flex items-center gap-1" [ngStyle]="{ color: m.color }">
+              <app-icon name="arrow-up"></app-icon>
+            </span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Approved Transactions (For Documentation)</h3>
+      <div class="flex items-center gap-3">
+        <button nz-button nzType="default" (click)="onExport()">
+          <span nz-icon nzType="download"></span>
+          <span>Export</span>
+        </button>
+        <nz-select [(ngModel)]="statusFilter" (ngModelChange)="onStatusChange($event)" class="w-48" nzAllowClear nzPlaceHolder="Status">
+          <nz-option nzValue="approved" nzLabel="Approved"></nz-option>
+          <nz-option nzValue="contract_sent" nzLabel="Contract Sent"></nz-option>
+        </nz-select>
+        <nz-select [(ngModel)]="selectedProperty" (ngModelChange)="onPropertyChange($event)" class="w-56" nzAllowClear nzPlaceHolder="All Properties">
+          @for(p of propertyOptions; track p){
+            <nz-option [nzValue]="p" [nzLabel]="p"></nz-option>
+          }
+        </nz-select>
+        <nz-select [(ngModel)]="selectedRealtor" (ngModelChange)="onRealtorChange($event)" class="w-56" nzAllowClear nzPlaceHolder="All Realtors">
+          @for(r of realtorOptions; track r){
+            <nz-option [nzValue]="r" [nzLabel]="r"></nz-option>
+          }
+        </nz-select>
+      </div>
+    </div>
+
+    <app-table
+      [data]="rows"
+      [columns]="columns"
+      [actions]="actions"
+      [loading]="loading"
+      [showSelection]="false"
+      [showPagination]="true"
+      [showSearch]="true"
+      (search)="onSearch($event)"
+      (actionClick)="onAction($event)"
+      class="w-full"
+    ></app-table>
+  </nz-card>
+</main>

@@ -6,155 +6,343 @@
     ></app-breadcrumb>
   </div>
 
-  <!-- Metrics Cards -->
-  <div class="flex items-center gap-6 mb-8">
-    @for(metric of financeMetrics; track metric.id) {
-      <nz-card class="finance-container flex-1 rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center"
-               [ngStyle]="{ 'background-color': metric.color + '20' }">
-            @if(metric.title === 'Total Balance') {
-              <span nz-icon nzType="home" [ngStyle]="{ color: metric.color }"></span>
-            } @else {
-              <span nz-icon nzType="rise" [ngStyle]="{ color: metric.color }"></span>
-            }
+  <!-- Metrics Cards (match dashboard style) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    @for(metric of financeMetrics; track metric.id){
+      <div
+        class="flex flex-col gap-6 p-6 border border-[#EEF2F6] dark:border-gray-600 rounded-lg w-full"
+        [ngStyle]="{ 'background-color': getTransparentColor(metric.color) }"
+      >
+        <p class="text-[#7A7A7A] text-normal text-[20px]">{{ metric.title }}</p>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-4">
+            <p class="text-[#4F4F4F] text-[32px] text-normal">
+              {{ formatShortAmount(metric.amount) }}
+            </p>
+            <span
+              class="flex items-center gap-1"
+              [ngStyle]="{ color: metric.color }"
+            >
+              <app-icon name="arrow-up"></app-icon>
+              <p class="font-medium text-normal">
+                {{ metric.percentage }}
+              </p>
+            </span>
           </div>
-          <p class="text-[#7A7A7A] dark:text-gray-400 text-[16px] font-medium mb-0">{{ metric.title }}</p>
         </div>
-        
-        <div class="flex items-center justify-between">
-          <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[32px] font-semibold mb-0">{{ metric.amount }}</h2>
-          <nz-tag [nzColor]="metric.color">
-            <span nz-icon nzType="arrow-up"></span>
-            {{ metric.percentage }} This Month
-          </nz-tag>
-        </div>
-      </nz-card>
+      </div>
     }
   </div>
 
-  <!-- Transaction Balance Chart Section -->
-  <nz-card class="finance-container mb-8 gap-6 rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
-          <span nz-icon nzType="line-chart" class="text-[#E41C24]"></span>
+  <!-- Charts & Balance -->
+  <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+    <nz-card class="finance-container gap-6 rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-[#E41C24]/10 rounded-full flex items-center justify-center">
+            <span nz-icon nzType="line-chart" class="text-[#E41C24]"></span>
+          </div>
+          <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[20px] font-semibold mb-0">Transaction Balance</h3>
         </div>
-        <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[20px] font-semibold mb-0">Transaction Balance</h3>
+        
+        <nz-select [(ngModel)]="selectedPeriod" class="w-40" nzSize="default">
+          @for(period of periodOptions; track period) {
+            <nz-option [nzValue]="period" [nzLabel]="period"></nz-option>
+          }
+        </nz-select>
       </div>
       
-      <nz-select [(ngModel)]="selectedPeriod" class="w-40" nzSize="default">
-        @for(period of periodOptions; track period) {
-          <nz-option [nzValue]="period" [nzLabel]="period"></nz-option>
-        }
-      </nz-select>
-    </div>
-    
-    <div class="mb-4">
-      <h2 class="text-[#4F4F4F] dark:text-gray-300 text-[32px] font-bold mb-1">₦300,000,000</h2>
-      <div class="flex items-center gap-2">
-        <nz-tag nzColor="success">
-          <span nz-icon nzType="arrow-up"></span>
-          ₦113,450,000
-        </nz-tag>
-      </div>
-    </div>
-    
-    <!-- Chart Container -->
-    <div class="h-80 w-full">
-      <canvas #chartCanvas></canvas>
-    </div>
-  </nz-card>
-
-  <!-- Spacer -->
-  <div class="h-8"></div>
-
-  <!-- Recent Financial Activity Section -->
-  <nz-card class="finance-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
-    <div class="flex items-center justify-between mb-6">
-      <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[24px] font-semibold mb-0">Recent Financial Activity</h3>
-      <button 
-        nz-button 
-        nzType="primary"
-        nzSize="default"
-        (click)="onExport()"
-        class="flex items-center gap-2">
-        <span nz-icon nzType="download" nzTheme="outline"></span>
-        <span>Export</span>
-      </button>
-    </div>
-
-    <!-- Custom Filter Bar -->
-    <div class="p-4 border-b border-gray-200 dark:border-gray-600 mb-4">
-      <div class="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4 lg:items-center lg:justify-between">
-        
-        <!-- Search Section -->
-        <div class="flex-1 max-w-md">
-          <app-search-bar
-            placeholder="Search transactions..."
-            (search)="onSearchTermChange($event)"
-            class="w-full">
-          </app-search-bar>
-        </div>
-
-        <!-- Date Range Filters -->
-        <div class="flex items-center gap-4 flex-wrap">
-          <!-- Property Filter -->
-          <div class="flex items-center gap-2">
-            <nz-select 
-              [(ngModel)]="selectedPropertyName"
-              (ngModelChange)="onPropertyNameChange($event)"
-              nzPlaceHolder="All Properties"
-              nzAllowClear
-              class="w-48">
-              <nz-option nzValue="" nzLabel="All Properties"></nz-option>
-              <nz-option nzValue="luxury-apartment" nzLabel="Luxury Apartment"></nz-option>
-              <nz-option nzValue="office-complex" nzLabel="Office Complex"></nz-option>
-              <nz-option nzValue="retail-space" nzLabel="Retail Space"></nz-option>
-              <nz-option nzValue="warehouse" nzLabel="Warehouse"></nz-option>
-            </nz-select>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <span class="text-[#4F4F4F] dark:text-gray-300 text-sm whitespace-nowrap">Start Date</span>
-            <nz-date-picker 
-              [(ngModel)]="startDate"
-              (ngModelChange)="onDateRangeChange()"
-              nzFormat="yyyy-MM-dd"
-              nzPlaceHolder="Start Date"
-              class="w-40">
-            </nz-date-picker>
-          </div>
-          
-          <div class="flex items-center gap-2">
-            <span class="text-[#4F4F4F] dark:text-gray-300 text-sm whitespace-nowrap">End Date</span>
-            <nz-date-picker 
-              [(ngModel)]="endDate"
-              (ngModelChange)="onDateRangeChange()"
-              nzFormat="yyyy-MM-dd"
-              nzPlaceHolder="End Date"
-              class="w-40">
-            </nz-date-picker>
-          </div>
+      <div class="mb-4">
+        <h2 class="text-[#4F4F4F] dark:text-gray-400 text-[32px] font-bold mb-1">{{ formatShortAmount(300000000) }}</h2>
+        <div class="flex items-center gap-2">
+          <nz-tag nzColor="success">
+            <span nz-icon nzType="arrow-up"></span>
+            {{ formatShortAmount(113450000) }}
+          </nz-tag>
         </div>
       </div>
-    </div>
+      
+      <div class="h-80 w-full">
+        <canvas #chartCanvas></canvas>
+      </div>
+    </nz-card>
 
-    <!-- Transactions Table using reusable component -->
-    <app-table
-      [data]="transactions"
-      [columns]="columns"
-      [actions]="actions"
-      [showSearch]="false"
-      [showFilters]="true"
-      [showSelection]="true"
-      [showPagination]="true"
-      [showExport]="false"
-      [pageSize]="10"
-      [responsive]="true"
-      (actionClick)="onTableAction($event)"
-      (selectionChange)="onSelectionChange($event)"
-      class="w-full">
-    </app-table>
-  </nz-card>
+    <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Payments by Method</h3>
+      </div>
+      <div class="h-80">
+        <canvas #paymentsMethodChart></canvas>
+      </div>
+    </nz-card>
+
+    <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Top Clients by Payment</h3>
+      </div>
+      <div class="h-80">
+        <canvas #topClientsChart></canvas>
+      </div>
+    </nz-card>
+
+    <nz-card class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-[#4F4F4F] dark:text-gray-300 text-[18px] font-semibold">Top Realtors by Revenue</h3>
+      </div>
+      <div class="h-80">
+        <canvas #topRealtorsChart></canvas>
+      </div>
+    </nz-card>
+  </div>
+
+  <!-- Tabs: Transactions, Upcoming, Users -->
+  <nz-tabset [nzSelectedIndex]="activeTab==='transactions'?0:activeTab==='upcoming'?1:activeTab==='aging'?2:activeTab==='overdue'?3:4" (nzSelectedIndexChange)="activeTab = ($event===0?'transactions':$event===1?'upcoming':$event===2?'aging':$event===3?'overdue':'users')">
+    <nz-tab [nzTitle]="'Recent Financial Transactions (' + transactions.length + ')'">
+      <nz-card class="finance-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600" [nzBodyStyle]="{ padding: '24px' }">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[24px] font-semibold mb-0">Recent Financial Activity</h3>
+          <button 
+            nz-button 
+            nzType="primary"
+            nzSize="default"
+            (click)="onExport()"
+            class="flex items-center gap-2">
+            <span nz-icon nzType="download" nzTheme="outline"></span>
+            <span>Export</span>
+          </button>
+        </div>
+
+        <div class="p-4 border-b border-gray-200 dark:border-gray-600 mb-4">
+          <div class="flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-4 lg:items-center lg:justify-between">
+            
+            <div class="flex-1 max-w-md">
+              <app-search-bar
+                placeholder="Search transactions..."
+                (search)="onSearchTermChange($event)"
+                class="w-full">
+              </app-search-bar>
+            </div>
+
+            <div class="flex items-center gap-4 flex-wrap">
+              <div class="flex items-center gap-2">
+                <nz-select 
+                  [(ngModel)]="selectedPropertyName"
+                  (ngModelChange)="onPropertyNameChange($event)"
+                  nzPlaceHolder="All Properties"
+                  nzAllowClear
+                  class="w-48">
+                  <nz-option nzValue="" nzLabel="All Properties"></nz-option>
+                  <nz-option nzValue="luxury-apartment" nzLabel="Luxury Apartment"></nz-option>
+                  <nz-option nzValue="office-complex" nzLabel="Office Complex"></nz-option>
+                  <nz-option nzValue="retail-space" nzLabel="Retail Space"></nz-option>
+                  <nz-option nzValue="warehouse" nzLabel="Warehouse"></nz-option>
+                </nz-select>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="text-[#4F4F4F] dark:text-gray-400 text-sm whitespace-nowrap">Start Date</span>
+                <nz-date-picker 
+                  [(ngModel)]="startDate"
+                  (ngModelChange)="onDateRangeChange()"
+                  nzFormat="yyyy-MM-dd"
+                  nzPlaceHolder="Start Date"
+                  class="w-40">
+                </nz-date-picker>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <span class="text-[#4F4F4F] dark:text-gray-400 text-sm whitespace-nowrap">End Date</span>
+                <nz-date-picker 
+                  [(ngModel)]="endDate"
+                  (ngModelChange)="onDateRangeChange()"
+                  nzFormat="yyyy-MM-dd"
+                  nzPlaceHolder="End Date"
+                  class="w-40">
+                </nz-date-picker>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <app-table
+          [data]="transactions"
+          [columns]="columns"
+          [actions]="actions"
+          [loading]="loading"
+          [showSearch]="false"
+          [showFilters]="true"
+          [showSelection]="true"
+          [showPagination]="true"
+          [showExport]="false"
+          [pageSize]="10"
+          [responsive]="true"
+          (actionClick)="onTableAction($event)"
+          (selectionChange)="onSelectionChange($event)"
+          class="w-full">
+        </app-table>
+      </nz-card>
+    </nz-tab>
+
+    <nz-tab [nzTitle]="'Upcoming Payments (This Month) (' + upcomingPayments.length + ' | ' + formatShortAmount(getUpcomingTotal()) + ')'">
+      <div class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 p-4">
+        <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold mb-4">Upcoming Installment Payments</h3>
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr class="text-left text-[#7A7A7A] dark:text-gray-400">
+                <th class="py-2 pr-4">Client</th>
+                <th class="py-2 pr-4">Property</th>
+                <th class="py-2 pr-4">Installment</th>
+                <th class="py-2 pr-4">Due Date</th>
+                <th class="py-2 pr-4">Amount</th>
+                <th class="py-2 pr-4">Status</th>
+                <th class="py-2 pr-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for(item of upcomingPayments; track item.id) {
+                <tr class="border-t border-gray-100 dark:border-gray-700">
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ item.client }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ item.property }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ item.installment }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ item.dueDate | date: 'mediumDate' }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ item.amount }}</td>
+                  <td class="py-3 pr-4">
+                    <span
+                      [ngClass]="{
+                        'text-orange-600 bg-orange-100 px-3 py-1 rounded-full text-sm': item.status === 'Due Soon',
+                        'text-red-600 bg-red-100 px-3 py-1 rounded-full text-sm': item.status === 'Overdue',
+                        'text-blue-600 bg-blue-100 px-3 py-1 rounded-full text-sm': item.status === 'Scheduled'
+                      }"
+                    >
+                      {{ item.status }}
+                    </span>
+                  </td>
+                  <td class="py-3 pr-4">
+                    <button nz-button nzType="default" (click)="sendReminder(item)">Send Reminder</button>
+                    <span class="text-xs text-gray-500 ml-2" *ngIf="item.lastReminded">Last: {{ item.lastReminded | date: 'short' }}</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </nz-tab>
+
+    <nz-tab [nzTitle]="'Aging (Overdue Installments) (' + agingCount + ' | ' + formatShortAmount(agingTotal) + ')'">
+      <div class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 p-4">
+        <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold mb-2">Receivables Aging Summary</h3>
+        <p class="text-[#7A7A7A] dark:text-gray-400 text-sm mb-4">
+          Groups late installment payments by how many days past due they are. Click a bucket to view those items in the Overdue tab.
+        </p>
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr class="text-left text-[#7A7A7A] dark:text-gray-400">
+                <th class="py-2 pr-4">Bucket</th>
+                <th class="py-2 pr-4">Count</th>
+                <th class="py-2 pr-4">Total Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for(row of agingBuckets; track row.name) {
+                <tr class="border-t border-gray-100 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" (click)="onAgingRowClick(row)">
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ row.name }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ row.count }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ formatShortAmount(row.total) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </nz-tab>
+
+    <nz-tab [nzTitle]="'Overdue Payments (' + filteredOverduePayments.length + ' | ' + formatShortAmount(getOverdueTotal()) + ')'">
+      <div class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 p-4">
+        <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold mb-4">Late Installment Payments</h3>
+        <div class="flex items-center gap-3 mb-3" *ngIf="overdueBucketFilter">
+          <span class="text-sm text-[#7A7A7A] dark:text-gray-400">Filtered by:</span>
+          <nz-tag nzColor="red">{{ overdueBucketFilter }}</nz-tag>
+          <button nz-button nzSize="small" (click)="clearOverdueBucketFilter()">Clear</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr class="text-left text-[#7A7A7A] dark:text-gray-400">
+                <th class="py-2 pr-4">Client</th>
+                <th class="py-2 pr-4">Property</th>
+                <th class="py-2 pr-4">Installment</th>
+                <th class="py-2 pr-4">Due Date</th>
+                <th class="py-2 pr-4">Days Overdue</th>
+                <th class="py-2 pr-4">Amount</th>
+                <th class="py-2 pr-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for(item of filteredOverduePayments; track item.id) {
+                <tr class="border-t border-gray-100 dark:border-gray-700">
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ item.client }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ item.property }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ item.installment }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ item.dueDate | date: 'mediumDate' }}</td>
+                  <td class="py-3 pr-4">
+                    <span class="text-red-600 bg-red-100 px-3 py-1 rounded-full text-sm">{{ getDaysOverdue(item.dueDate) }} days</span>
+                  </td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ item.amount }}</td>
+                  <td class="py-3 pr-4">
+                    <button nz-button nzType="default" (click)="sendReminder(item)">Send Reminder</button>
+                    <span class="text-xs text-gray-500 ml-2" *ngIf="item.lastReminded">Last: {{ item.lastReminded | date: 'short' }}</span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </nz-tab>
+
+    <nz-tab [nzTitle]="'Users (' + userSummaries.length + ')'">
+      <div class="rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 p-4">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-[#4F4F4F] dark:text-gray-400 text-[18px] font-semibold">User Payment Overview</h3>
+          <div class="w-full max-w-md">
+            <app-search-bar placeholder="Search users..." (search)="onUserSearch($event)"></app-search-bar>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead>
+              <tr class="text-left text-[#7A7A7A] dark:text-gray-400">
+                <th class="py-2 pr-4">User</th>
+                <th class="py-2 pr-4">Email</th>
+                <th class="py-2 pr-4">Phone</th>
+                <th class="py-2 pr-4">Completed</th>
+                <th class="py-2 pr-4">Pending</th>
+                <th class="py-2 pr-4">Next Due</th>
+                <th class="py-2 pr-4">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for(u of userSummaries; track u.id) {
+                <tr class="border-t border-gray-100 dark:border-gray-700">
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ u.name }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ u.email }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ u.phone }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ u.completedPayments }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ u.pendingPayments }}</td>
+                  <td class="py-3 pr-4 text-[#4F4F4F] dark:text-gray-300">{{ u.nextDueDate || '—' }}</td>
+                  <td class="py-3 pr-4">
+                    <button nz-button nzType="default" (click)="viewUser(u.id)">View User</button>
+                    <button nz-button nzType="primary" class="ml-2" *ngIf="u.pendingPayments > 0" (click)="viewUser(u.id)">View Schedule</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </nz-tab>
+  </nz-tabset>
 </main>

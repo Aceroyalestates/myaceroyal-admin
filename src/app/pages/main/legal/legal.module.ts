@@ -15,6 +15,8 @@ import { LegalRoutingModule } from './legal-routing.module';
 
 // Components
 import { LegalComponent } from './legal.component';
+import { LegalTransactionsComponent } from './transactions/legal-transactions.component';
+import { LegalTransactionDetailsComponent } from './transactions/legal-transaction-details.component';
 
 @NgModule({
   declarations: [],
@@ -30,7 +32,9 @@ import { LegalComponent } from './legal.component';
     NzIconModule,
     
     // Standalone components
-    LegalComponent
+    LegalComponent,
+    LegalTransactionsComponent,
+    LegalTransactionDetailsComponent
   ]
 })
 export class LegalModule { }

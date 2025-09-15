@@ -3,13 +3,16 @@
     <app-breadcrumb
       [items]="[
         { label: 'Realtor Management', url: '/main/realtor-management' },
-        { label: 'Add New Realtor' }
+        { label: isEditMode ? 'Edit Realtor' : 'Add New Realtor' }
       ]"
     ></app-breadcrumb>
-    <p class="!text-medium font-medium !text-[#7A7A7A]">
-      Fill details below to create a new realtor profile
+    <p class="!text-medium font-medium text-[#7A7A7A]">
+      {{ isEditMode ? 'Update realtor details below' : 'Fill details below to create a new realtor profile' }}
     </p>
   </div>
+  @if (error) {
+    <nz-alert nzType="error" [nzMessage]="error" nzShowIcon class="mb-4"></nz-alert>
+  }
   <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
     <div class="mb-4">
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="avatar">
@@ -87,43 +90,83 @@
           />
         </nz-form-control>
       </div>
-      <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password">
-          <span>Password</span>
-        </nz-form-label>
-        <nz-form-control
-          [nzSm]="14"
-          [nzXs]="24"
-          nzErrorTip="Please input password!"
-        >
-          <input
-            nz-input
-            type="password"
-            id="password"
-            placeholder="Enter password"
-            formControlName="password"
-          />
-        </nz-form-control>
-      </div>
-      <div>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkPassword"
-          >Confirm Password</nz-form-label
-        >
-        <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
-          <input
-            nz-input
-            type="password"
-            formControlName="checkPassword"
-            placeholder="Confirm Admin Password"
-            id="checkPassword"
-          />
-          <ng-template #errorTpl let-control>
-            @if (control.errors?.['required']) { Please confirm your password! }
-            @if (control.errors?.['confirm']) { Two passwords that you enter is
-            inconsistent! }
-          </ng-template>
-        </nz-form-control>
-      </div>
+      @if (!isEditMode) {
+        <div>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password">
+            <span>Password</span>
+          </nz-form-label>
+          <nz-form-control
+            [nzSm]="14"
+            [nzXs]="24"
+            nzErrorTip="Please input password!"
+          >
+            <input
+              nz-input
+              type="password"
+              id="password"
+              placeholder="Enter password"
+              formControlName="password"
+            />
+          </nz-form-control>
+        </div>
+        <div>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkPassword"
+            >Confirm Password</nz-form-label
+          >
+          <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
+            <input
+              nz-input
+              type="password"
+              formControlName="checkPassword"
+              placeholder="Confirm Password"
+              id="checkPassword"
+            />
+            <ng-template #errorTpl let-control>
+              @if (control.errors?.['required']) { Please confirm your password! }
+              @if (control.errors?.['confirm']) { Two passwords that you enter is
+              inconsistent! }
+            </ng-template>
+          </nz-form-control>
+        </div>
+      } @else {
+        <div>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password">
+            <span>New Password (Optional)</span>
+          </nz-form-label>
+          <nz-form-control
+            [nzSm]="14"
+            [nzXs]="24"
+            nzErrorTip="Please input password!"
+          >
+            <input
+              nz-input
+              type="password"
+              id="password"
+              placeholder="Leave blank to keep current password"
+              formControlName="password"
+            />
+          </nz-form-control>
+        </div>
+        <div>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkPassword"
+            >Confirm New Password</nz-form-label
+          >
+          <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
+            <input
+              nz-input
+              type="password"
+              formControlName="checkPassword"
+              placeholder="Confirm new password"
+              id="checkPassword"
+            />
+            <ng-template #errorTpl let-control>
+              @if (control.errors?.['required']) { Please confirm your password! }
+              @if (control.errors?.['confirm']) { Two passwords that you enter is
+              inconsistent! }
+            </ng-template>
+          </nz-form-control>
+        </div>
+      }
       <div>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="gender">
           <span>Gender</span>
@@ -259,8 +302,9 @@
       <button
         type="submit"
         class="place-self-end rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+        [disabled]="isLoading"
       >
-        Create Realtor
+        {{ isEditMode ? 'Update Realtor' : 'Create Realtor' }}
       </button>
     </div>
   </form>

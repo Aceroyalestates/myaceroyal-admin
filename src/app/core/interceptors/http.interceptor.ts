@@ -6,11 +6,15 @@ import { inject } from '@angular/core';
 import { catchError, finalize, tap, throwError, timer, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SKIP_LOADING, SKIP_ERROR_HANDLING } from '../services/http.service';
+import { ProgressService } from '../services/progress.service';
+
+let activeRequests = 0;
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const loaderService = inject(LoaderService);
   const errorModalService = inject(ErrorModalService);
+  const progressService = inject(ProgressService);
   
   // Check if we should skip loading or error handling for this request
   const skipLoading = req.context.get(SKIP_LOADING);
@@ -38,9 +42,11 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   // Show loader for appropriate requests
-  if (!skipLoading && shouldShowLoader(req)) {
-    const loadingMessage = getLoadingMessage(req);
-    loaderService.show(loadingMessage);
+  if (!skipLoading) {
+    if (activeRequests++ === 0) {
+      // Use top progress bar instead of overlay loader
+      progressService.start();
+    }
   }
 
   // Log request in development
@@ -105,9 +111,12 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
       return throwError(() => error);
     }),
     finalize(() => {
-      // Hide loader if it was shown for this request
-      if (!skipLoading && shouldShowLoader(req)) {
-        loaderService.hide();
+      if (!skipLoading) {
+        if (--activeRequests <= 0) {
+          activeRequests = 0;
+          // Complete top progress (no overlay)
+          progressService.complete();
+        }
       }
     })
   );
@@ -126,8 +135,8 @@ function shouldAddContentType(req: HttpRequest<any>): boolean {
 }
 
 function shouldShowLoader(req: HttpRequest<any>): boolean {
-  // Show loader for non-GET requests and certain GET requests
-  return req.method !== 'GET' || req.url.includes('/upload') || req.url.includes('/download');
+  // Retained for backward compatibility; loader visibility is now centralized via activeRequests
+  return true;
 }
 
 function getLoadingMessage(req: HttpRequest<any>): string {

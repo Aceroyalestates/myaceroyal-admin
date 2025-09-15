@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
 import {
   TableAction,
@@ -6,15 +7,25 @@ import {
 } from 'src/app/shared/components/table/table.component';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from 'src/app/shared/components/icon/icon.component';
-import { Metric } from 'src/app/core/types/general';
 import { Metrics, PAGE_SIZE } from 'src/app/core/constants';
+import { Metric } from 'src/app/core/types/general';
 import { FormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { DashboardService } from '../../../core/services/dashboard.service';
+import { DashboardAnalyticsService, DashboardKpis, TimeRangeFilters } from 'src/app/core/services/dashboard-analytics.service';
+import { DashboardFiltersService } from 'src/app/core/services/dashboard-filters.service';
+import { MockDataService } from 'src/app/core/services/mock-data.service';
+import { environment } from 'src/environments/environment';
 import { forkJoin, Subscription } from 'rxjs';
 import { Property } from 'src/app/core/models/properties';
 import { Activity } from 'src/app/core/models/generic';
 import { PaymentDetailsComponent } from './payment-details/payment-details.component';
+import Chart from 'chart.js/auto';
+import { ThemeService } from 'src/app/core/services/theme.service';
+import { SearchBarComponent } from 'src/app/shared/components/search-bar/search-bar.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,12 +35,16 @@ import { PaymentDetailsComponent } from './payment-details/payment-details.compo
     IconComponent,
     FormsModule,
     NzSelectModule,
+    NzDatePickerModule,
+    NzCardModule,
+    NzTabsModule,
+    SearchBarComponent,
     PaymentDetailsComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   loading = false;
   error: string | null = null;
   activities!: Activity[];
@@ -75,6 +90,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
   properties!: Property[];
   isVisible = false
   activity: Activity = {} as Activity;
+  // Charts
+  @ViewChild('revenueChart', { static: false }) revenueChartRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('paymentsChart', { static: false }) paymentsChartRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('propertiesChart', { static: false }) propertiesChartRef!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('realtorsChart', { static: false }) realtorsChartRef!: ElementRef<HTMLCanvasElement>;
+
+  private revenueChart?: Chart;
+  private paymentsChart?: Chart;
+  private propertiesChart?: Chart;
+  private realtorsChart?: Chart;
+  // Analytics state
+  kpis: DashboardKpis | null = null;
+  funnelLabels: string[] = [];
+  funnelData: number[] = [];
+  @ViewChild('funnelChart', { static: false }) funnelChartRef!: ElementRef<HTMLCanvasElement>;
+  private funnelChart?: Chart;
 
   // Report Filters
   systemReportFilters = {
@@ -92,6 +123,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Report Data
   systemActivities: any[] = [];
   customerActivities: any[] = [];
+  filteredSystemActivities: any[] = [];
+  filteredCustomerActivities: any[] = [];
   systemReportLoading = false;
   customerReportLoading = false;
 
@@ -197,7 +230,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
   constructor(
-    private dashboardService: DashboardService
+    private router: Router,
+    private dashboardService: DashboardService,
+    private themeService: ThemeService,
+    private mockData: MockDataService,
+    private analytics: DashboardAnalyticsService,
+    private dashFilters: DashboardFiltersService
   ) {}
 
   ngOnInit(): void {
@@ -205,132 +243,62 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.initializeReportDates();
     this.loadSystemReport();
     this.loadCustomerReport();
+    this.loadAnalytics(this.dashFilters.getSnapshot());
+    this.themeService.theme$.subscribe(() => {
+      this.rebuildCharts();
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.initAllCharts();
   }
 
   private initializeReportDates(): void {
+    if (environment.mock) {
+      // Leave empty to show all mock records by default
+      this.systemReportFilters.startDate = '';
+      this.systemReportFilters.endDate = '';
+      this.customerReportFilters.startDate = '';
+      this.customerReportFilters.endDate = '';
+      return;
+    }
     const today = new Date();
     const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
-    
     this.systemReportFilters.startDate = thirtyDaysAgo.toISOString().split('T')[0];
     this.systemReportFilters.endDate = today.toISOString().split('T')[0];
-    
     this.customerReportFilters.startDate = thirtyDaysAgo.toISOString().split('T')[0];
     this.customerReportFilters.endDate = today.toISOString().split('T')[0];
   }
 
   loadSystemReport(): void {
     this.systemReportLoading = true;
-    
-    // Mock data for system activities
-    setTimeout(() => {
-      this.systemActivities = [
-        {
-          id: 1,
-          user_name: 'John Admin',
-          user_role: 'Admin',
-          action: 'Property Created',
-          details: 'Created new property: Lagos Luxury Apartment',
-          date: '2024-12-09 10:30 AM',
-          status: 'Completed'
-        },
-        {
-          id: 2,
-          user_name: 'Sarah Realtor',
-          user_role: 'Realtor',
-          action: 'Client Meeting',
-          details: 'Met with potential buyer for Property #123',
-          date: '2024-12-09 02:15 PM',
-          status: 'Completed'
-        },
-        {
-          id: 3,
-          user_name: 'Mike User',
-          user_role: 'User',
-          action: 'Profile Updated',
-          details: 'Updated contact information and preferences',
-          date: '2024-12-09 04:45 PM',
-          status: 'Completed'
-        },
-        {
-          id: 4,
-          user_name: 'Admin System',
-          user_role: 'Admin',
-          action: 'Report Generated',
-          details: 'Generated monthly revenue report',
-          date: '2024-12-09 06:00 PM',
-          status: 'Completed'
-        },
-        {
-          id: 5,
-          user_name: 'Jane Realtor',
-          user_role: 'Realtor',
-          action: 'Property Updated',
-          details: 'Updated pricing for Property #456',
-          date: '2024-12-09 08:20 PM',
-          status: 'Completed'
-        }
-      ];
-      this.systemReportLoading = false;
-    }, 1000);
+    if (environment.mock) {
+      this.mockData.getSystemActivities().subscribe(items => {
+        this.systemActivities = items;
+        this.systemReportLoading = false;
+        this.applySystemFilters();
+      });
+      return;
+    }
+    // TODO: real API call when available
+    this.systemReportLoading = false;
+    this.applySystemFilters();
   }
 
   loadCustomerReport(): void {
     this.customerReportLoading = true;
     
-    // Mock data for customer activities
-    setTimeout(() => {
-      this.customerActivities = [
-        {
-          id: 1,
-          customer_name: 'Alice Johnson',
-          activity_type: 'Account Created',
-          description: 'New customer registration completed',
-          date: '2024-12-09 09:15 AM',
-          status: 'Active'
-        },
-        {
-          id: 2,
-          customer_name: 'Bob Williams',
-          activity_type: 'Subscription Form',
-          description: 'Filled premium subscription form',
-          date: '2024-12-09 11:30 AM',
-          status: 'Pending'
-        },
-        {
-          id: 3,
-          customer_name: 'Carol Davis',
-          activity_type: 'Payment Made',
-          description: 'Payment of ₦50,000 for property consultation',
-          date: '2024-12-09 01:45 PM',
-          status: 'Completed'
-        },
-        {
-          id: 4,
-          customer_name: 'David Brown',
-          activity_type: 'Property Viewed',
-          description: 'Viewed Lagos Luxury Apartment details',
-          date: '2024-12-09 03:20 PM',
-          status: 'Active'
-        },
-        {
-          id: 5,
-          customer_name: 'Emma Wilson',
-          activity_type: 'Inquiry Sent',
-          description: 'Sent inquiry about Abuja property pricing',
-          date: '2024-12-09 05:30 PM',
-          status: 'Pending'
-        },
-        {
-          id: 6,
-          customer_name: 'Frank Miller',
-          activity_type: 'Payment Made',
-          description: 'Payment of ₦2,500,000 for property purchase',
-          date: '2024-12-09 07:10 PM',
-          status: 'Completed'
-        }
-      ];
-      this.customerReportLoading = false;
-    }, 1000);
+    if (environment.mock) {
+      this.mockData.getCustomerActivities().subscribe(items => {
+        this.customerActivities = items;
+        this.customerReportLoading = false;
+        this.applyCustomerFilters();
+      });
+      return;
+    }
+    // TODO: real API call when available
+    this.customerReportLoading = false;
+    this.applyCustomerFilters();
   }
 
   onSystemReportAction(event: { action: string; row: any }): void {
@@ -374,7 +342,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Cleanup if needed
+    this.destroyCharts();
   }
 
   loadUsers() {
@@ -410,6 +378,298 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     return `rgba(${r}, ${g}, ${b}, 0.12)`;
   }
+
+  // ===== Report filtering =====
+  systemSearchTerm = '';
+  customerSearchTerm = '';
+
+  onSystemSearch(term: string) {
+    this.systemSearchTerm = term;
+    this.applySystemFilters();
+  }
+
+  onCustomerSearch(term: string) {
+    this.customerSearchTerm = term;
+    this.applyCustomerFilters();
+  }
+
+  onSystemDateChange() { this.applySystemFilters(); }
+  onCustomerDateChange() { this.applyCustomerFilters(); }
+
+  private applySystemFilters(): void {
+    const { startDate, endDate } = this.systemReportFilters;
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    const term = this.systemSearchTerm.toLowerCase();
+    this.filteredSystemActivities = this.systemActivities.filter(a => {
+      const dateOk = this.inRange(this.parseDate(a.date), start, end);
+      const text = `${a.user_name} ${a.user_role} ${a.action} ${a.details}`.toLowerCase();
+      const searchOk = !term || text.includes(term);
+      return dateOk && searchOk;
+    });
+  }
+
+  private applyCustomerFilters(): void {
+    const { startDate, endDate } = this.customerReportFilters;
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    const term = this.customerSearchTerm.toLowerCase();
+    this.filteredCustomerActivities = this.customerActivities.filter(a => {
+      const dateOk = this.inRange(this.parseDate(a.date), start, end);
+      const text = `${a.customer_name} ${a.activity_type} ${a.description} ${a.status}`.toLowerCase();
+      const searchOk = !term || text.includes(term);
+      return dateOk && searchOk;
+    });
+  }
+
+  private parseDate(val: string): Date | null {
+    if (!val) return null;
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  private inRange(date: Date | null, start: Date | null, end: Date | null): boolean {
+    if (!date) return true; // keep if missing
+    if (start && date < start) return false;
+    if (end) {
+      // include entire end day
+      const endOfDay = new Date(end);
+      endOfDay.setHours(23, 59, 59, 999);
+      if (date > endOfDay) return false;
+    }
+    return true;
+  }
+
+  // ============ Charts ============
+  private cssVars() {
+    const cs = getComputedStyle(document.documentElement);
+    return {
+      primary: cs.getPropertyValue('--primary').trim() || '#E41C24',
+      text: cs.getPropertyValue('--text').trim() || '#111827',
+      muted: cs.getPropertyValue('--muted').trim() || '#6b7280',
+      border: cs.getPropertyValue('--border').trim() || '#e5e7eb',
+      surface: cs.getPropertyValue('--surface').trim() || '#ffffff',
+    };
+  }
+
+  private initAllCharts(): void {
+    this.destroyCharts();
+    this.initRevenueChart();
+    this.initPaymentsChart();
+    this.initPropertiesChart();
+    this.initRealtorsChart();
+    this.initFunnelChart();
+  }
+
+  private rebuildCharts(): void {
+    this.initAllCharts();
+  }
+
+  private destroyCharts(): void {
+    this.revenueChart?.destroy();
+    this.paymentsChart?.destroy();
+    this.propertiesChart?.destroy();
+    this.realtorsChart?.destroy();
+    this.funnelChart?.destroy();
+  }
+
+  private initRevenueChart(): void {
+    const ctx = this.revenueChartRef?.nativeElement.getContext('2d');
+    if (!ctx) return;
+    const v = this.cssVars();
+    this.revenueChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Revenue (₦)',
+          data: [],
+          borderColor: v.primary,
+          backgroundColor: 'rgba(228, 28, 36, 0.12)',
+          pointBackgroundColor: v.primary,
+          tension: 0.35,
+          borderWidth: 3,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            ticks: {
+              color: v.muted,
+              callback: (val: any) => '₦' + (Number(val)/1_000_000).toFixed(0) + 'M'
+            },
+            grid: { color: v.border }
+          },
+          x: { ticks: { color: v.muted }, grid: { display: false } }
+        },
+        plugins: { legend: { labels: { color: v.text } } }
+      }
+    });
+    this.analytics.getRevenueSeries(this.dashFilters.getSnapshot()).subscribe(s => {
+      if (!this.revenueChart) return;
+      this.revenueChart.data.labels = s.labels;
+      (this.revenueChart.data.datasets[0].data as number[]) = s.data;
+      this.revenueChart.update();
+    });
+  }
+
+  private initPaymentsChart(): void {
+    const ctx = this.paymentsChartRef?.nativeElement.getContext('2d');
+    if (!ctx) return;
+    const v = this.cssVars();
+    this.paymentsChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: [],
+        datasets: [{
+          data: [],
+          backgroundColor: [v.primary, '#10B981', '#3B82F6', '#F59E0B'],
+          borderColor: v.surface,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { color: v.text } }
+        }
+      }
+    });
+    this.analytics.getPaymentsByMethod(this.dashFilters.getSnapshot()).subscribe(s => {
+      if (!this.paymentsChart) return;
+      this.paymentsChart.data.labels = s.labels;
+      (this.paymentsChart.data.datasets[0].data as number[]) = s.data;
+      this.paymentsChart.update();
+    });
+  }
+
+  private initPropertiesChart(): void {
+    const ctx = this.propertiesChartRef?.nativeElement.getContext('2d');
+    if (!ctx) return;
+    const v = this.cssVars();
+    this.propertiesChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Units',
+          data: [],
+          backgroundColor: [ '#10B981', '#F59E0B', v.primary ],
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { ticks: { color: v.muted }, grid: { display: false } },
+          y: { ticks: { color: v.muted }, grid: { color: v.border } }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+    this.analytics.getPropertyStatus(this.dashFilters.getSnapshot()).subscribe(s => {
+      if (!this.propertiesChart) return;
+      this.propertiesChart.data.labels = s.labels;
+      (this.propertiesChart.data.datasets[0].data as number[]) = s.data;
+      this.propertiesChart.update();
+    });
+  }
+
+  private initRealtorsChart(): void {
+    const ctx = this.realtorsChartRef?.nativeElement.getContext('2d');
+    if (!ctx) return;
+    const v = this.cssVars();
+    this.realtorsChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Closed Deals',
+          data: [],
+          backgroundColor: v.primary,
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: { ticks: { color: v.muted } },
+          x: { ticks: { color: v.muted }, grid: { color: v.border } }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+    this.analytics.getTopRealtors(this.dashFilters.getSnapshot()).subscribe(s => {
+      if (!this.realtorsChart) return;
+      this.realtorsChart.data.labels = s.labels;
+      (this.realtorsChart.data.datasets[0].data as number[]) = s.data;
+      this.realtorsChart.update();
+    });
+  }
+
+  private initFunnelChart(): void {
+    const ctx = this.funnelChartRef?.nativeElement.getContext('2d');
+    if (!ctx) return;
+    const v = this.cssVars();
+    this.funnelChart = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: [], datasets: [{ label: 'Count', data: [], backgroundColor: v.primary, borderRadius: 6 }] },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { ticks: { color: v.muted } }, x: { ticks: { color: v.muted }, grid: { color: v.border } } },
+        plugins: { legend: { display: false } }
+      }
+    });
+    this.analytics.getFunnel(this.dashFilters.getSnapshot()).subscribe(s => {
+      if (!this.funnelChart) return;
+      this.funnelLabels = s.labels;
+      this.funnelData = s.data;
+      this.funnelChart.data.labels = s.labels;
+      (this.funnelChart.data.datasets[0].data as number[]) = s.data;
+      this.funnelChart.update();
+    });
+  }
+
+  private loadAnalytics(filters: TimeRangeFilters): void {
+    this.analytics.getOverviewKpis(filters).subscribe(k => {
+      this.kpis = k;
+      this.updateMetricCardsFromKpis();
+    });
+  }
+
+  private updateMetricCardsFromKpis(): void {
+    if (!this.kpis) return;
+    const formatNairaCompact = (val: number) => {
+      const n = val || 0;
+      if (n >= 1_000_000_000) return `₦${(n / 1_000_000_000).toFixed(1)}B`;
+      if (n >= 1_000_000) return `₦${(n / 1_000_000).toFixed(1)}M`;
+      if (n >= 1_000) return `₦${(n / 1_000).toFixed(1)}K`;
+      return `₦${n.toLocaleString()}`;
+    };
+    this.metrics = this.metrics.map(m => {
+      switch (m.title) {
+        case 'Total Revenue':
+          return { ...m, amount: formatNairaCompact(this.kpis!.totalRevenue) };
+        case 'Monthly Revenue':
+          return { ...m, amount: formatNairaCompact(this.kpis!.mtdRevenue) };
+        case 'Active Realtors':
+          return { ...m, amount: this.kpis!.activeRealtors };
+        case 'Total Clients':
+          return { ...m, amount: this.kpis!.totalCustomers };
+        default:
+          return m;
+      }
+    });
+  }
   onTableAction(event: { action: string; row: Activity }) {
     console.log('Table action:', event.action, 'Row:', event.row);
     switch (event.action) {
@@ -419,8 +679,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
     onRowClick(row: Activity) {
-      // Navigate to user details
-      window.location.href = `/main/user-management/view/${row.id}/${row.user.full_name}`;
+      this.router.navigate(['/main/user-management/view', row.id, row.user.full_name]);
     }
 
     viewUser(activity: Activity) {

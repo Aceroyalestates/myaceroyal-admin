@@ -31,6 +31,16 @@ export class HttpService {
   constructor(private http: HttpClient) { }
 
   /**
+   * Build full URL. If endpoint is absolute (http/https), use as-is.
+   */
+  private makeUrl(endpoint: string): string {
+    if (/^https?:\/\//i.test(endpoint)) {
+      return endpoint;
+    }
+    return `${this.apiUrl}/${endpoint}`;
+  }
+
+  /**
    * Get default headers (without hardcoded token - let interceptor handle it)
    */
   private getDefaultHeaders(): HttpHeaders {
@@ -75,7 +85,7 @@ export class HttpService {
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
     const retryCount = options?.retryCount || this.defaultRetryCount;
 
-    return this.http.get<T>(`${this.apiUrl}/${endpoint}`, {
+    return this.http.get<T>(this.makeUrl(endpoint), {
       params: httpParams,
       headers,
       context,
@@ -109,7 +119,7 @@ export class HttpService {
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
     const retryCount = options?.retryCount || 0; // No retry for POST by default
 
-    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, data, {
+    return this.http.post<T>(this.makeUrl(endpoint), data, {
       headers,
       context,
       reportProgress: options?.reportProgress,
@@ -142,7 +152,7 @@ export class HttpService {
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
     const retryCount = options?.retryCount || 0; // No retry for PUT by default
 
-    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, data, {
+    return this.http.put<T>(this.makeUrl(endpoint), data, {
       headers,
       context,
       reportProgress: options?.reportProgress,
@@ -175,7 +185,7 @@ export class HttpService {
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
     const retryCount = options?.retryCount || 0; // No retry for PATCH by default
 
-    return this.http.patch<T>(`${this.apiUrl}/${endpoint}`, data, {
+    return this.http.patch<T>(this.makeUrl(endpoint), data, {
       headers,
       context,
       reportProgress: options?.reportProgress,
@@ -204,7 +214,7 @@ export class HttpService {
     const timeoutMs = options?.timeoutMs || this.defaultTimeout;
     const retryCount = options?.retryCount || 0;
 
-    return this.http.request<T>('DELETE', `${this.apiUrl}/${endpoint}`, {
+    return this.http.request<T>('DELETE', this.makeUrl(endpoint), {
       headers,
       context,
       body: options?.body,
