@@ -23,21 +23,7 @@
                     </button>
                 </div>
                 <div class="property-container rounded-lg border-2 border-[#EEF2F6] dark:border-gray-600 px-4 py-10">
-                    
-                    <!-- <app-table
-                        [data]="properties"
-                        [columns]="columns"
-                        [showSelection]="true"
-                        [showPagination]="true"
-                        [showSearch]="true"
-                        [showFilters]="true"
-                        [loading]="loading"
-                        [enableRowClick]="true"
-                        (selectionChange)="onSelectionChange($event)"
-                        (rowClick)="onRowClick($event)"
-                        class="w-full"
-                    /> -->
-
+                 
                     <app-table
                         [data]="properties"
                         [columns]="columns"
@@ -74,16 +60,18 @@
                         </div>
                     </div> -->
                     <app-table
-                        [data]="properties"
+                        [data]="soldProperties"
                         [columns]="columns"
-                        [actions]="actions"
-                        [showSelection]="false"
+                        [showSelection]="true"
                         [showPagination]="true"
                         [showSearch]="true"
                         [showFilters]="true"
+                        [loading]="loading"
+                        [enableRowClick]="true"
+                        [pageSize]="pageSize"
                         (selectionChange)="onSelectionChange($event)"
-                        (actionClick)="onTableAction($event)"
                         (rowClick)="onRowClick($event)"
+                        (pageChange)="onPageChange($event.page, $event.size)"
                         class="w-full"
                     />
                 </div>
@@ -106,16 +94,18 @@
                         </div>
                     </div> -->
                     <app-table
-                        [data]="properties"
+                        [data]="availableProperties"
                         [columns]="columns"
-                        [actions]="actions"
-                        [showSelection]="false"
+                        [showSelection]="true"
                         [showPagination]="true"
                         [showSearch]="true"
                         [showFilters]="true"
+                        [loading]="loading"
+                        [enableRowClick]="true"
+                        [pageSize]="pageSize"
                         (selectionChange)="onSelectionChange($event)"
-                        (actionClick)="onTableAction($event)"
                         (rowClick)="onRowClick($event)"
+                        (pageChange)="onPageChange($event.page, $event.size)"
                         class="w-full"
                     />
                 </div>

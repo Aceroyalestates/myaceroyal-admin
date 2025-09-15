@@ -18,7 +18,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { PropertyService } from 'src/app/core/services/property.service';
-import { InstallmentPlan, InstallmentPlanRequest, Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions, PropertyUnitRequest } from 'src/app/core/models/properties';
+import { InstallmentPlan, InstallmentPlanCreate, InstallmentPlanRequest, Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions, PropertyUnitCreate, PropertyUnitRequest } from 'src/app/core/models/properties';
 import { ImageService } from 'src/app/core/services/image.service';
 
 
@@ -124,9 +124,9 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       installment_plans: this.fb.array(unit?.property_installment_plans?.map((plan: any) => this.createInstallmentPlan(plan)) || []),
       isSaved: [!!unit]
     });
-    if (unit) {
-      formGroup.disable();
-    }
+    // if (unit) {
+    //   formGroup.disable();
+    // }
     return formGroup;
   }
 
@@ -138,9 +138,9 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       start_date: [plan?.start_date ? new Date(plan.start_date) : '', [Validators.required]],
       isSaved: [!!plan]
     });
-    if (plan) {
-      formGroup.disable();
-    }
+    // if (plan) {
+    //   formGroup.disable();
+    // }
     return formGroup;
   }
 
@@ -357,8 +357,8 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
     this.propertyService.deleteInstallmentPlanFromUnit(this.property!.id, planId!).subscribe({
       next: () => {
         this.isLoading = false;
-        const plans = this.getInstallmentPlans(unitIndex);
-        plans.removeAt(planIndex);
+        // const plans = this.getInstallmentPlans(unitIndex);
+        // plans.removeAt(planIndex);
         this.notification.success('Success', 'Installment plan removed successfully');
         this.getPropertyById();
       },
@@ -371,13 +371,11 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
   }
 
   removeUnitType(index: number): void {
-    if (this.unitTypes.length > 1) {
-      const unitId = this.property?.property_units[index]?.id;
-      if (unitId) {
-        this.deleteUnitType(index, unitId);
-      } else {
-        this.unitTypes.removeAt(index);
-      }
+    const unitId = this.property?.property_units[index]?.id;
+    if (unitId) {
+      this.deleteUnitType(index, unitId);
+    } else {
+      console.log('unitId not found for index', index);
     }
   }
 
@@ -480,13 +478,34 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
   }
 
   onImageSelected(event: any): void {
-    const file = event.target.files[0];
+    const maxSizeInBytes = 1 * 1024 * 1024; // 1MB in bytes
+    const input = event.target as HTMLInputElement;
+    const file = input?.files?.[0];
+
+    // maximum number of images is 10
+    if (this.uploadedImages.length >= 10) {
+      this.notification.error('Error', 'You can only upload a maximum of 10 images');
+      input.value = ''; // Clear the input
+      return;
+    }
+
     if (file) {
+      if (file.size > maxSizeInBytes) {
+        this.notification.error('Error', 'Image must be 1MB or smaller');
+        input.value = ''; // Clear the input
+        return;
+      }
+      const validTypes = ['image/jpeg', 'image/png'];
+      if (!validTypes.includes(file.type)) {
+        this.notification.error('Error', 'Only JPEG and PNG images are allowed');
+        input.value = ''; // Clear the input
+        return;
+      }
       this.isLoading = true;
       this.imageService.uploadImage(file).subscribe({
         next: (response) => {
           this.isLoading = false;
-          this.addPropertyImages([...this.uploadedImages, response.data.file.secure_url]);
+          this.addPropertyImages([response.data.file.secure_url]);
         },
         error: (error) => {
           this.isLoading = false;
@@ -499,10 +518,11 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
 
   addPropertyImages(images: string[]): void {
     this.isLoading = true;
+    console.log('Adding images to property:', images);
     this.propertyService.addImagesToProperty(this.property!.id, { images }).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.uploadedImages = images;
+        this.uploadedImages = [...this.uploadedImages, ...images];
         this.editForm.patchValue({ images });
         this.notification.success('Success', 'Images added successfully');
         this.getPropertyById();
@@ -589,6 +609,94 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
         console.error('Error fetching installment plans:', error);
       }
     });
+  }
+
+  updateUnit(index: number): void {
+    const unitType = this.unitTypes.at(index);
+    console.log('updateUnit', index, unitType);
+    if (unitType.valid) {
+      const unitId = this.property?.property_units[index]?.id;
+      if (!unitId) {
+        this.notification.error('Error', 'Unit ID is missing');
+        return;
+      }
+      const data: Partial<PropertyUnitCreate> = {
+        unit_type_id: unitType.value.unit_type_id,
+        price: unitType.value.price,
+        total_units: unitType.value.total_units
+      };
+      // attempt to update the unit only when there is a change in value
+      if (data.unit_type_id === this.property?.property_units[index]?.unit_type_id &&
+        data.price === this.property?.property_units[index]?.price &&
+        data.total_units === this.property?.property_units[index]?.total_units) {
+        this.notification.info('Info', 'No changes detected to update');
+        return;
+      }
+      console.log('Updating unit with data:', {index, unitId, data});
+      this.isLoading = true;
+      this.propertyService.updatePropertyUnit(this.property!.id, unitId, data).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          this.notification.success('Success', 'Unit updated successfully');
+          this.getPropertyById();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.notification.error('Error', 'Failed to update unit');
+          console.error('Error updating unit:', error);
+        }
+      });
+    } else {
+      this.notification.error('Error', 'Please fill out all required unit fields');
+    }
+  }
+
+  updatePlan(unitIndex: number, planIndex: number): void {
+    const plans = this.getInstallmentPlans(unitIndex);
+    const plan = plans.at(planIndex);
+    console.log('updatePlan', unitIndex, planIndex, plan);
+    if (plan.valid) {
+      const unitId = this.property?.property_units[unitIndex]?.id;
+      if (!unitId) {
+        this.notification.error('Error', 'Unit ID is missing');
+        return;
+      }
+      const planId = this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.id;
+      if (!planId) {
+        this.notification.error('Error', 'Installment Plan ID is missing');
+        return;
+      }
+      const data: Partial<InstallmentPlanCreate> = {
+        plan_id: plan.value.plan_id,
+        initial_amount: plan.value.initial_amount,
+        total_price: plan.value.total_price,
+        start_date: plan.value.start_date.toISOString()
+      };
+      // attempt to update the plan only when there is a change in value
+      if (data.plan_id === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.plan_id &&
+        data.initial_amount === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.initial_amount &&
+        data.total_price === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.total_price &&
+        data.start_date === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.start_date) {
+        this.notification.info('Info', 'No changes detected to update');
+        return;
+      }
+      console.log('Updating installment plan with data:', {unitIndex, planIndex, unitId, planId, data});
+      this.isLoading = true;
+      this.propertyService.updateInstallmentPlanOfUnit(this.property!.id, planId, data).subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          this.notification.success('Success', 'Installment plan updated successfully');
+          this.getPropertyById();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.notification.error('Error', 'Failed to update installment plan');
+          console.error('Error updating installment plan:', error);
+        }
+      });
+    } else {
+      this.notification.error('Error', 'Please fill out all required plan fields');
+    }
   }
 
   submitFormBasic(): void {

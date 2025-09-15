@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
-import { FeatureRequest, InstallmentPlan, InstallmentPlanCreate, InstallmentPlanRequest, Property, PropertyCreateRequest, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUnitRequest, TogglePropertyAvailabilityResponse, UnitType } from '../models/properties';
+import { FeatureRequest, InstallmentPlan, InstallmentPlanCreate, InstallmentPlanRequest, Property, PropertyCreateRequest, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUnitCreate, PropertyUnitRequest, TogglePropertyAvailabilityResponse, UnitType } from '../models/properties';
 import { IResponse } from '../models/generic';
 
 @Injectable({
@@ -124,6 +124,10 @@ export class PropertyService {
     return this.httpService.delete<IResponse<Property>>(`admin/properties/${propertyId}/units/${unitId}`);
   }
 
+  updatePropertyUnit(propertyId: string, unitId: number, unit: Partial<PropertyUnitCreate>): Observable<IResponse<Property>> {
+    return this.httpService.put<IResponse<Property>>(`admin/properties/${propertyId}/units/${unitId}`, unit);
+  }
+
   addPropertyInstallmentPlans(propertyId: string, plans: InstallmentPlanRequest): Observable<IResponse<Property>> {
     return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/installment-plans`,  plans);
   }
@@ -134,6 +138,10 @@ export class PropertyService {
 
   deleteInstallmentPlanFromUnit(propertyId: string, planId: number): Observable<IResponse<Property>> {
     return this.httpService.delete<IResponse<Property>>(`admin/properties/${propertyId}/installment-plans/${planId}`);
+  }
+
+  updateInstallmentPlanOfUnit(propertyId: string, planId: number, plan: Partial<InstallmentPlanCreate>): Observable<IResponse<Property>> {
+    return this.httpService.put<IResponse<Property>>(`admin/properties/${propertyId}/installment-plans/${planId}`, plan);
   }
 
 }

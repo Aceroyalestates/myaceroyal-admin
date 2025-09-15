@@ -37,6 +37,8 @@ export interface PropertyUnit {
   price: string;
   is_available: boolean;
   unit_type: UnitType;
+  unit_type_id: number;
+  total_units: number;
   property_installment_plans: PropertyInstallmentPlan[];
 }
 
@@ -112,7 +114,7 @@ export interface PropertyUnitRequest {
   unit_types: PropertyUnitCreate[];
 }
 
-interface PropertyUnitCreate {
+export interface PropertyUnitCreate {
     unit_type_id: number;
     price: string;
     total_units: number;
@@ -138,14 +140,16 @@ export interface InstallmentPlan {
 }
 
 export interface InstallmentPlanRequest {
-  installment_plans: Array<{
+  installment_plans: InstallmentPlanUnitRequest[];
+}
+
+export interface InstallmentPlanUnitRequest {
     plan_id: string;
     unit_id: number;
     initial_amount: number;
     total_price: number;
     start_date: string;
-  }>;
-}
+  }
 
 export interface TogglePropertyAvailabilityResponse {
   message: string;

@@ -43,13 +43,36 @@
             </button>
         </div>
 
-      <div class="grid grid-cols-3  justify-center items-center gap-6">
+      <!-- <div class="grid grid-cols-3  justify-center items-center gap-6">
         @for(img of property.property_images; track img.image_url) {
           <img
               src="{{img.image_url}}"
               alt="property image"
               class="w-full h-full rounded-lg object-cover"
           />
+        }
+      </div> -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        @for (img of property.property_images; track img.image_url) {
+          <div class="relative w-full aspect-square">
+            <img
+              src="{{ img.image_url }}"
+              alt="Property image"
+              class="w-full h-full rounded-lg object-contain"
+              [class.opacity-50]="isLoading"
+              (load)="isLoading = false"
+            />
+            <!-- <nz-spin
+              *ngIf="isLoading"
+              nzSimple
+              class="absolute inset-0 flex items-center justify-center"
+            ></nz-spin> -->
+          </div>
+        }
+        @empty {
+          <div class="col-span-1 sm:col-span-2 md:col-span-3 text-center text-gray-500">
+            <!-- <nz-empty nzNotFoundContent="No images available"></nz-empty> -->
+          </div>
         }
       </div>
       <div class="flex flex-col gap-5 w-full">

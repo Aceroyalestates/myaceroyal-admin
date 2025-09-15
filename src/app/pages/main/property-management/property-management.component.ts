@@ -22,6 +22,9 @@ export class PropertyManagementComponent {
   error: string | null = null;
 
   properties: Property[] = [];
+  availableProperties: Property[] = [];
+  soldProperties: Property[] = [];
+
   columns: TableColumn[] = [
       {
         key: 'name',
@@ -75,7 +78,6 @@ export class PropertyManagementComponent {
         align: 'right'
       },
     ];
-
     actions: TableAction[] = [
       {
         key: 'view',
@@ -188,6 +190,9 @@ export class PropertyManagementComponent {
                 ? formatNaira(property.property_units[0].price)
                 : ''
             }));
+            this.availableProperties = this.properties.filter(prop => prop.is_available);
+            this.soldProperties = this.properties.filter(prop => !prop.is_available);
+            this.totalItems = response.pagination.total;
             this.loading = false;
             console.log(this.properties); // Property array
             console.log(response.pagination); // Pagination info
