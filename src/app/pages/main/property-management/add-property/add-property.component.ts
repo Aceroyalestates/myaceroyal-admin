@@ -378,24 +378,63 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
     }
   }
 
+  // onImageSelected(event: any): void {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     console.log('Selected file:', file);
+  //     this.isLoading = true;
+  //     this.imageService.uploadImage(file).subscribe({
+  //       next: (response) => {
+  //         this.isLoading = false;
+  //         console.log('Image uploaded successfully: ', response);
+  //         this.uploadedImages.push(response.data.file.secure_url);
+  //       },
+  //       error: (error) => {
+  //         this.isLoading = false;
+  //         console.log('Error uploading image: ', error);
+  //       }
+  //     })
+  //   } else {
+  //     console.log('No file selected')
+  //   }
+  // }
+
   onImageSelected(event: any): void {
-    const file = event.target.files[0];
+    const maxSizeInBytes = 1 * 1024 * 1024; // 1MB in bytes
+    const input = event.target as HTMLInputElement;
+    const file = input?.files?.[0];
+
+    // maximum number of images is 10
+    if (this.uploadedImages.length >= 10) {
+      this.notification.error('Error', 'You can only upload a maximum of 10 images');
+      input.value = ''; // Clear the input
+      return;
+    }
+
     if (file) {
-      console.log('Selected file:', file);
+      if (file.size > maxSizeInBytes) {
+        this.notification.error('Error', 'Image must be 1MB or smaller');
+        input.value = ''; // Clear the input
+        return;
+      }
+      const validTypes = ['image/jpeg', 'image/png'];
+      if (!validTypes.includes(file.type)) {
+        this.notification.error('Error', 'Only JPEG and PNG images are allowed');
+        input.value = ''; // Clear the input
+        return;
+      }
       this.isLoading = true;
       this.imageService.uploadImage(file).subscribe({
         next: (response) => {
           this.isLoading = false;
-          console.log('Image uploaded successfully: ', response);
           this.uploadedImages.push(response.data.file.secure_url);
         },
         error: (error) => {
           this.isLoading = false;
-          console.log('Error uploading image: ', error);
+          this.notification.error('Error', 'Failed to upload image');
+          console.error('Error uploading image:', error);
         }
-      })
-    } else {
-      console.log('No file selected')
+      });
     }
   }
 

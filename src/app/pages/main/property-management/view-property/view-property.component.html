@@ -43,13 +43,36 @@
             </button>
         </div>
 
-      <div class="grid grid-cols-3  justify-center items-center gap-6">
+      <!-- <div class="grid grid-cols-3  justify-center items-center gap-6">
         @for(img of property.property_images; track img.image_url) {
           <img
               src="{{img.image_url}}"
               alt="property image"
               class="w-full h-full rounded-lg object-cover"
           />
+        }
+      </div> -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        @for (img of property.property_images; track img.image_url) {
+          <div class="relative w-full aspect-square">
+            <img
+              src="{{ img.image_url }}"
+              alt="Property image"
+              class="w-full h-full rounded-lg object-contain"
+              [class.opacity-50]="isLoading"
+              (load)="isLoading = false"
+            />
+            <!-- <nz-spin
+              *ngIf="isLoading"
+              nzSimple
+              class="absolute inset-0 flex items-center justify-center"
+            ></nz-spin> -->
+          </div>
+        }
+        @empty {
+          <div class="col-span-1 sm:col-span-2 md:col-span-3 text-center text-gray-500">
+            <!-- <nz-empty nzNotFoundContent="No images available"></nz-empty> -->
+          </div>
         }
       </div>
       <div class="flex flex-col gap-5 w-full">
@@ -81,8 +104,6 @@
         <div *ngIf="property.property_features && property.property_features.length > 0" class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Amenities</p>
         <div class="flex flex-col gap-1">
-          <p class="text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Amenities</p>
-
           <div class="flex gap-4 flex-wrap">
                 @for(am of property.property_features; track am) {
                   <div class="amenity-badge flex bg-tertiary items-center gap-2 bg-gray-100 dark:bg-gray-700 p-2 rounded">
@@ -95,7 +116,8 @@
               </div>
         </div>
 
-        <div class="flex">
+        <div *ngIf="property.property_units && property.property_units.length > 0" class="flex mt-6 flex-col gap-1">
+          <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Units</p>
           <nz-collapse class="w-full flex flex-col gap-4" [nzExpandIconPosition]="'end'">
             @for (unit of property.property_units; track unit.id; let i = $index) {
               <nz-collapse-panel [nzHeader]="unit.unit_type.name" [nzActive]="i === 0" [nzShowArrow]="true">

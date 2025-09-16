@@ -23,6 +23,9 @@ export class PropertyManagementComponent {
   error: string | null = null;
 
   properties: Property[] = [];
+  availableProperties: Property[] = [];
+  soldProperties: Property[] = [];
+
   columns: TableColumn[] = [
       {
         key: 'name',
@@ -76,7 +79,6 @@ export class PropertyManagementComponent {
         align: 'right'
       },
     ];
-
     actions: TableAction[] = [
       {
         key: 'view',
@@ -101,6 +103,9 @@ export class PropertyManagementComponent {
       }
     ];
     selectedproperty = signal<Property[]>([]);
+    pageSize = 10;
+    currentPage = 1;
+    totalItems = 0;
 
     constructor(
       private propertyService: PropertyService,
@@ -139,6 +144,12 @@ export class PropertyManagementComponent {
       // window.location.href = `/property-management/view/${row.id}`;
   }
 
+    onPageChange(page: number, pageSize: number) {
+      this.currentPage = page;
+      this.pageSize = pageSize;
+      this.loadProperties(page, pageSize);
+    }
+
     addNewProperty() {
       console.log('Adding new property');
       // Navigate to add property page
@@ -166,9 +177,9 @@ export class PropertyManagementComponent {
         console.log(this.selectedproperty);
       }
 
-      loadProperties() {
+      loadProperties(page: number = 1, limit: number = this.pageSize, filters: any = {}) {
         this.loading = true;
-      this.propertyService.getProperties(1, 10, { })
+      this.propertyService.getProperties(page, limit, filters)
         .subscribe({
           next: (response) => {
             // Preprocess properties to add unit_type_name
@@ -180,6 +191,9 @@ export class PropertyManagementComponent {
                 ? formatNaira(property.property_units[0].price)
                 : ''
             }));
+            this.availableProperties = this.properties.filter(prop => prop.is_available);
+            this.soldProperties = this.properties.filter(prop => !prop.is_available);
+            this.totalItems = response.pagination.total;
             this.loading = false;
             console.log(this.properties); // Property array
             console.log(response.pagination); // Pagination info
