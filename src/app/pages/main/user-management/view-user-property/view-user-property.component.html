@@ -34,13 +34,13 @@
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Property Category</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ purchaseDetails.unit?.property?.name || 'N/A' }}
+            {{ purchaseDetails.unit.property.name || 'N/A' }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Property Type</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ purchaseDetails.unit?.unit_type?.name || 'N/A' }}
+            {{ purchaseDetails.unit.unit_type.name || 'N/A' }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
@@ -70,7 +70,7 @@
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Realtor</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ purchaseDetails.realtor_history?.[0]?.name || 'N/A' }}
+            {{ purchaseDetails.realtor_history[0].name || 'N/A' }}
           </h2>
         </div>
       </div>
@@ -91,7 +91,7 @@
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Installment Plan</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ paymentSchedulesData?.summary?.totalSchedules || purchaseDetails.schedules?.length || 'N/A' }} {{ (paymentSchedulesData?.summary?.totalSchedules || purchaseDetails.schedules?.length) === 1 ? 'Payment' : 'Payments' }}
+            {{ paymentSchedulesData?.summary?.totalSchedules || purchaseDetails.schedules.length || 'N/A' }} {{ (paymentSchedulesData?.summary?.totalSchedules || purchaseDetails.schedules.length) === 1 ? 'Payment' : 'Payments' }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">

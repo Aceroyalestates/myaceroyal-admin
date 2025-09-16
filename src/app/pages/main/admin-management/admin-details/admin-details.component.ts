@@ -73,9 +73,9 @@ export class AdminDetailsComponent implements OnInit {
     forkJoin([
       this.adminService.getUserById(id),
       this.dashboardService.getActivityLogs(1, PAGE_SIZE, {}),
-      this.adminService.getRoles(),
+      // this.adminService.getRoles(),
     ]).subscribe({
-      next: ([user, activities, roles]) => {
+      next: ([user, activities]) => {
         this.loading = false;
         this.user = user;
         this.activities = activities.data.map((activity) => ({
@@ -84,7 +84,7 @@ export class AdminDetailsComponent implements OnInit {
           date: new Date(activity.createdAt).toLocaleDateString(),
           // is_active: user.is_active === true ? 'Active' : 'Inactive',
         }));
-        this.roles = roles.data;
+        // this.roles = roles.data;
       },
       error: (error) => {
         this.loading = false;
