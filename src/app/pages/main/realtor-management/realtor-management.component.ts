@@ -39,12 +39,12 @@ export class RealtorManagementComponent {
       sortable: true,
       type: 'text',
     },
-    {
-      key: 'gender',
-      title: 'Gender',
-      sortable: true,
-      type: 'text',
-    },
+    // {
+    //   key: 'gender',
+    //   title: 'Gender',
+    //   sortable: true,
+    //   type: 'text',
+    // },
     {
       key: 'createdAt',
       title: 'Date',
@@ -74,13 +74,13 @@ export class RealtorManagementComponent {
       color: 'green',
       tooltip: 'Edit realtor',
     },
-    {
-      key: 'delete',
-      label: 'Delete',
-      icon: 'delete',
-      color: 'red',
-      tooltip: 'Delete realtor',
-    },
+    // {
+    //   key: 'delete',
+    //   label: 'Delete',
+    //   icon: 'delete',
+    //   color: 'red',
+    //   tooltip: 'Delete realtor',
+    // },
   ];
 
   selectedPeople = signal<User[]>([]);
@@ -97,7 +97,7 @@ export class RealtorManagementComponent {
         this.users = response.data.map((user) => ({
           ...user,
           createdAt: new Date(user.createdAt).toLocaleDateString(),
-          is_active: user.is_active === true ? 'Active' : 'Inactive',
+          is_active: user.is_account_locked === false ? 'Active' : 'Inactive',
         }));
         this.loading = false;
       },

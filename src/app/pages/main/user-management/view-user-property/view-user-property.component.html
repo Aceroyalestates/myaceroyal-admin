@@ -10,13 +10,18 @@
         ]"
       ></app-breadcrumb>
     </div>
-    
+
     @if (loading) {
-      <div class="flex justify-center items-center py-8">
-        <nz-spin nzSize="large"></nz-spin>
-      </div>
+    <div class="flex justify-center items-center py-8">
+      <nz-spin nzSize="large"></nz-spin>
+    </div>
     } @else if (error) {
-      <nz-alert nzType="error" [nzMessage]="error" nzShowIcon class="mb-4"></nz-alert>
+    <nz-alert
+      nzType="error"
+      [nzMessage]="error"
+      nzShowIcon
+      class="mb-4"
+    ></nz-alert>
     } @else if (purchaseDetails) {
     <div
       class="flex flex-col gap-8 w-full py-8 px-6 border border-[#EBEBEB] rounded-lg bg-background mb-8"
@@ -34,47 +39,51 @@
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Property Category</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ purchaseDetails.unit.property.name || 'N/A' }}
+            {{ purchaseDetails.unit.property.name || "N/A" }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Property Type</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ purchaseDetails.unit.unit_type.name || 'N/A' }}
+            {{ purchaseDetails.unit.unit_type.name || "N/A" }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">No of Units</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ purchaseDetails.quantity || '1' }}
+            {{ purchaseDetails.quantity || "1" }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Property Cost</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ formatCurrency(purchaseDetails.total_price) }}
+            {{ formatCurrency(purchaseDetails.total_price) | moneyFormat }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Payment Type</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ purchaseDetails.payment_method || 'Installment' }}
+            {{ purchaseDetails.payment_method || "Installment" }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Payment Status</p>
-          <h2 [ngClass]="getStatusColor(purchaseDetails.status)" class="text-normal font-semibold text-2xl !mb-0">
-            {{ purchaseDetails.status || 'In Progress' }}
+          <h2
+            [ngClass]="getStatusColor(purchaseDetails.status)"
+            class="text-normal font-semibold text-2xl !mb-0"
+          >
+            {{ formatStatus(purchaseDetails.status || "In Progress") }}
           </h2>
         </div>
-        <div class="flex flex-col gap-1">
+        <!-- <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Realtor</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ purchaseDetails.realtor_history[0].name || 'N/A' }}
+            {{ purchaseDetails.realtor_history[0].name || "N/A" }}
           </h2>
-        </div>
+        </div> -->
       </div>
     </div>
+    @if (paymentSchedulesData) {
     <div
       class="flex flex-col gap-8 w-full py-8 px-6 border border-[#EBEBEB] rounded-lg bg-background mb-8"
     >
@@ -85,19 +94,29 @@
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Property Price</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ formatCurrency(purchaseDetails.total_price) }}
+            {{ formatCurrency(purchaseDetails.total_price) | moneyFormat }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Installment Plan</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ paymentSchedulesData?.summary?.totalSchedules || purchaseDetails.schedules.length || 'N/A' }} {{ (paymentSchedulesData?.summary?.totalSchedules || purchaseDetails.schedules.length) === 1 ? 'Payment' : 'Payments' }}
+            {{
+              paymentSchedulesResponse?.summary?.totalSchedules || paymentSchedulesData.length ||
+                purchaseDetails.schedules.length ||
+                "N/A"
+            }}
+            {{
+              (paymentSchedulesResponse?.summary?.totalSchedules ||
+                purchaseDetails.schedules.length) === 1
+                ? "Payment"
+                : "Payments"
+            }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Installment Paid</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ paymentSchedulesData?.summary?.statusBreakdown?.paid || 0 }}
+            {{ paymentSchedulesResponse?.summary?.statusBreakdown?.paid || 0 }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
@@ -105,47 +124,59 @@
             Outstanding Installment
           </p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ (paymentSchedulesData?.summary?.statusBreakdown?.pending || 0) + (paymentSchedulesData?.summary?.statusBreakdown?.overdue || 0) }}
+            {{
+              (paymentSchedulesResponse?.summary?.statusBreakdown?.pending || 0) +
+                (paymentSchedulesResponse?.summary?.statusBreakdown?.overdue || 0)
+            }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Total Amount Paid</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ formatCurrency(paymentSchedulesData?.summary?.totalAmountPaid || 0) }}
+            {{
+              formatCurrency(paymentSchedulesResponse?.summary?.totalAmountPaid || 0)
+                | moneyFormat
+            }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Outstanding Amount</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ formatCurrency(paymentSchedulesData?.summary?.remainingBalance || purchaseDetails.balance_due || 0) }}
+            {{
+              formatCurrency(
+                paymentSchedulesResponse?.summary?.remainingBalance ||
+                  purchaseDetails?.balance_due ||
+                  0
+              ) | moneyFormat
+            }}
           </h2>
         </div>
       </div>
     </div>
-    
+    } @if (paymentSchedulesData) {
     <div class="flex flex-col gap-2 mb-6">
       <h2 class="text-[#4F4F4F] text-normal text-2xl">Payment Schedule</h2>
       <p class="text-normal text-[#7A7A7A]">
         You have been approved to make payment on behalf of the Client
       </p>
     </div>
-    <div
-      class="flex flex-col w-full max-w-9/12 gap-6"
-    >
-      @for (payment of paymentSchedulesData?.data || []; track payment.id) {
+    <div class="flex flex-col w-full max-w-9/12 gap-6">
+      @for (payment of paymentSchedulesData || []; track payment.id) {
       <div
         class="flex flex-col gap-10 items-start rounded-lg border-2 border-[#EEF2F6] bg-background py-8 px-6 w-full"
       >
         <div class="flex items-center justify-between w-full">
           <h2 class="text-normal">
-            {{ payment.installment_number }}/{{ paymentSchedulesData?.summary?.totalSchedules || 1 }}
+            {{ payment.installment_number }}/{{
+              paymentSchedulesResponse?.summary?.totalSchedules || paymentSchedulesData.length || 1
+            }}
             installment
           </h2>
           <p
             [ngClass]="getStatusColor(payment.status)"
             class="!px-6 !py-2 rounded-full w-[162px] text-center capitalize text-normal text-[20px]"
           >
-            {{ payment.status }}
+            {{ formatStatus(payment.status) }}
           </p>
         </div>
         <div class="flex flex-col gap-6 w-full">
@@ -154,7 +185,7 @@
               Amount Due
             </h4>
             <p class="text-[#7A7A7A] text-normal text-2xl !font-medium">
-              {{ formatCurrency(payment.amount_due) }}
+              {{ payment.amount_due | moneyFormat }}
             </p>
           </div>
           <div class="flex justify-between items-center">
@@ -162,7 +193,7 @@
               Amount Paid
             </h4>
             <p class="text-[#7A7A7A] text-normal text-2xl !font-medium">
-              {{ formatCurrency(payment.amount_paid) }}
+              {{ payment.amount_paid | moneyFormat }}
             </p>
           </div>
           <div class="flex justify-between items-center">
@@ -182,8 +213,7 @@
               {{ formatDate(payment.paid_at) }}
             </p>
           </div>
-          }
-          @if (payment.is_overdue && payment.days_overdue > 0) {
+          } @if (payment.is_overdue && payment.days_overdue && payment.days_overdue > 0) {
           <div class="flex justify-between items-center">
             <h4 class="text-[#E41C24] !text-normal !font-normal text-[20px]">
               Days Overdue
@@ -195,17 +225,19 @@
           }
         </div>
         @if(payment.status.toLowerCase() !== "paid"){
-        <button class="bg-primary !text-white text-medium font-medium rounded-full px-8 py-4">
+        <button
+          class="bg-primary !text-white text-medium font-medium rounded-full px-8 py-4"
+        >
           Send Reminder
         </button>
         }
       </div>
       }
     </div>
-    } @else {
-      <div class="flex justify-center items-center py-8">
-        <p class="text-[#7A7A7A] text-lg">No purchase data available</p>
-      </div>
+    } } @else {
+    <div class="flex justify-center items-center py-8">
+      <p class="text-[#7A7A7A] text-lg">No purchase data available</p>
+    </div>
     }
   </div>
 </main>

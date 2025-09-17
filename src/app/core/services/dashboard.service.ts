@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
 import { ActivityLogsResponse, User, UsersResponse } from '../models/users';
+import { Activity } from '../models/generic';
 import { PAGE_SIZE } from '../constants';
 import { Property, PropertyResponse } from '../models/properties';
 
@@ -34,6 +35,23 @@ export class DashboardService {
       ...filters,
     };
     return this.httpService.get<ActivityLogsResponse>('activity-logs', params);
+  }
+
+  getActivityLogById(
+    id: string,
+    page: number = 1,
+    limit: number = PAGE_SIZE,
+    filters?: any
+  ): Observable<Activity[]> {
+    const params = {
+      userId: id,
+      page: page.toString(),
+      limit: limit.toString(),
+      ...filters,
+    };
+    return this.httpService
+      .get<{ data: Activity[] }>(`activity-logs/user/${id}`, params)
+      .pipe(map((response) => response.data));
   }
 
   getAdminProperties(
