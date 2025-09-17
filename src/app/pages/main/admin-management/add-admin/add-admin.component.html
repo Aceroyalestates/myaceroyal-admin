@@ -14,6 +14,59 @@
     <nz-alert nzType="error" [nzMessage]="error" nzShowIcon class="mb-4"></nz-alert>
   }
   <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
+    <!-- Image Upload Section -->
+    <div class="mb-8">
+      <nz-form-label [nzSm]="6" [nzXs]="24">
+        <span>Profile Picture</span>
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" class="!min-w-full">
+        <div class="flex items-center gap-6">
+          <!-- Image Preview -->
+          @if (imagePreview) {
+            <div class="relative">
+              <img 
+                [src]="imagePreview" 
+                alt="Profile preview" 
+                class="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
+              />
+              <button 
+                type="button" 
+                (click)="removeImage()"
+                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                title="Remove image"
+              >
+                ×
+              </button>
+            </div>
+          }
+          
+          <!-- Upload Area -->
+          <div class="relative flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-400 w-32 h-32 rounded-lg hover:bg-gray-100 transition-colors">
+            <input
+              type="file"
+              id="avatar-upload"
+              (change)="onFileSelected($event)"
+              class="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+              [disabled]="isLoading || isUploadingImage"
+              accept="image/*"
+            />
+            <div class="flex flex-col items-center justify-center text-center">
+              @if (isUploadingImage) {
+                <span nz-icon nzType="loading" class="text-gray-400 text-2xl mb-2"></span>
+                <span class="text-xs text-gray-500">Uploading...</span>
+              } @else {
+                <span nz-icon nzType="camera" class="text-gray-400 text-2xl mb-2"></span>
+                <span class="text-xs text-gray-500">
+                  {{ imagePreview ? 'Change' : 'Upload' }}<br/>Profile Picture
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">JPG, PNG up to 5MB</p>
+      </nz-form-control>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstName">
@@ -258,9 +311,13 @@
       <button nz-button nzType="primary" nzSize="large"
         type="submit"
         class="place-self-end !text-white font-medium"
-        [nzLoading]="isLoading"
-        [disabled]="form.invalid || isLoading">
-        {{ isEditMode ? 'Update Admin' : 'Save & Create Admin' }}
+        [nzLoading]="isLoading || isUploadingImage"
+        [disabled]="form.invalid || isLoading || isUploadingImage">
+        @if (isUploadingImage) {
+          Uploading Image...
+        } @else {
+          {{ isEditMode ? 'Update Admin' : 'Save & Create Admin' }}
+        }
       </button>
     </div>
   </form>

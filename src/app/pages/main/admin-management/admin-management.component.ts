@@ -41,19 +41,13 @@ export class AdminManagementComponent implements OnInit {
       type: 'text',
     },
     {
-      key: 'gender',
-      title: 'Gender',
-      sortable: true,
-      type: 'text',
-    },
-    {
       key: 'createdAt',
       title: 'Date',
       sortable: true,
       type: 'text',
     },
     {
-      key: 'is_active',
+      key: 'is_account_locked',
       title: 'Status',
       sortable: true,
       type: 'status',
@@ -91,9 +85,9 @@ export class AdminManagementComponent implements OnInit {
         // Preprocess users to add unit_type_name
         this.users = response.data.map((user: any) => ({
           ...user,
-          active_bool: user.is_active === true,
+          active_bool: user.is_account_locked === true,
           createdAt: new Date(user.createdAt).toLocaleDateString(),
-          is_active: user.is_active === true ? 'Active' : 'Inactive',
+          is_account_locked: user.is_account_locked === true ? 'Inactive' : 'Active',
         }));
         this.loading = false;
         this.updateAdminMetrics();

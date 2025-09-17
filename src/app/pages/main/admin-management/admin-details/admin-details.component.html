@@ -61,36 +61,6 @@
       </div>
     </div>
   </div>
-  <!-- <div class="mb-10">
-    <p class="text-[#4F4F4F] text-normal text-2xl !mb-2">Edit Role</p>
-    <nz-select
-      ngModel="role"
-      nzAllowClear
-      nzMode="multiple"
-      [nzMaxTagCount]="3"
-      nzPlaceHolder="Edit Role"
-      class="!w-[515px]"
-    >
-      @for (role of roles; track role) {
-      <nz-option [nzValue]="role.value" nzLabel="{{ role.label }}"></nz-option>
-      }
-    </nz-select>
-  </div> -->
-  <div class="flex items-center justify-between mb-10">
-    <p class="text-[#4F4F4F] text-normal text-2xl">Activity Log</p>
-    <nz-select
-      ngModel="All Properties"
-      nzAllowClear
-      nzPlaceHolder="All Properties"
-      class="!w-[200px]"
-    >
-      <nz-option nzValue="lucy" nzLabel="Lucy"></nz-option>
-      <nz-option nzValue="lucy1" nzLabel="Lucy1"></nz-option>
-      <nz-option nzValue="luc2y" nzLabel="Lucy2"></nz-option>
-      <nz-option nzValue="lu3cy" nzLabel="Lucy3"></nz-option>
-      <nz-option nzValue="l4ucy" nzLabel="Lucy4"></nz-option>
-    </nz-select>
-  </div>
   <app-table
     [data]="activities"
     [columns]="columns"

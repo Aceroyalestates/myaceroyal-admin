@@ -86,9 +86,9 @@ export class UserManagementComponent {
         // Preprocess users and preserve booleans for metrics
         this.users = response.data.map((user: any) => ({
           ...user,
-          active_bool: user.is_active === true,
+          active_bool: user.is_account_locked === true,
           createdAt: new Date(user.createdAt).toLocaleDateString(),
-          is_active: user.is_active === true ? 'Active' : 'Inactive'
+          is_active: user.is_account_locked === true ? 'Inactive' : 'Active'
         } as any));
           this.loading = false;
         this.updateUserMetrics();

@@ -10,12 +10,14 @@ import { Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PaymentSchedules } from '../../../../core/constants/index';
 import { CustomerService } from 'src/app/core/services/user.service';
-import { UserPurchaseDetailsResponse, UserPurchasePaymentSchedulesResponse } from 'src/app/core/models/users';
+import { UserPurchaseDetailsResponse, UserPurchasePaymentSchedulesResponse, PaymentSchedule } from 'src/app/core/models/users';
 import { forkJoin } from 'rxjs';
+import { MoneyFormatPipe } from 'src/app/core/pipes/money-format.pipe';
+import { FormatWordPipe } from 'src/app/core/pipes/format-word.pipe';
 
 @Component({
   selector: 'app-view-user-property',
-  imports: [CommonModule, SharedModule, NzSelectModule, NzSpinModule, NzAlertModule],
+  imports: [CommonModule, SharedModule, NzSelectModule, NzSpinModule, NzAlertModule, MoneyFormatPipe],
   templateUrl: './view-user-property.component.html',
   styleUrls: ['./view-user-property.component.css'],
 })
@@ -35,7 +37,14 @@ export class ViewUserPropertyComponent implements OnInit {
   
   // Purchase details
   purchaseDetails: UserPurchaseDetailsResponse | null = null;
-  paymentSchedulesData: UserPurchasePaymentSchedulesResponse | null = null;
+  paymentSchedulesData!: PaymentSchedule[];
+  paymentSchedulesResponse!: UserPurchasePaymentSchedulesResponse;
+  
+  private formatWordPipe = new FormatWordPipe();
+
+  formatStatus(status: string): string {
+    return this.formatWordPipe.transform(status) || status;
+  }
   
   getRowLink = (row: Person) =>
     `/main/user-management/view/${row.id}/${row.name}`;
@@ -90,7 +99,8 @@ export class ViewUserPropertyComponent implements OnInit {
     }).subscribe({
       next: ({ purchaseDetails, paymentSchedules }) => {
         this.purchaseDetails = purchaseDetails;
-        this.paymentSchedulesData = paymentSchedules;
+        this.paymentSchedulesData = paymentSchedules.data;
+        this.paymentSchedulesResponse = paymentSchedules;
         this.loading = false;
         console.log('Purchase data loaded successfully:', { purchaseDetails, paymentSchedules });
       },
