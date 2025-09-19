@@ -6,7 +6,6 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { SharedModule } from '../../shared/shared.module';
-import { ErrorModalComponent } from 'src/app/shared/components/error-modal/error-modal.component';
 import { LoaderComponent } from 'src/app/shared/components/loader/loader.component';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { ThemeService } from 'src/app/core/services/theme.service';

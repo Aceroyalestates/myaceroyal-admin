@@ -1,19 +1,19 @@
 import { HttpInterceptorFn, HttpErrorResponse, HttpRequest } from '@angular/common/http';
 import { AuthService } from '../services/auth/auth.service';
 import { LoaderService } from '../services/loader.service';
-import { ErrorModalService } from '../services/error-modal.service';
 import { inject } from '@angular/core';
 import { catchError, finalize, tap, throwError, timer, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { SKIP_LOADING, SKIP_ERROR_HANDLING } from '../services/http.service';
 import { ProgressService } from '../services/progress.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 let activeRequests = 0;
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const loaderService = inject(LoaderService);
-  const errorModalService = inject(ErrorModalService);
+  const notification = inject(NzNotificationService);
   const progressService = inject(ProgressService);
   
   // Check if we should skip loading or error handling for this request
@@ -88,24 +88,28 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Handle different types of errors
       if (isInvalidJsonResponse(error)) {
-        errorModalService.showError(
+        notification.error(
           'Invalid Response',
           'The server returned an unexpected response format. Please contact support.',
-          'INVALID_RESPONSE'
+          { nzPlacement: 'topRight', nzDuration: 6000 }
         );
         return throwError(() => new Error('Invalid response format'));
       }
 
       // Handle authentication errors (401/403)
       if (isAuthError(status)) {
-        handleAuthError(authService, errorModalService, errorMessage);
+        handleAuthError(authService, notification, errorMessage);
         return throwError(() => error);
       }
 
       // Handle server errors (4xx/5xx) but not auth errors
       if (isServerError(status) && !isAuthError(status)) {
         const userFriendlyMessage = getUserFriendlyErrorMessage(status, errorMessage);
-        errorModalService.showServerError(status, userFriendlyMessage);
+        notification.error(
+          'Server Error',
+          userFriendlyMessage,
+          { nzPlacement: 'topRight', nzDuration: 6000 }
+        );
       }
 
       return throwError(() => error);
@@ -195,13 +199,15 @@ function getUserFriendlyErrorMessage(status: number, originalMessage: string): s
 
 function handleAuthError(
   authService: AuthService, 
-  errorModalService: ErrorModalService, 
+  notification: NzNotificationService, 
   errorMessage: string
 ): void {
   console.error('Authentication error:', errorMessage);
 
-  errorModalService.showAuthError(
-    'Your session has expired. Please log in again.'
+  notification.error(
+    'Authentication Error',
+    'Your session has expired. Please log in again.',
+    { nzPlacement: 'topRight', nzDuration: 6000 }
   );
 
   // Delay logout to allow user to read the error message

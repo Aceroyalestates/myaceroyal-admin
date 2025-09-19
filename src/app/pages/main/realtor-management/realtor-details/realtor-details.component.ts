@@ -14,6 +14,7 @@ import { Property } from 'src/app/core/models/properties';
 import { AdminService } from 'src/app/core/services/admin.service';
 import { forkJoin } from 'rxjs';
 import { CountryInterface, StateInterface } from 'src/app/core/models/generic';
+import { Client } from 'src/app/core/models/clients';
 
 @Component({
   selector: 'app-realtor-details',
@@ -92,7 +93,7 @@ export class RealtorDetailsComponent {
     { key: 'purchases', title: 'Purchases', sortable: true, type: 'text' },
     { key: 'total', title: 'Total Amount', sortable: true, type: 'text' },
   ];
-  clientsData: Array<{ id: string; name: string; email: string; phone: string; purchases: number; total: string; }> = [];
+  clientsData: Client[] = [];
 
   actions: TableAction[] = [
     {
@@ -137,6 +138,7 @@ export class RealtorDetailsComponent {
         this.user = user;
         this.properties = properties.data;
         this.fetchNationalityAndState();
+        this.loadClientsData();
       },
       error: () => {
         this.loading = false;
@@ -178,6 +180,21 @@ export class RealtorDetailsComponent {
     } else {
       this.loading = false;
     }
+  }
+
+  /**
+   * Load clients data for the current realtor
+   */
+  loadClientsData(): void {
+    this.realtorService.getRealtorClients().subscribe({
+      next: (response) => {
+        this.clientsData = response.data;
+      },
+      error: (error) => {
+        console.error('Error loading clients data:', error);
+        this.clientsData = [];
+      },
+    });
   }
 
   onSelectionChange(selected: Person[]) {

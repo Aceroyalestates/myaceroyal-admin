@@ -101,12 +101,12 @@
           <p class="text-[#7A7A7A] !text-medium !mb-2">Installment Plan</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
             {{
-              paymentSchedulesResponse?.summary?.totalSchedules || paymentSchedulesData.length ||
+              paymentSchedulesResponse.summary.totalSchedules || paymentSchedulesData.length ||
                 purchaseDetails.schedules.length ||
                 "N/A"
             }}
             {{
-              (paymentSchedulesResponse?.summary?.totalSchedules ||
+              (paymentSchedulesResponse.summary.totalSchedules ||
                 purchaseDetails.schedules.length) === 1
                 ? "Payment"
                 : "Payments"
@@ -116,7 +116,7 @@
         <div class="flex flex-col gap-1">
           <p class="text-[#7A7A7A] !text-medium !mb-2">Installment Paid</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
-            {{ paymentSchedulesResponse?.summary?.statusBreakdown?.paid || 0 }}
+            {{ paymentSchedulesResponse.summary.statusBreakdown.paid || 0 }}
           </h2>
         </div>
         <div class="flex flex-col gap-1">
@@ -125,8 +125,8 @@
           </p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
             {{
-              (paymentSchedulesResponse?.summary?.statusBreakdown?.pending || 0) +
-                (paymentSchedulesResponse?.summary?.statusBreakdown?.overdue || 0)
+              (paymentSchedulesResponse.summary.statusBreakdown.pending || 0) +
+                (paymentSchedulesResponse.summary.statusBreakdown.overdue || 0)
             }}
           </h2>
         </div>
@@ -134,7 +134,7 @@
           <p class="text-[#7A7A7A] !text-medium !mb-2">Total Amount Paid</p>
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
             {{
-              formatCurrency(paymentSchedulesResponse?.summary?.totalAmountPaid || 0)
+              formatCurrency(paymentSchedulesResponse.summary.totalAmountPaid || 0)
                 | moneyFormat
             }}
           </h2>
@@ -144,8 +144,8 @@
           <h2 class="text-[#4F4F4F] text-normal font-semibold text-2xl !mb-0">
             {{
               formatCurrency(
-                paymentSchedulesResponse?.summary?.remainingBalance ||
-                  purchaseDetails?.balance_due ||
+                paymentSchedulesResponse.summary.remainingBalance ||
+                  purchaseDetails!.balance_due ||
                   0
               ) | moneyFormat
             }}
@@ -168,7 +168,7 @@
         <div class="flex items-center justify-between w-full">
           <h2 class="text-normal">
             {{ payment.installment_number }}/{{
-              paymentSchedulesResponse?.summary?.totalSchedules || paymentSchedulesData.length || 1
+              paymentSchedulesResponse.summary.totalSchedules || paymentSchedulesData.length || 1
             }}
             installment
           </h2>

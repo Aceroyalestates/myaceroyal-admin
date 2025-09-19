@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import {
   User,
@@ -8,12 +9,22 @@ import {
   UsersResponse,
 } from '../models/users';
 import { PAGE_SIZE } from '../constants';
+import { environment } from '../../../environments/environment';
+
+export interface ExportUsersParams {
+  search?: string;
+  role?: string;
+  role_id?: number;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class CustomerService {
-  constructor(private httpService: HttpService) {}
+  constructor(
+    private httpService: HttpService,
+    private http: HttpClient
+  ) {}
 
   getCustomerUsers(
     page: number = 1,
@@ -63,5 +74,30 @@ export class CustomerService {
 
   deleteUser(id: string): Observable<void> {
     return this.httpService.delete<void>(`users/customers/${id}`);
+  }
+
+  /**
+   * Export users data with optional filters
+   * @param params Optional export parameters (search, role, role_id)
+   * @returns Observable of Blob for file download
+   */
+  exportUsers(params?: ExportUsersParams): Observable<Blob> {
+    let httpParams = new HttpParams();
+    
+    if (params?.search) {
+      httpParams = httpParams.set('search', params.search);
+    }
+    if (params?.role) {
+      httpParams = httpParams.set('role', params.role);
+    }
+    if (params?.role_id !== undefined) {
+      httpParams = httpParams.set('role_id', params.role_id.toString());
+    }
+
+    // Use HttpClient directly to avoid interceptor issues with blob responses
+    return this.http.get(`${environment.apiUrl}/users/export`, {
+      params: httpParams,
+      responseType: 'blob'
+    });
   }
 }

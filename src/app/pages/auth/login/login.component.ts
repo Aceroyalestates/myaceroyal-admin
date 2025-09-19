@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
-import { ErrorModalService } from 'src/app/core/services/error-modal.service';
+import { NzNotificationModule, NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
 	selector: 'app-login',
@@ -12,6 +12,7 @@ import { ErrorModalService } from 'src/app/core/services/error-modal.service';
 	imports: [
 		CommonModule,
 		ReactiveFormsModule,
+		NzNotificationModule,
 	],
 	templateUrl: './login.component.html',
 	styleUrl: './login.component.css',
@@ -26,7 +27,7 @@ export class LoginComponent implements OnInit {
 		private fb: FormBuilder,
 		private authService: AuthService,
 		private router: Router,
-		private errorModalService: ErrorModalService
+		private notification: NzNotificationService
 	) {}
 
 	ngOnInit(): void {
@@ -63,7 +64,11 @@ export class LoginComponent implements OnInit {
 				},
 				error: (error) => {
 					this.isLoading = false;
-					this.errorModalService.showNetworkError();
+					// this.notification.error(
+					// 	'Login Failed',
+					// 	'Login failed. Please check your credentials and try again.',
+					// 	{ nzPlacement: 'topRight', nzDuration: 6000 }
+					// );
 					this.errorMessage = 'Login failed. Please try again.';
 					console.error('Login error:', error);
 				},

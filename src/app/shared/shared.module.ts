@@ -9,7 +9,6 @@ import { SearchBarComponent } from './components/search-bar/search-bar.component
 import { PropertyCardComponent } from './components/property-card/property-card.component';
 import { BreadcrumbComponent } from './components/breadcrumb/breadcrumb.component';
 import { LoaderComponent } from './components/loader/loader.component';
-import { ErrorModalComponent } from './components/error-modal/error-modal.component';
 import { LoaderDemoComponent } from './components/loader-demo/loader-demo.component';
 
 @NgModule({
@@ -25,7 +24,6 @@ import { LoaderDemoComponent } from './components/loader-demo/loader-demo.compon
     PropertyCardComponent,
     BreadcrumbComponent,
     LoaderComponent,
-    ErrorModalComponent,
     LoaderDemoComponent,
   ],
   exports: [
@@ -38,7 +36,6 @@ import { LoaderDemoComponent } from './components/loader-demo/loader-demo.compon
     PropertyCardComponent,
     BreadcrumbComponent,
     LoaderComponent,
-    ErrorModalComponent,
     LoaderDemoComponent,
   ],
 })

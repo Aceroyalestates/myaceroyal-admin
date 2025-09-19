@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-breadcrumb',
+  standalone: true,
   imports: [RouterLink, CommonModule],
   templateUrl: './breadcrumb.component.html',
   styleUrl: './breadcrumb.component.css',
