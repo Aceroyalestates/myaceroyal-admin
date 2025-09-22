@@ -62,6 +62,29 @@ export class UserManagementComponent {
     },
   ];
 
+  // Date filter columns for the table
+  dateFilterColumns: TableColumn[] = [
+    {
+      key: 'fromDate',
+      title: 'From Date',
+      filterable: true,
+      type: 'date',
+      filterType: 'date',
+    },
+    {
+      key: 'toDate',
+      title: 'To Date',
+      filterable: true,
+      type: 'date',
+      filterType: 'date',
+    },
+  ];
+
+  // Combined columns for the table
+  get allColumns(): TableColumn[] {
+    return [...this.columns, ...this.dateFilterColumns];
+  }
+
   actions: TableAction[] = [
     {
       key: 'view',
@@ -202,6 +225,15 @@ export class UserManagementComponent {
       exportParams.role_id = this.currentFilters['role_id'];
     }
 
+    // Add date filters if present
+    if (this.currentFilters['fromDate']) {
+      exportParams.fromDate = this.formatDateForAPI(this.currentFilters['fromDate']);
+    }
+    
+    if (this.currentFilters['toDate']) {
+      exportParams.toDate = this.formatDateForAPI(this.currentFilters['toDate']);
+    }
+
     // Debug: Log export parameters
     console.log('Exporting users with parameters:', exportParams);
 
@@ -216,6 +248,28 @@ export class UserManagementComponent {
         this.loading = false;
       },
     });
+  }
+
+  /**
+   * Format date for API (convert to ISO string format)
+   */
+  private formatDateForAPI(date: any): string {
+    if (!date) return '';
+    
+    // If it's already a Date object
+    if (date instanceof Date) {
+      return date.toISOString().split('T')[0];
+    }
+    
+    // If it's a string, try to parse it
+    if (typeof date === 'string') {
+      const parsedDate = new Date(date);
+      if (!isNaN(parsedDate.getTime())) {
+        return parsedDate.toISOString().split('T')[0];
+      }
+    }
+    
+    return date;
   }
 
   /**

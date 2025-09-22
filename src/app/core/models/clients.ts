@@ -28,4 +28,5 @@ export interface ClientListParams {
 	sort_by?: string;   // e.g. createdAt, name, total
 	sort_order?: 'ASC' | 'DESC';
 	search?: string;    // Search by name, email, or phone
+	realtorId?: string;
 }

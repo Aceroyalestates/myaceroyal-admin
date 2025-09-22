@@ -15,6 +15,8 @@ export interface ExportUsersParams {
   search?: string;
   role?: string;
   role_id?: number;
+  fromDate?: string;
+  toDate?: string;
 }
 
 @Injectable({
@@ -78,7 +80,7 @@ export class CustomerService {
 
   /**
    * Export users data with optional filters
-   * @param params Optional export parameters (search, role, role_id)
+   * @param params Optional export parameters (search, role, role_id, fromDate, toDate)
    * @returns Observable of Blob for file download
    */
   exportUsers(params?: ExportUsersParams): Observable<Blob> {
@@ -92,6 +94,12 @@ export class CustomerService {
     }
     if (params?.role_id !== undefined) {
       httpParams = httpParams.set('role_id', params.role_id.toString());
+    }
+    if (params?.fromDate) {
+      httpParams = httpParams.set('fromDate', params.fromDate);
+    }
+    if (params?.toDate) {
+      httpParams = httpParams.set('toDate', params.toDate);
     }
 
     // Use HttpClient directly to avoid interceptor issues with blob responses

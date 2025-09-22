@@ -206,7 +206,7 @@ function handleAuthError(
 
   notification.error(
     'Authentication Error',
-    'Your session has expired. Please log in again.',
+    errorMessage||'Your session has expired. Please log in again.',
     { nzPlacement: 'topRight', nzDuration: 6000 }
   );
 
