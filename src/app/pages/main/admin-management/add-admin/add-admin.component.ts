@@ -45,9 +45,8 @@ export class AddAdminComponent implements OnInit, OnDestroy {
   showConfirmPassword = false;
   isEditMode = false;
   adminId: string | null = null;
-  selectedFile: File | null = null;
-  imagePreview: string | null = null;
-  isUploadingImage = false;
+  avatarUrl: string | null = null;
+  uplloadedAvatarId: string | null = null;
 
   confirmationValidator = (
     control: AbstractControl
@@ -81,6 +80,8 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     lastName: this.fb.control('', [Validators.required]),
     phone: this.fb.control('', [Validators.required]),
     role: this.fb.control('', [Validators.required]),
+    avatar: this.fb.control<File | null>(null),
+    avatar_url: this.fb.control(''),
   });
 
   get passwordStrength(): 'weak' | 'medium' | 'strong' | 'empty' {
@@ -142,76 +143,42 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  onFileSelected(event: Event): void {
+  onAvatarChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input?.files?.[0];
 
-    if (file) {
-      // Validate file size (max 5MB)
-      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB in bytes
-      if (file.size > maxSizeInBytes) {
-        this.error = 'Image must be 5MB or smaller';
-        input.value = ''; // Clear the input
-        return;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      if (this.uplloadedAvatarId) {
+        console.log('Previous file ID to delete:', this.uplloadedAvatarId);
+        this.imageService.deleteImage(this.uplloadedAvatarId).subscribe({
+          next: (response) => {
+            console.log('Previous image deleted successfully:', response);
+          },
+          error: (error) => {
+            console.error('Error deleting previous image:', error);
+          },
+        });
+        this.uplloadedAvatarId = null;
       }
-
-      // Validate file type
-      const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-      if (!validTypes.includes(file.type)) {
-        this.error = 'Only JPEG and PNG images are allowed';
-        input.value = ''; // Clear the input
-        return;
-      }
-
-      this.selectedFile = file;
-      this.error = null;
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.imagePreview = e.target?.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  removeImage(): void {
-    this.selectedFile = null;
-    this.imagePreview = null;
-  }
-
-  uploadImage(): Promise<string | null> {
-    return new Promise((resolve, reject) => {
-      if (!this.selectedFile) {
-        resolve(null);
-        return;
-      }
-
-      this.isUploadingImage = true;
-      this.imageService.uploadImage(
-        this.selectedFile,
-        'admin/avatars',
-        'avatar',
-        { width: 300, height: 300, crop: 'fit' },
-        ['admin', 'avatar']
-      ).pipe(takeUntil(this.destroy$)).subscribe({
+      this.imageService.uploadImage1(file, "admin/images").subscribe({
         next: (response) => {
-          this.isUploadingImage = false;
-          if (response.success && response.data?.file?.secure_url) {
-            resolve(response.data.file.secure_url);
-          } else {
-            this.error = 'Failed to upload image';
-            reject(new Error('Failed to upload image'));
-          }
+          this.form.patchValue({ avatar_url: response.data.file.url });
+          this.uplloadedAvatarId = response.data.file.public_id
+
+          console.log('Image uploaded successfully:', response);
         },
         error: (error) => {
-          this.isUploadingImage = false;
-          this.error = 'Failed to upload image';
-          console.error('Image upload error:', error);
-          reject(error);
-        }
+          console.error('Error uploading image:', error);
+        },
       });
-    });
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.avatarUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      this.form.patchValue({ avatar: file });
+    }
   }
 
   loadAdminData(): void {
@@ -234,9 +201,9 @@ export class AddAdminComponent implements OnInit, OnDestroy {
         const matchingRole = this.roles.find(r => r.value === admin.role_id);
         console.log('Matching role found:', matchingRole);
 
-        // Set existing avatar if available
+        // Set avatar URL if exists
         if (admin.avatar) {
-          this.imagePreview = admin.avatar;
+          this.avatarUrl = admin.avatar;
         }
 
         // Wait a bit to ensure roles are loaded, then patch the form
@@ -247,6 +214,8 @@ export class AddAdminComponent implements OnInit, OnDestroy {
             lastName: lastName,
             phone: admin.phone_number,
             role: admin.role_id.toString(),
+            avatar_url: admin.avatar,
+            // Don't populate password fields in edit mode
           });
           
           console.log('Form patched with role value:', admin.role_id.toString());
@@ -263,79 +232,59 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     });
   }
 
-  async submitForm(): Promise<void> {
+  submitForm(): void {
     this.isLoading = true;
     this.error = null;
     
     if (this.form.valid) {
-      try {
-        const { email, password, firstName, lastName, phone, role } = this.form
-          .value as Record<string, string>;
-        
-        // Upload image if selected
-        let avatarUrl: string | null = null;
-        if (this.selectedFile) {
-          avatarUrl = await this.uploadImage();
-        } else if (this.imagePreview && this.isEditMode) {
-          // Keep existing avatar if no new file selected in edit mode
-          avatarUrl = this.imagePreview;
-        }
-        
-        const adminData = {
-          email,
-          full_name: firstName + " " + lastName,
-          phone_number: phone,
-          role_id: parseInt(role),
-          ...(avatarUrl && { avatar: avatarUrl }),
-        };
+      console.log('Form Data:', this.form.value);
+      
+      const payload = {
+        email: this.form.value.email,
+        full_name: this.form.value.firstName + " " + this.form.value.lastName,
+        phone_number: this.form.value.phone,
+        role_id: parseInt(this.form.value.role!),
+        avatar: this.form.value.avatar_url,
+      };
 
-        if (this.isEditMode && this.adminId) {
-          // Update existing admin
-          const updateData = password ? { ...adminData, password } : adminData;
-          this.adminService
-            .updateUser(this.adminId, updateData)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                this.isLoading = false;
-                this.error = null;
-                console.log('Admin updated successfully:', response);
-                this.router.navigate(['/main/admin-management']);
-              },
-              error: (error) => {
-                console.error('Error updating admin:', error);
-                this.error = 'Failed to update admin';
-                this.isLoading = false;
-              },
-            });
-        } else {
-          // Create new admin
-          this.adminService
-            .addAdmin({
-              ...adminData,
-              password: password!,
-              phone: phone,
-            })
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (response) => {
-                this.isLoading = false;
-                this.error = null;
-                console.log('Admin added successfully:', response);
-                this.router.navigate(['/main/admin-management']);
-              },
-              error: (error) => {
-                console.error('Error adding admin:', error);
-                this.error = 'Failed to add admin';
-                this.isLoading = false;
-              },
-            });
-        }
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        this.error = 'Failed to upload image';
-        this.isLoading = false;
+      if (this.isEditMode && this.adminId) {
+        // Update existing admin
+        const updateData = this.form.value.password ? 
+          { ...payload, password: this.form.value.password } : 
+          payload;
+        
+        this.adminService.updateUser(this.adminId, updateData as any).subscribe({
+          next: (response) => {
+            console.log('Admin updated:', response);
+            this.isLoading = false;
+            this.router.navigate(['/main/admin-management']);
+          },
+          error: (error) => {
+            console.error('Error updating admin:', error);
+            this.error = 'Failed to update admin';
+            this.isLoading = false;
+          }
+        });
+      } else {
+        // Create new admin
+        this.adminService.addAdmin({
+          ...payload,
+          password: this.form.value.password!,
+        } as any).subscribe({
+          next: (response) => {
+            console.log('Admin created:', response);
+            this.isLoading = false;
+            this.router.navigate(['/main/admin-management']);
+          },
+          error: (error) => {
+            console.error('Error creating admin:', error);
+            this.error = 'Failed to create admin';
+            this.isLoading = false;
+          }
+        });
       }
+
+      console.log('Submitting payload:', payload);
     } else {
       console.log('Form is invalid');
       this.isLoading = false;

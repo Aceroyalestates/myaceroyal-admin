@@ -94,15 +94,7 @@
     <div class="pt-8 flex flex-col px-[30px] pb-6 gap-0">
       <h1 class="font-medium text-sm !text-primary uppercase mb-0">SETTINGS</h1>
       <ul nz-menu class="menu">
-        <li nz-menu-item class="menu-item" nzMatchRouter>
-          <app-icon name="bell"></app-icon>
 
-          <a
-            [routerLink]="['/notifications']"
-            routerLinkActive="!bg-primary !text-[#fff]"
-            >Notifications</a
-          >
-        </li>
         <li nz-menu-item class="menu-item" (click)="logout()">
           <app-icon name="exit"></app-icon>
 

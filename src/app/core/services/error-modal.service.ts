@@ -1,34 +1,18 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-
-export interface IErrorModalData {
-	isVisible: boolean;
-	title: string;
-	message: string;
-	errorCode?: string;
-	showRetry?: boolean;
-}
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class ErrorModalService {
-	private readonly _errorModalState$ = new BehaviorSubject<IErrorModalData>({
-		isVisible: false,
-		title: '',
-		message: '',
-		errorCode: '',
-		showRetry: false,
-	});
-
-	public readonly errorModalState$ = this._errorModalState$.asObservable();
+	constructor(private notification: NzNotificationService) {}
 
 	/**
-	 * Shows an error modal with the specified details
-	 * @param title - Error modal title
+	 * Shows an error notification with the specified details
+	 * @param title - Error notification title
 	 * @param message - Error message to display
-	 * @param errorCode - Optional error code
-	 * @param showRetry - Whether to show retry button
+	 * @param errorCode - Optional error code (for logging)
+	 * @param showRetry - Whether to show retry button (not applicable for notifications)
 	 */
 	showError(
 		title: string,
@@ -36,73 +20,64 @@ export class ErrorModalService {
 		errorCode?: string,
 		showRetry: boolean = false,
 	): void {
-		this._errorModalState$.next({
-			isVisible: true,
+		this.notification.error(
 			title,
 			message,
-			errorCode,
-			showRetry,
-		});
-	}
-
-	/**
-	 * Shows a network error modal
-	 * @param message - Custom error message
-	 */
-	showNetworkError(message?: string): void {
-		this.showError(
-			'Network Error',
-			message || 'Unable to connect to the server. Please check your internet connection and try again.',
-			'NETWORK_ERROR',
-			true,
+			{ nzPlacement: 'topRight', nzDuration: 6000 }
 		);
 	}
 
 	/**
-	 * Shows a server error modal
+	 * Shows a network error notification
+	 * @param message - Custom error message
+	 */
+	showNetworkError(message?: string): void {
+		this.notification.error(
+			'Network Error',
+			message || 'Unable to connect to the server. Please check your internet connection and try again.',
+			{ nzPlacement: 'topRight', nzDuration: 6000 }
+		);
+	}
+
+	/**
+	 * Shows a server error notification
 	 * @param statusCode - HTTP status code
 	 * @param message - Custom error message
 	 */
 	showServerError(statusCode: number, message?: string): void {
 		const defaultMessage = `Server error occurred (${statusCode}). Please try again later or contact support if the problem persists.`;
-		this.showError(
+		this.notification.error(
 			'Server Error',
 			message || defaultMessage,
-			`HTTP_${statusCode}`,
-			true,
+			{ nzPlacement: 'topRight', nzDuration: 6000 }
 		);
 	}
 
 	/**
-	 * Shows an authentication error modal
+	 * Shows an authentication error notification
 	 * @param message - Custom error message
 	 */
 	showAuthError(message?: string): void {
-		this.showError(
+		this.notification.error(
 			'Authentication Error',
 			message || 'Your session has expired. Please log in again.',
-			'AUTH_ERROR',
-			false,
+			{ nzPlacement: 'topRight', nzDuration: 6000 }
 		);
 	}
 
 	/**
-	 * Hides the error modal
+	 * Hides the error notification (not applicable for notifications)
 	 */
 	hideError(): void {
-		this._errorModalState$.next({
-			isVisible: false,
-			title: '',
-			message: '',
-			errorCode: '',
-			showRetry: false,
-		});
+		// Notifications auto-dismiss, so this method is kept for compatibility
+		console.log('hideError called - notifications auto-dismiss');
 	}
 
 	/**
-	 * Gets the current error modal state
+	 * Gets the current error notification state (not applicable for notifications)
 	 */
-	getCurrentState(): IErrorModalData {
-		return this._errorModalState$.value;
+	getCurrentState(): any {
+		// Notifications don't have persistent state, so this method is kept for compatibility
+		return { isVisible: false };
 	}
 }

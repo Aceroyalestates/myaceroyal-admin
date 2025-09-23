@@ -5,6 +5,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-icon',
+  standalone: true,
   imports: [CommonModule, HttpClientModule],
   templateUrl: './icon.component.html',
   styles: [

@@ -45,16 +45,22 @@
     <button
       class="flex items-center gap-3 rounded-lg bg-primary py-4 px-10 text-[20px] font-medium cursor-pointer"
       [ngStyle]="{ color: '#FFF' }"
+      [disabled]="loading"
       (click)="triggerExport()"
     >
-      Export
+      @if (loading) {
+        <span class="animate-spin">⏳</span>
+        Exporting...
+      } @else {
+        Export
+      }
     </button>
   </div>
 
   <app-table
     #userTable
     [data]="users"
-    [columns]="columns"
+    [columns]="allColumns"
     [actions]="actions"
     [loading]="loading"
     [showSelection]="true"
@@ -64,6 +70,8 @@
     (selectionChange)="onSelectionChange($event)"
     (actionClick)="onTableAction($event)"
     (rowClick)="onRowClick($event)"
+    (searchChange)="onSearchChange($event)"
+    (filterChange)="onFilterChange($event)"
     class="w-full"
   />
 </main>

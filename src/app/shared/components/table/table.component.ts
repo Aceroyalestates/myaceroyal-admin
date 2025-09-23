@@ -26,6 +26,7 @@ import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { SearchBarComponent } from '../search-bar/search-bar.component';
 
 export interface TableColumn {
@@ -36,6 +37,7 @@ export interface TableColumn {
   width?: string;
   align?: 'left' | 'center' | 'right';
   type?: 'text' | 'number' | 'date' | 'status' | 'actions' | 'custom';
+  filterType?: 'select' | 'date';
   render?: (value: any, row: any) => string;
   filterOptions?: { label: string; value: any }[];
 }
@@ -70,6 +72,7 @@ export interface TableFilter {
     NzDividerModule,
     NzSpinModule,
     NzEmptyModule,
+    NzDatePickerModule,
     SearchBarComponent,
   ],
   templateUrl: './table.component.html',

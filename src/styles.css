@@ -527,6 +527,76 @@ a {
   border: 1px solid var(--border) !important;
 }
 
+/* Notification theming - Light mode */
+.ant-notification-notice {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.ant-notification-notice-close {
+  color: var(--muted) !important;
+}
+
+.ant-notification-notice-close:hover {
+  color: var(--text) !important;
+}
+
+.ant-notification-notice-content,
+.ant-notification-notice-message,
+.ant-notification-notice-description {
+  color: var(--text) !important;
+}
+
+.ant-notification-notice-with-icon .ant-notification-notice-description {
+  color: var(--muted) !important;
+}
+
+/* Notification theming - Dark mode */
+.dark .ant-notification-notice-content,
+.dark .ant-notification-notice-message,
+.dark .ant-notification-notice-description {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+.dark .ant-notification-notice-close {
+  color: var(--muted) !important;
+}
+
+.dark .ant-notification-notice-close:hover {
+  color: var(--text) !important;
+}
+
+.dark .ant-notification-notice-with-icon .ant-notification-notice-message {
+  color: var(--text) !important;
+}
+
+.dark .ant-notification-notice-with-icon .ant-notification-notice-description {
+  color: var(--muted) !important;
+}
+
+/* Notification icons theming - Dark mode */
+.dark .ant-notification-notice-icon {
+  color: var(--text) !important;
+}
+
+.dark .ant-notification-notice-icon-success {
+  color: #52c41a !important;
+}
+
+.dark .ant-notification-notice-icon-error {
+  color: #ff4d4f !important;
+}
+
+.dark .ant-notification-notice-icon-warning {
+  color: #faad14 !important;
+}
+
+.dark .ant-notification-notice-icon-info {
+  color: #1890ff !important;
+}
+
 .dark .ant-popover-title {
   color: var(--text) !important;
   border-bottom-color: var(--border) !important;
