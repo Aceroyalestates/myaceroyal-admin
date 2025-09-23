@@ -1,25 +1,25 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, signal, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { TableColumn, TableAction, TableComponent } from 'src/app/shared/components/table/table.component';
+import { TableColumn, TableAction, TableComponent, TableFilter } from 'src/app/shared/components/table/table.component';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzNotificationModule, NzNotificationService, NzNotificationPlacement } from 'ng-zorro-antd/notification';
 import { PAGE_SIZE, People } from 'src/app/core/constants';
 import { Metric, Person } from 'src/app/core/types/general';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { User } from 'src/app/core/models/users';
 import { DashboardService } from 'src/app/core/services/dashboard.service';
-import { CustomerService } from 'src/app/core/services/user.service';
+import { CustomerService, ExportUsersParams } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-user-management',
-  imports: [CommonModule, SharedModule, NzSelectModule],
+  imports: [CommonModule, SharedModule, NzSelectModule, NzNotificationModule],
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.css'],
 })
 export class UserManagementComponent {
   @ViewChild('userTable') userTable!: TableComponent;
   loading = false;
-  error: string | null = null;
   userMetrics: Metric[] = [];
   users!: User[];
   lucy!: string;
@@ -62,6 +62,29 @@ export class UserManagementComponent {
     },
   ];
 
+  // Date filter columns for the table
+  dateFilterColumns: TableColumn[] = [
+    {
+      key: 'fromDate',
+      title: 'From Date',
+      filterable: true,
+      type: 'date',
+      filterType: 'date',
+    },
+    {
+      key: 'toDate',
+      title: 'To Date',
+      filterable: true,
+      type: 'date',
+      filterType: 'date',
+    },
+  ];
+
+  // Combined columns for the table
+  get allColumns(): TableColumn[] {
+    return [...this.columns, ...this.dateFilterColumns];
+  }
+
   actions: TableAction[] = [
     {
       key: 'view',
@@ -73,8 +96,16 @@ export class UserManagementComponent {
   ];
 
   selectedPeople = signal<User[]>([]);
+  
+  // Current search and filter values
+  currentSearchTerm: string = '';
+  currentFilters: TableFilter = {};
 
-  constructor(private customerService: CustomerService, private router: Router) {}
+  constructor(
+    private customerService: CustomerService, 
+    private router: Router,
+    private notification: NzNotificationService
+  ) {}
 
   ngOnInit(): void {
     this.loadUsers()
@@ -86,16 +117,16 @@ export class UserManagementComponent {
         // Preprocess users and preserve booleans for metrics
         this.users = response.data.map((user: any) => ({
           ...user,
-          active_bool: user.is_active === true,
+          active_bool: user.is_account_locked === true,
           createdAt: new Date(user.createdAt).toLocaleDateString(),
-          is_active: user.is_active === true ? 'Active' : 'Inactive'
+          is_active: user.is_account_locked === true ? 'Inactive' : 'Active'
         } as any));
           this.loading = false;
         this.updateUserMetrics();
       },
       error: (error) => {
         this.loading = false;
-        this.error = 'Failed to load users';
+        this.showErrorNotification('Failed to load users', 'Please try again later.');
       },
     });
   }
@@ -156,11 +187,140 @@ export class UserManagementComponent {
     console.log(this.selectedPeople);
   }
 
+  /**
+   * Handle search term changes from the table component
+   */
+  onSearchChange(searchTerm: string) {
+    this.currentSearchTerm = searchTerm;
+  }
+
+  /**
+   * Handle filter changes from the table component
+   */
+  onFilterChange(filters: TableFilter) {
+    this.currentFilters = { ...filters };
+  }
+
+  /**
+   * Export users data using API with current search and filter parameters
+   */
   triggerExport() {
-    if (this.userTable) {
-      this.userTable.triggerExport();
-    } else {
-      console.warn('Table component not found');
+    this.loading = true;
+    
+    // Prepare export parameters
+    const exportParams: ExportUsersParams = {};
+    
+    // Add search term if present
+    if (this.currentSearchTerm.trim()) {
+      exportParams.search = this.currentSearchTerm.trim();
     }
+    
+    // Add role filter if present (assuming there's a role filter in the table)
+    if (this.currentFilters['role']) {
+      exportParams.role = this.currentFilters['role'];
+    }
+    
+    // Add role_id filter if present
+    if (this.currentFilters['role_id']) {
+      exportParams.role_id = this.currentFilters['role_id'];
+    }
+
+    // Add date filters if present
+    if (this.currentFilters['fromDate']) {
+      exportParams.fromDate = this.formatDateForAPI(this.currentFilters['fromDate']);
+    }
+    
+    if (this.currentFilters['toDate']) {
+      exportParams.toDate = this.formatDateForAPI(this.currentFilters['toDate']);
+    }
+
+    // Debug: Log export parameters
+    console.log('Exporting users with parameters:', exportParams);
+
+    this.customerService.exportUsers(exportParams).subscribe({
+      next: (blob: Blob) => {
+        this.handleFileDownload(blob);
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Export failed:', error);
+        this.showErrorNotification('Export Failed', 'Failed to export users data. Please try again.');
+        this.loading = false;
+      },
+    });
+  }
+
+  /**
+   * Format date for API (convert to ISO string format)
+   */
+  private formatDateForAPI(date: any): string {
+    if (!date) return '';
+    
+    // If it's already a Date object
+    if (date instanceof Date) {
+      return date.toISOString().split('T')[0];
+    }
+    
+    // If it's a string, try to parse it
+    if (typeof date === 'string') {
+      const parsedDate = new Date(date);
+      if (!isNaN(parsedDate.getTime())) {
+        return parsedDate.toISOString().split('T')[0];
+      }
+    }
+    
+    return date;
+  }
+
+  /**
+   * Handle file download from blob response
+   */
+  private handleFileDownload(blob: Blob) {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    // Generate filename with timestamp
+    const timestamp = new Date().toISOString().split('T')[0];
+    link.download = `users-export-${timestamp}.csv`;
+    
+    // Trigger download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clean up
+    window.URL.revokeObjectURL(url);
+    
+    // Show success message
+    this.showSuccessNotification('Export Successful', 'Users data has been exported successfully.');
+  }
+
+  /**
+   * Show success notification
+   */
+  private showSuccessNotification(title: string, message: string): void {
+    this.notification.success(
+      title,
+      message,
+      { 
+        nzPlacement: 'topRight',
+        nzDuration: 4000
+      }
+    );
+  }
+
+  /**
+   * Show error notification
+   */
+  private showErrorNotification(title: string, message: string): void {
+    this.notification.error(
+      title,
+      message,
+      { 
+        nzPlacement: 'topRight',
+        nzDuration: 6000
+      }
+    );
   }
 }

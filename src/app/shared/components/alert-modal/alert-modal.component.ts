@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'app-alert-modal',
+    standalone: true,
     templateUrl: './alert-modal.component.html',
     imports: [CommonModule],
     styleUrl: './alert-modal.component.css'

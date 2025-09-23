@@ -14,6 +14,35 @@
     <nz-alert nzType="error" [nzMessage]="error" nzShowIcon class="mb-4"></nz-alert>
   }
   <form nz-form [formGroup]="form" (ngSubmit)="submitForm()">
+    <div class="mb-4">
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="avatar">
+          <span>Avatar</span>
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <div
+            class="w-32 h-32 rounded-full border border-dashed border-gray-400 flex items-center justify-center cursor-pointer overflow-hidden"
+            (click)="avatarInput.click()"
+          >
+            <img
+              *ngIf="avatarUrl"
+              [src]="avatarUrl"
+              class="w-full h-full object-cover"
+              alt="Avatar"
+            />
+            <span *ngIf="!avatarUrl" class="text-gray-400"
+              >Click to upload</span
+            >
+            <input
+              #avatarInput
+              type="file"
+              accept="image/*"
+              style="display: none"
+              (change)="onAvatarChange($event)"
+            />
+          </div>
+        </nz-form-control>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <div>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstName">
@@ -255,12 +284,12 @@
     </div>
 
     <div class="flex items-center justify-end gap-6 my-12">
-      <button nz-button nzType="primary" nzSize="large"
+      <button
         type="submit"
-        class="place-self-end !text-white font-medium"
-        [nzLoading]="isLoading"
-        [disabled]="form.invalid || isLoading">
-        {{ isEditMode ? 'Update Admin' : 'Save & Create Admin' }}
+        class="place-self-end rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer"
+        [disabled]="isLoading"
+      >
+        {{ isEditMode ? 'Update Admin' : 'Create Admin' }}
       </button>
     </div>
   </form>

@@ -14,10 +14,12 @@ import { forkJoin } from 'rxjs';
 import { Property } from 'src/app/core/models/properties';
 import { CustomerService } from 'src/app/core/services/user.service';
 import { AdminService } from 'src/app/core/services/admin.service';
+import { MoneyFormatPipe } from 'src/app/core/pipes/money-format.pipe';
+import { FormatWordPipe } from 'src/app/core/pipes/format-word.pipe';
 
 @Component({
   selector: 'app-veiw-user',
-  imports: [CommonModule, SharedModule, NzSelectModule],
+  imports: [CommonModule, SharedModule, NzSelectModule, MoneyFormatPipe],
   templateUrl: './veiw-user.component.html',
   styleUrl: './veiw-user.component.css',
 })
@@ -62,12 +64,11 @@ export class ViewUserComponent implements OnInit {
       type: 'text',
     },
     {
-      key: 'plan.is_active',
+      key: 'formatted_status',
       title: 'Payment Status',
       sortable: true,
       type: 'text',
     },
-    
   ];
 
   actions: TableAction[] = [
@@ -78,15 +79,10 @@ export class ViewUserComponent implements OnInit {
       color: 'blue',
       tooltip: 'View details',
     },
-    // {
-    //   key: 'edit',
-    //   label: 'Edit',
-    //   icon: 'edit',
-    //   color: 'green',
-    //   tooltip: 'Edit user',
-    // },
   ];
   selectedPeople = signal<Person[]>([]);
+
+  private formatWordPipe = new FormatWordPipe();
 
   constructor(
     private customerService: CustomerService,
@@ -116,7 +112,10 @@ export class ViewUserComponent implements OnInit {
       next: ({ user, properties }) => {
         this.loading = false;
         this.user = user;
-        this.properties = properties.data;
+        this.properties = properties.data.map((property: any) => ({
+          ...property,
+          formatted_status: this.formatWordPipe.transform(property.status),
+        }));
       },
       error: (error) => {
         this.loading = false;
@@ -145,12 +144,24 @@ export class ViewUserComponent implements OnInit {
   onRowClick(row: any) {
     // Navigate to property details
     console.log('Row clicked:', row);
-    this.router.navigate(['/main/user-management/view', this.id, this.user?.full_name || 'User', row.id, row.name || row.unit?.property?.name || 'Property']);
+    this.router.navigate([
+      '/main/user-management/view',
+      this.id,
+      this.user?.full_name || 'User',
+      row.id,
+      row.name || row.unit?.property?.name || 'Property',
+    ]);
   }
 
   viewUser(user: any) {
     console.log('Viewing user:', user);
-    this.router.navigate(['/main/user-management/view', this.id, this.user?.full_name || 'User', user.id, user.name || user.unit?.property?.name || 'Property']);
+    this.router.navigate([
+      '/main/user-management/view',
+      this.id,
+      this.user?.full_name || 'User',
+      user.id,
+      user.name || user.unit?.property?.name || 'Property',
+    ]);
     // Already on user view page, could scroll to details or open modal
   }
 

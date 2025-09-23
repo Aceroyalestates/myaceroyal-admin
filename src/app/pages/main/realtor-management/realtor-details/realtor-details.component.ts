@@ -14,6 +14,7 @@ import { Property } from 'src/app/core/models/properties';
 import { AdminService } from 'src/app/core/services/admin.service';
 import { forkJoin } from 'rxjs';
 import { CountryInterface, StateInterface } from 'src/app/core/models/generic';
+import { Client } from 'src/app/core/models/clients';
 
 @Component({
   selector: 'app-realtor-details',
@@ -86,13 +87,13 @@ export class RealtorDetailsComponent {
   salesData: Array<{ id: string; property: string; client: string; unit: string; amount: string; status: string; date: string; }> = [];
 
   clientsColumns: TableColumn[] = [
-    { key: 'name', title: 'Client', sortable: true, type: 'text' },
+    { key: 'full_name', title: 'Client', sortable: true, type: 'text' },
     { key: 'email', title: 'Email', sortable: true, type: 'text' },
-    { key: 'phone', title: 'Phone', sortable: true, type: 'text' },
-    { key: 'purchases', title: 'Purchases', sortable: true, type: 'text' },
-    { key: 'total', title: 'Total Amount', sortable: true, type: 'text' },
+    { key: 'phone_number', title: 'Phone', sortable: true, type: 'text' },
+    { key: 'gender', title: 'Gender', sortable: true, type: 'text' },
+    { key: 'createdAt', title: 'Date', sortable: true, type: 'date' },
   ];
-  clientsData: Array<{ id: string; name: string; email: string; phone: string; purchases: number; total: string; }> = [];
+  clientsData: Client[] = [];
 
   actions: TableAction[] = [
     {
@@ -132,11 +133,14 @@ export class RealtorDetailsComponent {
     forkJoin({
       user: this.realtorService.getRealtorById(id),
       properties: this.adminService.getUserProperties(1, id, 10, {}, true),
+      clients: this.realtorService.getRealtorClients({ realtorId: id }),
     }).subscribe({
-      next: ({ user, properties }) => {
+      next: ({ user, properties, clients }) => {
         this.user = user;
         this.properties = properties.data;
         this.fetchNationalityAndState();
+        this.clientsData = clients.data;
+        console.log("clients", this.clientsData);
       },
       error: () => {
         this.loading = false;
@@ -179,6 +183,21 @@ export class RealtorDetailsComponent {
       this.loading = false;
     }
   }
+
+  /**
+   * Load clients data for the current realtor
+   */
+  // loadClientsData(): void {
+  //   this.realtorService.getRealtorClients().subscribe({
+  //     next: (response) => {
+  //       this.clientsData = response.data;
+  //     },
+  //     error: (error) => {
+  //       console.error('Error loading clients data:', error);
+  //       this.clientsData = [];
+  //     },
+  //   });
+  // }
 
   onSelectionChange(selected: Person[]) {
     this.selectedPeople.set(selected);

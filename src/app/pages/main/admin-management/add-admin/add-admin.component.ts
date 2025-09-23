@@ -12,6 +12,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { Subject, takeUntil } from 'rxjs';
 import { Role } from 'src/app/core/models/generic';
 import { AdminService } from 'src/app/core/services/admin.service';
+import { ImageService } from 'src/app/core/services/image.service';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 @Component({
@@ -36,6 +37,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private imageService = inject(ImageService);
   roles: Role[] = [];
   isLoading = false;
   error: string | null = null;
@@ -43,6 +45,8 @@ export class AddAdminComponent implements OnInit, OnDestroy {
   showConfirmPassword = false;
   isEditMode = false;
   adminId: string | null = null;
+  avatarUrl: string | null = null;
+  uplloadedAvatarId: string | null = null;
 
   confirmationValidator = (
     control: AbstractControl
@@ -76,6 +80,8 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     lastName: this.fb.control('', [Validators.required]),
     phone: this.fb.control('', [Validators.required]),
     role: this.fb.control('', [Validators.required]),
+    avatar: this.fb.control<File | null>(null),
+    avatar_url: this.fb.control(''),
   });
 
   get passwordStrength(): 'weak' | 'medium' | 'strong' | 'empty' {
@@ -137,6 +143,44 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  onAvatarChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      if (this.uplloadedAvatarId) {
+        console.log('Previous file ID to delete:', this.uplloadedAvatarId);
+        this.imageService.deleteImage(this.uplloadedAvatarId).subscribe({
+          next: (response) => {
+            console.log('Previous image deleted successfully:', response);
+          },
+          error: (error) => {
+            console.error('Error deleting previous image:', error);
+          },
+        });
+        this.uplloadedAvatarId = null;
+      }
+      this.imageService.uploadImage1(file, "admin/images").subscribe({
+        next: (response) => {
+          this.form.patchValue({ avatar_url: response.data.file.url });
+          this.uplloadedAvatarId = response.data.file.public_id
+
+          console.log('Image uploaded successfully:', response);
+        },
+        error: (error) => {
+          console.error('Error uploading image:', error);
+        },
+      });
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.avatarUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      this.form.patchValue({ avatar: file });
+    }
+  }
+
   loadAdminData(): void {
     if (!this.adminId) return;
     
@@ -157,6 +201,11 @@ export class AddAdminComponent implements OnInit, OnDestroy {
         const matchingRole = this.roles.find(r => r.value === admin.role_id);
         console.log('Matching role found:', matchingRole);
 
+        // Set avatar URL if exists
+        if (admin.avatar) {
+          this.avatarUrl = admin.avatar;
+        }
+
         // Wait a bit to ensure roles are loaded, then patch the form
         setTimeout(() => {
           this.form.patchValue({
@@ -165,6 +214,8 @@ export class AddAdminComponent implements OnInit, OnDestroy {
             lastName: lastName,
             phone: admin.phone_number,
             role: admin.role_id.toString(),
+            avatar_url: admin.avatar,
+            // Don't populate password fields in edit mode
           });
           
           console.log('Form patched with role value:', admin.role_id.toString());
@@ -184,59 +235,56 @@ export class AddAdminComponent implements OnInit, OnDestroy {
   submitForm(): void {
     this.isLoading = true;
     this.error = null;
+    
     if (this.form.valid) {
-      const { email, password, firstName, lastName, phone, role } = this.form
-        .value as Record<string, string>;
+      console.log('Form Data:', this.form.value);
       
-      const adminData = {
-        email,
-        full_name: firstName + " " + lastName,
-        phone_number: phone,
-        role_id: parseInt(role),
+      const payload = {
+        email: this.form.value.email,
+        full_name: this.form.value.firstName + " " + this.form.value.lastName,
+        phone_number: this.form.value.phone,
+        role_id: parseInt(this.form.value.role!),
+        avatar: this.form.value.avatar_url,
       };
 
       if (this.isEditMode && this.adminId) {
         // Update existing admin
-        const updateData = password ? { ...adminData, password } : adminData;
-        this.adminService
-          .updateUser(this.adminId, updateData)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              this.isLoading = false;
-              this.error = null;
-              console.log('Admin updated successfully:', response);
-              this.router.navigate(['/main/admin-management']);
-            },
-            error: (error) => {
-              console.error('Error updating admin:', error);
-              this.error = 'Failed to update admin';
-              this.isLoading = false;
-            },
-          });
+        const updateData = this.form.value.password ? 
+          { ...payload, password: this.form.value.password } : 
+          payload;
+        
+        this.adminService.updateUser(this.adminId, updateData as any).subscribe({
+          next: (response) => {
+            console.log('Admin updated:', response);
+            this.isLoading = false;
+            this.router.navigate(['/main/admin-management']);
+          },
+          error: (error) => {
+            console.error('Error updating admin:', error);
+            this.error = 'Failed to update admin';
+            this.isLoading = false;
+          }
+        });
       } else {
         // Create new admin
-        this.adminService
-          .addAdmin({
-            ...adminData,
-            password: password!,
-            phone: phone,
-          })
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (response) => {
-              this.isLoading = false;
-              this.error = null;
-              console.log('Admin added successfully:', response);
-              this.router.navigate(['/main/admin-management']);
-            },
-            error: (error) => {
-              console.error('Error adding admin:', error);
-              this.error = 'Failed to add admin';
-              this.isLoading = false;
-            },
-          });
+        this.adminService.addAdmin({
+          ...payload,
+          password: this.form.value.password!,
+        } as any).subscribe({
+          next: (response) => {
+            console.log('Admin created:', response);
+            this.isLoading = false;
+            this.router.navigate(['/main/admin-management']);
+          },
+          error: (error) => {
+            console.error('Error creating admin:', error);
+            this.error = 'Failed to create admin';
+            this.isLoading = false;
+          }
+        });
       }
+
+      console.log('Submitting payload:', payload);
     } else {
       console.log('Form is invalid');
       this.isLoading = false;

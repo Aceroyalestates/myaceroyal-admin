@@ -104,65 +104,45 @@ export interface UserPurchaseDetailsResponse {
     }
   ];
 }
-export interface UserPurchasePaymentSchedulesResponse {
-  data: [
-    {
-      id: string
-      purchase_id: string
-      user_id: string
-      installment_number: number;
-      installment_type: string
-      amount_due: number;
-      amount_paid: number;
-      outstanding_amount: number;
-      due_date: string
-      status: string
-      payment_ids: string[];
-      paid_at: string;
-      grace_days: number;
-      note: string;
-      is_auto_applied: true;
-      is_overdue: boolean;
-      days_overdue: number;
-      createdAt: string
-      updatedAt: string
-    }
-  ];
+export interface UserPurchasePaymentSchedulesResponse extends IResponse {
+  data: PaymentSchedule[];
   summary: {
     totalSchedules: number;
     totalAmountDue: number;
     totalAmountPaid: number;
     remainingBalance: number;
-    overdueCount:number;
-    overdueAmount:number;
+    overdueCount: number;
+    overdueAmount: number;
     statusBreakdown: {
       pending: number;
-      partial: number;
-      paid: number;
-      overdue:number;
+      partial?: number;
+      paid?: number;
+      overdue?: number;
     };
-    nextDueSchedule: {
-      id: string
-      purchase_id: string
-      user_id: string
-      installment_number: number;
-      installment_type: string
-      amount_due: number;
-      amount_paid: number;
-      outstanding_amount: number;
-      due_date: string
-      status: string
-      payment_ids: string[];
-      paid_at: string;
-      grace_days: number;
-      note: string;
-      is_auto_applied: true;
-      is_overdue: boolean;
-      days_overdue: number;
-      createdAt: string
-      updatedAt: string
-    };
+    nextDueSchedule: PaymentSchedule;
   };
+}
+
+export interface PaymentSchedule {
+  id: string;
+  purchase_id: string;
+  user_id: string;
+  installment_number: number;
+  installment_type: string;
+  amount_due: string;
+  amount_paid: string;
+  outstanding_amount?: number;
+  due_date: string;
+  status: string;
+  payment_ids: string[];
+  paid_at: string | null;
+  grace_days: number;
+  note: string | null;
+  is_auto_applied: boolean;
+  is_overdue?: boolean;
+  days_overdue?: number;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface ActivityLogsResponse extends IResponse {
   data: Activity[];

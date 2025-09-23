@@ -1,15 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterEvent, RouterOutlet, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
-import { SharedModule } from './shared/shared.module';
-import { ErrorModalComponent } from './shared/components/error-modal/error-modal.component';
 import { LoaderService } from './core/services/loader.service';
 import { Subscription, filter } from 'rxjs';
 import { TopProgressComponent } from './shared/components/top-progress/top-progress.component';
 import { ProgressService } from './core/services/progress.service';
+import { NzNotificationModule } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SharedModule, ErrorModalComponent, TopProgressComponent],
+  imports: [RouterOutlet, NzNotificationModule, TopProgressComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

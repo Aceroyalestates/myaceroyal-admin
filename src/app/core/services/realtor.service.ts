@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
 import { User, UsersResponse } from '../models/users';
+import { Client, ClientsResponse, ClientListParams } from '../models/clients';
 import { PAGE_SIZE } from '../constants';
 
 @Injectable({
@@ -43,5 +44,18 @@ export class RealtorService {
 
   deleteRealtor(id: string): Observable<void> {
     return this.httpService.delete<void>(`users/realtors/${id}`);
+  }
+
+  getRealtorClients(params?: ClientListParams): Observable<ClientsResponse> {
+    const queryParams = {
+      page: params?.page?.toString() || '1',
+      limit: params?.limit?.toString() || PAGE_SIZE.toString(),
+      realtorId: params?.realtorId || '',
+      ...(params?.sort_by && { sort_by: params.sort_by }),
+      ...(params?.sort_order && { sort_order: params.sort_order }),
+      ...(params?.search && { search: params.search }),
+    };
+    
+    return this.httpService.get<ClientsResponse>('users/customers', { params: queryParams });
   }
 }

@@ -16,7 +16,20 @@
       <div *ngIf="showFilters" class="flex flex-wrap gap-2 items-center">
         <ng-container *ngFor="let column of columns">
           <div *ngIf="column.filterable" class="min-w-32">
+            <!-- Date Filter -->
+            <nz-date-picker
+              *ngIf="column.filterType === 'date'"
+              [ngModel]="filters[column.key]"
+              (ngModelChange)="onFilterChange(column, $event)"
+              [nzPlaceHolder]="'Filter ' + column.title"
+              nzFormat="yyyy-MM-dd"
+              nzAllowClear
+              class="w-full min-w-32">
+            </nz-date-picker>
+            
+            <!-- Select Filter -->
             <nz-select
+              *ngIf="!column.filterType || column.filterType === 'select'"
               [ngModel]="filters[column.key]"
               (ngModelChange)="onFilterChange(column, $event)"
               [nzPlaceHolder]="'Filter ' + column.title"
