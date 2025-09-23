@@ -52,32 +52,32 @@ export class PropertyManagementComponent {
           { label: 'Office', value: 'Office' }
         ]
       },
-      {
-        key: 'unit_type_name',
-        title: 'Unit Type',
-        sortable: true,
-        filterable: true,
-        type: 'text',
-        filterOptions: [
-          { label: '1 Bedroom', value: '1 Bedroom' },
-          { label: '2 Bedroom', value: '2 Bedroom' },
-          { label: '3 Bedroom', value: '3 Bedroom' },
-          { label: 'Studio', value: 'Studio' }
-        ]
-      },
-      {
-        key: 'quantity',
-        title: 'Listings',
-        sortable: true,
-        type: 'text'
-      },
-      {
-        key: 'unit_price',
-        title: 'Unit Price',
-        sortable: true,
-        type: 'text',
-        align: 'right'
-      },
+      // {
+      //   key: 'unit_type_name',
+      //   title: 'Unit Type',
+      //   sortable: true,
+      //   filterable: true,
+      //   type: 'text',
+      //   filterOptions: [
+      //     { label: '1 Bedroom', value: '1 Bedroom' },
+      //     { label: '2 Bedroom', value: '2 Bedroom' },
+      //     { label: '3 Bedroom', value: '3 Bedroom' },
+      //     { label: 'Studio', value: 'Studio' }
+      //   ]
+      // },
+      // {
+      //   key: 'quantity',
+      //   title: 'Listings',
+      //   sortable: true,
+      //   type: 'text'
+      // },
+      // {
+      //   key: 'unit_price',
+      //   title: 'Unit Price',
+      //   sortable: true,
+      //   type: 'text',
+      //   align: 'right'
+      // },
     ];
     actions: TableAction[] = [
       {

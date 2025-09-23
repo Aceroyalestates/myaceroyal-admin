@@ -20,6 +20,7 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { PropertyService } from 'src/app/core/services/property.service';
 import { InstallmentPlan, InstallmentPlanCreate, InstallmentPlanRequest, Property, PropertyFeatureAdmin, PropertyType, PropertyTypeOptions, PropertyUnitCreate, PropertyUnitRequest } from 'src/app/core/models/properties';
 import { ImageService } from 'src/app/core/services/image.service';
+import { NgxCurrencyDirective } from "ngx-currency";
 
 
 
@@ -40,7 +41,8 @@ import { ImageService } from 'src/app/core/services/image.service';
     NzDividerModule,
     NzCollapseModule,
     NzDatePickerModule,
-    NzPopconfirmModule
+    NzPopconfirmModule,
+    NgxCurrencyDirective
   ],
   templateUrl: './edit-property.component.html',
   styleUrl: './edit-property.component.css'
@@ -120,7 +122,7 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
     const formGroup = this.fb.group({
       unit_type_id: [unit?.unit_type_id || '', [Validators.required]],
       price: [unit?.price || '', [Validators.required, Validators.min(0)]],
-      total_units: [unit?.total_units || '', [Validators.required, Validators.min(1)]],
+      total_units: [unit?.total_units || '', [Validators.min(1)]],
       installment_plans: this.fb.array(unit?.property_installment_plans?.map((plan: any) => this.createInstallmentPlan(plan)) || []),
       isSaved: [!!unit]
     });
@@ -132,15 +134,12 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
 
   createInstallmentPlan(plan?: any): FormGroup {
     const formGroup = this.fb.group({
-      plan_id: [plan?.plan_id, [Validators.required]],
-      initial_amount: [plan?.initial_amount || '', [Validators.required, Validators.min(0)]],
-      total_price: [plan?.total_price || '', [Validators.required, Validators.min(0)]],
-      start_date: [plan?.start_date ? new Date(plan.start_date) : '', [Validators.required]],
+      plan_id: [plan?.plan_id, []],
+      initial_amount: [plan?.initial_amount || '', [Validators.min(0)]],
+      total_price: [plan?.total_price || '', [Validators.min(0)]],
+      start_date: [],
       isSaved: [!!plan]
     });
-    // if (plan) {
-    //   formGroup.disable();
-    // }
     return formGroup;
   }
 
@@ -478,7 +477,7 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
   }
 
   onImageSelected(event: any): void {
-    const maxSizeInBytes = 1 * 1024 * 1024; // 1MB in bytes
+    const maxSizeInBytes = 3 * 1024 * 1024; // 3MB in bytes
     const input = event.target as HTMLInputElement;
     const file = input?.files?.[0];
 
@@ -491,7 +490,7 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
 
     if (file) {
       if (file.size > maxSizeInBytes) {
-        this.notification.error('Error', 'Image must be 1MB or smaller');
+        this.notification.error('Error', 'Image must be 3MB or smaller');
         input.value = ''; // Clear the input
         return;
       }
@@ -626,9 +625,12 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
         total_units: unitType.value.total_units
       };
       // attempt to update the unit only when there is a change in value
-      if (data.unit_type_id === this.property?.property_units[index]?.unit_type_id &&
-        data.price === this.property?.property_units[index]?.price &&
-        data.total_units === this.property?.property_units[index]?.total_units) {
+      if (
+        // data.unit_type_id === this.property?.property_units[index]?.unit_type_id &&
+        // data.price === this.property?.property_units[index]?.price &&
+        // data.total_units === this.property?.property_units[index]?.total_units
+        unitType.pristine
+      ) {
         this.notification.info('Info', 'No changes detected to update');
         return;
       }
@@ -670,14 +672,29 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
         plan_id: plan.value.plan_id,
         initial_amount: plan.value.initial_amount,
         total_price: plan.value.total_price,
-        start_date: plan.value.start_date.toISOString()
+        // start_date: plan.value.start_date.toISOString()
       };
       // attempt to update the plan only when there is a change in value
-      if (data.plan_id === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.plan_id &&
-        data.initial_amount === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.initial_amount &&
-        data.total_price === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.total_price &&
-        data.start_date === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.start_date) {
+      console.log('Pristine status:', plan.pristine);
+      console.log('Dirty status:', plan.dirty);
+      console.log('Touched status:', plan.touched);
+      console.log('Untouched status:', plan.untouched);
+      const isSamePlanId = data.plan_id === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.plan_id;
+      const isSameInitialAmount = data.initial_amount === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.initial_amount;
+      const isSameTotalPrice = data.total_price === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.total_price;
+      // const isSameStartDate = data.start_date === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.start_date;
+      console.log('Data to compare:', {data, existing: this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]});
+      console.log('Comparison results:', {isSamePlanId, isSameInitialAmount, isSameTotalPrice /*, isSameStartDate*/});
+      if (
+        // data.plan_id === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.plan_id ||
+        // data.initial_amount === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.initial_amount ||
+        // data.total_price === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.total_price ||
+        // data.start_date === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.start_date
+        plan.pristine
+      ) {
         this.notification.info('Info', 'No changes detected to update');
+        // log the condition values
+        console.log('No changes detected:', {data, existing: this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]});
         return;
       }
       console.log('Updating installment plan with data:', {unitIndex, planIndex, unitId, planId, data});

@@ -57,6 +57,7 @@ panels = [
         console.warn('Property not found for ID:', this.id);
       }
     });
+    
   }
 
   gotoEdit(): void {

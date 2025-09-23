@@ -4,6 +4,7 @@ export interface IResponse<T = any> {
   message: string;
   pagination?: Pagination;
   data?: T;
+  added?: T;
 }
 
 export interface Pagination {

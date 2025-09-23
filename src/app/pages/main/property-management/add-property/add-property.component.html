@@ -14,6 +14,7 @@
             <nz-step nzTitle="Features/Amenities" nzDescription="Enter available amenities and facilities of the properties"></nz-step>
             <nz-step nzTitle="Property Images" nzDescription="Add property images"></nz-step>
             <nz-step nzTitle="Payment Plan" nzDescription="Set payment plan"></nz-step>
+            <!-- <nz-step nzTitle="Payment Installment Plan" nzDescription="Set payment installment plan"></nz-step> -->
         </nz-steps>
     </div>
   @if (currentStep == 0) {
@@ -178,7 +179,7 @@
     >
     <h1 class="!text-primary">Property Images</h1>
     <p class="!text-medium text-[#7A7A7A]">
-      Upload images of the property here, upload at least 4 images, Make sure the images are of good quality
+      Upload images of the property here, upload within 4 to 10 images, Make sure the images are of good quality
     </p>
 
     <div class="flex flex-col mt-8">
@@ -213,9 +214,10 @@
              <button
                 type="submit"
                 class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
-                [disabled]="isLoading || uploadedImages.length < 4"
+                [disabled]="isLoading || uploadedImages.length < 4 || uploadedImages.length > 10"
                 (click)="submitImage()">Save & Continue
               </button>
+              <!--  || uploadedImages.length < 4 -->
         </div>
     </div>
 
@@ -223,14 +225,15 @@
   }
 
   @if (currentStep == 3) {
-    <form nz-form [formGroup]="unitTypeForm" class="w-full">
+    <div class="flex flex-col gap-12 w-full">
+      <form *ngIf="!unitSaved" nz-form [formGroup]="unitTypeForm" class="w-full">
         <div class="flex flex-col gap-6">
             <div class="flex justify-end gap-4">
               <button
                 type="button"
                 class="!text-primary hover:text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
                 (click)="addUnitType()"
-                [disabled]="isLoading"
+                [disabled]="isLoading || unitSaved"
               >
                 + Add Unit
               </button>
@@ -272,13 +275,13 @@
                     class="w-full"
                     [nzSize]="'large'"
                     [readonly]="unitType.get('isSaved')?.value"
+                    [currencyMask]="{ prefix: '₦ ', thousands: ',', decimal: '.', align: 'left' }"
                   />
                 </nz-form-control>
               </div>
               <div class="flex flex-col gap-2 mt-12">
                 <label [for]="'total_units_' + i" class="text-gray-500 text-xs font-medium">
                   Total Units
-                  <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
                 </label>
                 <nz-form-control nzErrorTip="Please enter a valid total units">
                   <input
@@ -301,29 +304,19 @@
                   nzPopconfirmTitle="Are you sure you want to delete this unit?"
                   (nzOnConfirm)="removeUnitType(i)"
                   [nzPopconfirmPlacement]="'top'"
-                  [disabled]="isLoading || unitTypes.length <= 1"
+                  [disabled]="isLoading || unitTypes.length <= 1 || unitSaved"
                 >
                   <app-icon class="!text-gray-500 !text-sm" name="trash"></app-icon>
                   <span class="!text-gray-500 !text-sm ml-2">Delete Unit</span>
                 </button>
               </div>
             </div>
-              <!-- <div class="flex justify-center">
-                <button
-                  type="button"
-                  class="rounded-lg bg-primary py-2 px-6 text-sm !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
-                  (click)="submitUnits()"
-                  [disabled]="isLoading || unitTypeForm.invalid"
-                >
-                  Save Units
-                </button>
-              </div> -->
           </div>
           <div class="flex items-center justify-end gap-6 my-12">
              <button
                 type="submit"
                 class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
-                [disabled]="isLoading || unitTypeForm.invalid"
+                [disabled]="isLoading || unitTypeForm.invalid || unitSaved"
                 (click)="submitUnits()">Save & Continue
               </button>
         </div>
@@ -335,6 +328,135 @@
         </div>
       </form>
 
+      <!-- <form *ngIf="createdProperty?.property_units?.length" nz-form [formGroup]="installmentPlanForm" class="w-full"> -->
+      <form *ngIf="unitSaved" nz-form [formGroup]="installmentPlanForm" class="w-full" id="plans-section">
+        <div class="flex flex-col gap-6">
+            <div class="flex justify-end gap-4">
+              <button
+                type="button"
+                class="!text-primary hover:text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+                (click)="addInstallmentPlan()"
+                [disabled]="isLoading"
+              >
+                + Add installment Plan
+              </button>
+              
+            </div>
+          <div formArrayName="installment_plans" class="flex flex-col gap-6 bg-gray-100 p-6 rounded-lg border border-gray-200">
+            <div *ngFor="let unitType of installmentPlans.controls; let i = index; trackBy: trackByInstallmentPlan" [formGroupName]="i">
+              <div class="flex flex-col gap-2 mb-2">
+                <label [for]="'unit_id_' + i" class="text-gray-500 text-xs font-medium">
+                  Unit
+                  <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
+                </label>
+                <nz-form-control nzErrorTip="Please select a unit type">
+                  <nz-select
+                    [id]="'unit_id_' + i"
+                    formControlName="unit_id"
+                    nzPlaceHolder="Select a unit for this property"
+                    class="w-full"
+                    [nzSize]="'large'"
+                    [nzDisabled]="installmentPlans.get('isSaved')?.value"
+                  >
+                    @for (data of createdProperty?.property_units; track data.id) {
+                      <nz-option [nzValue]="data.id" [nzLabel]="data.unit_type.name"></nz-option>
+                    }
+                  </nz-select>
+                </nz-form-control>
+              </div>
+              <div class="flex flex-col gap-2 mb-2 mt-12">
+                <label [for]="'plan_id_' + i" class="text-gray-500 text-xs font-medium">
+                  Installment Type
+                  <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
+                </label>
+                <nz-form-control>
+                  <nz-select
+                    [id]="'plan_id_' + i"
+                    formControlName="plan_id"
+                    nzPlaceHolder="Select an installment type"
+                    class="w-full"
+                    [nzSize]="'large'"
+                  >
+                    @for (option of installmentPlanOptions; track option.id) {
+                      <nz-option [nzValue]="option.id" [nzLabel]="option.title"></nz-option>
+                    }
+                  </nz-select>
+                </nz-form-control>
+              </div>
+              <div class="flex flex-col gap-2 mb-2 mt-12">
+                <label [for]="'initial_amount_' + i" class="text-gray-500 text-xs font-medium">
+                  Initial Deposit
+                  <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
+                </label>
+                <nz-form-control nzErrorTip="Please enter a valid initial amount">
+                  <input
+                    nz-input
+                    [id]="'initial_amount_' + i"
+                    formControlName="initial_amount"
+                    placeholder="Enter initial amount"
+                    type="text"
+                    class="w-full"
+                    [nzSize]="'large'"
+                    [currencyMask]="{ prefix: '₦ ', thousands: ',', decimal: '.', align: 'left' }"
+                  />
+                </nz-form-control>
+              </div>
+              <div class="flex flex-col gap-2 mb-2 mt-12">
+                <label [for]="'total_price_' + i" class="text-gray-500 text-xs font-medium">
+                  Total Amount
+                  <span nz-tooltip nzTooltipTitle="Required field" class="text-red-500">*</span>
+                </label>
+                <nz-form-control nzErrorTip="Please enter a valid total price">
+                  <input
+                    nz-input
+                    [id]="'total_price_' + i"
+                    formControlName="total_price"
+                    placeholder="Enter total amount"
+                    type="text"
+                    class="w-full"
+                    [nzSize]="'large'"
+                    [currencyMask]="{ prefix: '₦ ', thousands: ',', decimal: '.', align: 'left' }"
+                  />
+                </nz-form-control>
+              </div>
+              
+              <div class="flex justify-end mt-6 border-t border-gray-200 pt-6">
+                <button
+                  type="button"
+                  class="flex items-center bg-transparent border-none p-0 cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
+                  nz-popconfirm
+                  nzPopconfirmTitle="Are you sure you want to delete this plan?"
+                  (nzOnConfirm)="removeInstallmentPlan(i)"
+                  [nzPopconfirmPlacement]="'top'"
+                  [disabled]="isLoading || installmentPlans.length <= 1"
+                >
+                  <app-icon class="!text-gray-500 !text-sm" name="trash"></app-icon>
+                  <span class="!text-gray-500 !text-sm ml-2">Delete Plan</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-end gap-6 my-12">
+             <button
+                type="submit"
+                class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
+                [disabled]="isLoading || installmentPlanForm.invalid"
+                (click)="submitPlans()">Save & Continue
+              </button>
+              <button
+                type="submit"
+                class="rounded-lg bg-primary py-3 px-10 text-[20px] !text-white font-medium cursor-pointer disabled:!bg-gray-100 disabled:cursor-not-allowed"
+                (click)="skip()">Skip & View Property
+              </button>
+        </div>
+          <ng-template #noUnitTypes>
+            <div *ngIf="!isLoading" class="text-gray-500">
+              No unit types available. Please try again later.
+            </div>
+          </ng-template>
+        </div>
+      </form>
+    </div>
   }
  </div>
 

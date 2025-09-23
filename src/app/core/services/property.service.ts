@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
-import { FeatureRequest, InstallmentPlan, InstallmentPlanCreate, InstallmentPlanRequest, Property, PropertyCreateRequest, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUnitCreate, PropertyUnitRequest, TogglePropertyAvailabilityResponse, UnitType } from '../models/properties';
+import { FeatureRequest, InstallmentPlan, InstallmentPlanCreate, InstallmentPlanRequest, Property, PropertyCreateRequest, PropertyFeatureAdmin, PropertyResponse, PropertyType, PropertyTypeOptions, PropertyUnit, PropertyUnitCreate, PropertyUnitRequest, TogglePropertyAvailabilityResponse, UnitType } from '../models/properties';
 import { IResponse } from '../models/generic';
 
 @Injectable({
@@ -116,8 +116,8 @@ export class PropertyService {
     return this.httpService.get<IResponse<InstallmentPlan[]>>('admin/installment-plans');
   }
 
-  addPropertyUnit(propertyId: string, unit: PropertyUnitRequest): Observable<IResponse<Property>> {
-    return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/units`, unit);
+  addPropertyUnit(propertyId: string, unit: PropertyUnitRequest): Observable<IResponse<Partial<PropertyUnit>>> {
+    return this.httpService.post<IResponse<Partial<PropertyUnit>>>(`admin/properties/${propertyId}/units`, unit);
   }
 
   deletePropertyUnit(propertyId: string, unitId: number): Observable<IResponse<Property>> {
@@ -132,7 +132,7 @@ export class PropertyService {
     return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/installment-plans`,  plans);
   }
 
-  addInstallmentPlanToUnit(propertyId: string, unitId: string, plan: InstallmentPlanCreate): Observable<IResponse<Property>> {
+  addInstallmentPlanToUnit(propertyId: string, unitId: number, plan: InstallmentPlanRequest): Observable<IResponse<Property>> {
     return this.httpService.post<IResponse<Property>>(`admin/properties/${propertyId}/units/${unitId}/installment-plans`, plan);
   }
 
