@@ -140,6 +140,9 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       start_date: [],
       isSaved: [!!plan]
     });
+    // if (plan) {
+    //   formGroup.disable();
+    // }
     return formGroup;
   }
 
@@ -625,15 +628,12 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
         total_units: unitType.value.total_units
       };
       // attempt to update the unit only when there is a change in value
-      if (
-        // data.unit_type_id === this.property?.property_units[index]?.unit_type_id &&
-        // data.price === this.property?.property_units[index]?.price &&
-        // data.total_units === this.property?.property_units[index]?.total_units
-        unitType.pristine
-      ) {
-        this.notification.info('Info', 'No changes detected to update');
-        return;
-      }
+      // if (
+      //   unitType.pristine
+      // ) {
+      //   this.notification.info('Info', 'No changes detected to update');
+      //   return;
+      // }
       console.log('Updating unit with data:', {index, unitId, data});
       this.isLoading = true;
       this.propertyService.updatePropertyUnit(this.property!.id, unitId, data).subscribe({
@@ -685,18 +685,18 @@ export class EditPropertyComponent implements OnInit, OnDestroy {
       // const isSameStartDate = data.start_date === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.start_date;
       console.log('Data to compare:', {data, existing: this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]});
       console.log('Comparison results:', {isSamePlanId, isSameInitialAmount, isSameTotalPrice /*, isSameStartDate*/});
-      if (
-        // data.plan_id === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.plan_id ||
-        // data.initial_amount === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.initial_amount ||
-        // data.total_price === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.total_price ||
-        // data.start_date === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.start_date
-        plan.pristine
-      ) {
-        this.notification.info('Info', 'No changes detected to update');
-        // log the condition values
-        console.log('No changes detected:', {data, existing: this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]});
-        return;
-      }
+      // if (
+      //   // data.plan_id === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.plan_id ||
+      //   // data.initial_amount === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.initial_amount ||
+      //   // data.total_price === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.total_price ||
+      //   // data.start_date === this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]?.start_date
+      //   plan.pristine
+      // ) {
+      //   this.notification.info('Info', 'No changes detected to update');
+      //   // log the condition values
+      //   console.log('No changes detected:', {data, existing: this.property?.property_units[unitIndex]?.property_installment_plans[planIndex]});
+      //   return;
+      // }
       console.log('Updating installment plan with data:', {unitIndex, planIndex, unitId, planId, data});
       this.isLoading = true;
       this.propertyService.updateInstallmentPlanOfUnit(this.property!.id, planId, data).subscribe({

@@ -418,7 +418,7 @@
                     class="w-full"
                     [nzSize]="'large'"
                     [disabled]="true"
-                  >
+                    nzDisabled>
                     @for (type of unitTypesOptions; track type.id) {
                       <nz-option [nzValue]="type.id" [nzLabel]="type.name"></nz-option>
                     }
