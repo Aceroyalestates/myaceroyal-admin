@@ -331,7 +331,8 @@
       <!-- <form *ngIf="createdProperty?.property_units?.length" nz-form [formGroup]="installmentPlanForm" class="w-full"> -->
       <form *ngIf="unitSaved" nz-form [formGroup]="installmentPlanForm" class="w-full" id="plans-section">
         <div class="flex flex-col gap-6">
-            <div class="flex justify-end gap-4">
+            <div class="flex justify-between gap-4">
+              <h3 class="text-gray-400 text-base font-medium">Installment Plans</h3>
               <button
                 type="button"
                 class="!text-primary hover:text-red-800 text-sm font-medium cursor-pointer disabled:!text-gray-200 disabled:cursor-not-allowed"
