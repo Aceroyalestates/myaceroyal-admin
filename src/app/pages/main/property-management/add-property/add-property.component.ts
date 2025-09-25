@@ -353,7 +353,7 @@ export class AddPropertyComponent implements OnInit, OnDestroy {
   createInstallmentPlans(data: InstallmentPlanRequest): void {
     console.log({ data });
     this.isLoading = true;
-    this.propertyService.addInstallmentPlanToUnit(this.createdProperty!.id, data.installment_plans[0].unit_id, data).subscribe({
+    this.propertyService.addPropertyInstallmentPlans(this.createdProperty!.id, data).subscribe({
       next: (response) => {
         this.isLoading = false;
         this.notification.success('Success', 'Installment plans added successfully');
