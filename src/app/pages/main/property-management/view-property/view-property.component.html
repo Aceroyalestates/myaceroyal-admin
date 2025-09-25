@@ -116,7 +116,7 @@
               </div>
         </div>
 
-        <div *ngIf="property.property_units && property.property_units.length > 0" class="flex mt-6 flex-col gap-1">
+        <div *ngIf="property.property_units && property.property_units.length > 0" class="flex mt-6 flex-col gap-1" id="units-section">
           <p class="!text-[#7A7A7A] dark:!text-gray-400 !text-medium !mb-2">Units</p>
           <nz-collapse class="w-full flex flex-col gap-4" [nzExpandIconPosition]="'end'">
             @for (unit of property.property_units; track unit.id; let i = $index) {

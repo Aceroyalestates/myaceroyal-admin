@@ -11,6 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpInterceptor } from './core/interceptors/http.interceptor';
+import { provideEnvironmentNgxCurrency, NgxCurrencyInputMode } from 'ngx-currency';
+
 
 registerLocaleData(en);
 
@@ -22,6 +24,20 @@ export const appConfig: ApplicationConfig = {
     provideNzI18n(en_US), 
     importProvidersFrom(FormsModule), 
     provideAnimationsAsync(), 
-    provideHttpClient(withInterceptors([httpInterceptor]))
+    provideHttpClient(withInterceptors([httpInterceptor])),
+    // provideEnvironmentNgxCurrency({
+    //   align: "left",
+    //   allowNegative: true,
+    //   allowZero: true,
+    //   decimal: ".",
+    //   precision: 2,
+    //   prefix: "₦ ",
+    //   suffix: "",
+    //   thousands: ",",
+    //   nullable: true,
+    //   min: null,
+    //   max: null,
+    //   inputMode: NgxCurrencyInputMode.Financial,
+    // }),
   ]
 };
