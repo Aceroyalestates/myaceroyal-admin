@@ -42,12 +42,12 @@ export class UserManagementComponent {
       sortable: true,
       type: 'text',
     },
-    {
-      key: 'gender',
-      title: 'Gender',
-      sortable: true,
-      type: 'text',
-    },
+    // {
+    //   key: 'gender',
+    //   title: 'Gender',
+    //   sortable: true,
+    //   type: 'text',
+    // },
     {
       key: 'createdAt',
       title: 'Date',
