@@ -42,12 +42,12 @@ export class UserManagementComponent {
       sortable: true,
       type: 'text',
     },
-    {
-      key: 'gender',
-      title: 'Gender',
-      sortable: true,
-      type: 'text',
-    },
+    // {
+    //   key: 'gender',
+    //   title: 'Gender',
+    //   sortable: true,
+    //   type: 'text',
+    // },
     {
       key: 'createdAt',
       title: 'Date',
@@ -63,26 +63,10 @@ export class UserManagementComponent {
   ];
 
   // Date filter columns for the table
-  dateFilterColumns: TableColumn[] = [
-    {
-      key: 'fromDate',
-      title: 'From Date',
-      filterable: true,
-      type: 'date',
-      filterType: 'date',
-    },
-    {
-      key: 'toDate',
-      title: 'To Date',
-      filterable: true,
-      type: 'date',
-      filterType: 'date',
-    },
-  ];
 
   // Combined columns for the table
   get allColumns(): TableColumn[] {
-    return [...this.columns, ...this.dateFilterColumns];
+    return [...this.columns];
   }
 
   actions: TableAction[] = [
