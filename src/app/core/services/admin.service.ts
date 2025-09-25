@@ -3,8 +3,13 @@ import { HttpService } from './http.service';
 import { map, Observable } from 'rxjs';
 import { User, UsersResponse } from '../models/users';
 import { PAGE_SIZE } from '../constants';
-import { CountryInterface, Role, StateInterface } from '../models/generic';
+import { CountryInterface, Role, StateInterface, IResponse } from '../models/generic';
 import { PropertyResponse } from '../models/properties';
+
+export interface SendReminderRequest {
+  type: 'upcoming' | 'overdue' | 'general';
+  message: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -106,5 +111,15 @@ export class AdminService {
       include_schedules,
     };
     return this.httpService.get<PropertyResponse>(`purchases/user/${id}`, params);
+  }
+
+  /**
+   * Send reminder for a payment schedule
+   * @param scheduleId Payment schedule ID
+   * @param request Reminder request body
+   * @returns Observable of response
+   */
+  sendReminder(scheduleId: string, request: SendReminderRequest): Observable<IResponse> {
+    return this.httpService.post<IResponse>(`admin/schedules/${scheduleId}/send-reminder`, request);
   }
 }
